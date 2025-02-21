@@ -50,8 +50,9 @@ public class ui {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.getContentPane().setBackground(Color.black);
         window.setLayout(null);
+        window.setResizable(false);
 
-        messageText = new JTextArea("SAMPLE TEXT AAAAA");
+        messageText = new JTextArea("Sample text");
 
         messageText.setBounds(50,400,700,150);
 
@@ -72,7 +73,7 @@ public class ui {
         bgPanel[bgNum].setBounds(50,50,700,350);
         
 
-        bgPanel[bgNum].setBackground(Color.blue);
+        bgPanel[bgNum].setBackground(Color.WHITE);
         bgPanel[bgNum].setLayout(null);
         window.add(bgPanel[bgNum]);
 
@@ -90,38 +91,27 @@ public class ui {
         
     }
 
+    Image scaleifCharacter(ImageIcon objectIcon) {
+        double x = 200 / (double) objectIcon.getIconHeight();
+
+        Image scaledImage = objectIcon.getImage().getScaledInstance((int) (objectIcon.getIconWidth() * x), 200, java.awt.Image.SCALE_SMOOTH);
+        
+        return scaledImage;
+    }
+
     public void createObject(int bgNum, int objx, int objy, int objw, int objh, String objFileName, String[] optionNames, String[] optionCommands) {
         JPopupMenu popMenu = new JPopupMenu();
 
         JMenuItem menuItem[] = new JMenuItem[4]; // use 1 2 3
-        /* 
+        
         int i = 1;
         for (String option : optionNames) {
-            menuItem[i] = new JMenuItem(i-1);
+            menuItem[i] = new JMenuItem(option);
             menuItem[i].addActionListener(gm.aHandler);
             menuItem[i].setActionCommand(optionCommands[i-1]);
             popMenu.add(menuItem[i]);
             i++;
-        } */
-        menuItem[1] = new JMenuItem(optionNames[0]);
-        menuItem[1].addActionListener(gm.aHandler);
-        menuItem[1].setActionCommand(optionCommands[0]);
-        popMenu.add(menuItem[1]);
-
-
-        menuItem[2] = new JMenuItem(optionNames[1]);
-        menuItem[2].addActionListener(gm.aHandler);
-        menuItem[2].setActionCommand(optionCommands[1]);
-        popMenu.add(menuItem[2]);
-
-        menuItem[3] = new JMenuItem(optionNames[2]);
-        menuItem[3].addActionListener(gm.aHandler);
-        menuItem[3].setActionCommand(  optionCommands[2]);
-        popMenu.add(menuItem[3]);
-
-
-
-        
+        } 
 
        
         JLabel objectLabel = new JLabel();
@@ -129,11 +119,9 @@ public class ui {
 
         ImageIcon objectIcon = new ImageIcon(getClass().getClassLoader().getResource(objFileName));
 
-        double x = 200 / (double) objectIcon.getIconHeight();
+        //check if objFileName starts with "characters/" to determine if it's a character or not
 
-        Image scaledImage = objectIcon.getImage().getScaledInstance((int) (objectIcon.getIconWidth() * x), 200, java.awt.Image.SCALE_SMOOTH);
-        
-        objectIcon = new ImageIcon(scaledImage);
+        if (objFileName.startsWith("characters/")) objectIcon = new ImageIcon(scaleifCharacter(objectIcon));
         
         objectLabel.setIcon(objectIcon);
         objectLabel.addMouseListener(new MouseListener() {
@@ -184,25 +172,30 @@ public class ui {
     }
 
     public void generateScreen() {
-        //SCREEN 1
-        createBackground(1, "Cafe_Interior_750x300.jpg");
-        createObject(1, 400,150,200,200,"ch_1.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh1", "checkCh1", "giftCh1"});
-        createObject(1, 300, 150, 200, 200, "ch_2.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh2", "checkCh2", "giftCh2"});
-        createObject(1, 200, 150, 200, 200, "ch_3.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh3", "checkCh3", "giftCh3"});
 
-        createLocationButton(1, 100, 75, 64, 64, "locationCafe.png", "goCafe2");
+        //SCREEN 0 - TOWN MAP
+        createBackground(0, "");
+        createLocationButton(0, 100, 75, 64, 64, "icons/iconCoffeeShop.png", "goCafe1");
+        createLocationButton(0, 300, 75, 64, 64, "icons/iconLibrary.png", "goCafe2");
+        bgPanel[0].add(bgLabel[0]);
+
+
+        //SCREEN 1 - CAFE 1
+        createBackground(1, "backgrounds/Cafe_Interior_750x300.jpg");
+        createObject(1, 400,150,200,200,"characters/ch_1.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh1", "checkCh1", "giftCh1"});
+        createObject(1, 300, 150, 200, 200, "characters/ch_2.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh2", "checkCh2", "giftCh2"});
+        createObject(1, 200, 150, 200, 200, "characters/ch_3.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh3", "checkCh3", "giftCh3"});
 
         bgPanel[1].add(bgLabel[1]);
 
-        //SCREEN 2
+        //SCREEN 2 - CAFE 2 
 
-        createBackground(2, "Cafe_Interior_Evening_750x300.jpg");
-        createObject(2, 400,150,200,200,"ch_4.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh1", "checkCh1", "giftCh1"});
-        createObject(2, 300, 150, 200, 200, "ch_5.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh2", "checkCh2", "giftCh2"});
-        createObject(2, 200, 150, 200, 200, "ch_6.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh3", "checkCh3", "giftCh3"});
+        createBackground(2, "backgrounds/Cafe_Interior_Evening_750x300.jpg");
+        createObject(2, 400,150,200,200,"characters/ch_4.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh4", "checkCh4", "giftCh4"});
+        createObject(2, 300, 150, 200, 200, "characters/ch_5.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh5", "checkCh5", "giftCh5"});
+        createObject(2, 200, 150, 200, 200, "characters/ch_6.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh6", "checkCh6", "giftCh6"});
 
-        createLocationButton(2, 100, 75, 64, 64, "locationCafe.png", "goCafe1");
-        //createObject(2, 600, 20, 64, 64, "ch_7.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh1", "checkCh1", "giftCh1"});
+        createObject(2, 600, 20, 64, 64, "", new String[]{"Check"}, new String[]{"checkLocal"});
 
         bgPanel[2].add(bgLabel[2]);
 

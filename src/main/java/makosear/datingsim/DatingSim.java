@@ -36,6 +36,6 @@ public class DatingSim {
     }
 
     public DatingSim() {
-        mudaLugar.setCafe1();
+        mudaLugar.setMap();
     }
 }
