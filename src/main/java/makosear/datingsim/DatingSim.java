@@ -4,6 +4,8 @@
 
 package makosear.datingsim;
 
+import makosear.datingsim.UI.ActionHandler;
+import makosear.datingsim.UI.MudaLugar;
 import makosear.datingsim.UI.ui;
 
 /**
@@ -23,9 +25,17 @@ public class DatingSim {
 
     }
 
-    ui ui = new ui(this);
+    public ActionHandler aHandler = new ActionHandler(this);
+
+    public ui ui = new ui(this);
+
+    public MudaLugar mudaLugar = new MudaLugar(this);
     
     public static void main (String[] args) {
         new DatingSim();
+    }
+
+    public DatingSim() {
+        mudaLugar.setCafe1();
     }
 }
