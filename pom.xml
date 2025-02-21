@@ -10,4 +10,14 @@
         <maven.compiler.release>21</maven.compiler.release>
         <exec.mainClass>makosear.datingsim.DatingSim</exec.mainClass>
     </properties>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/res</directory>
+            </resource>
+        </resources>
+    </build>
 </project>

@@ -4,18 +4,28 @@
 
 package makosear.datingsim;
 
-import makosear.datingsim.Interface.MainFrame;
+import makosear.datingsim.UI.ui;
 
 /**
  *
  * @author ice
  */
 public class DatingSim {
+    private int diaAtual;
+    private int periodoAtual;
+    private int diasTotais;
 
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-        MainFrame mainFrame;
-        
-        
+    public void comecaJogo() {
+
+    }
+
+    public void terminaJogo() {
+
+    }
+
+    ui ui = new ui(this);
+    
+    public static void main (String[] args) {
+        new DatingSim();
     }
 }
