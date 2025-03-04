@@ -6,6 +6,7 @@ package makosear.datingsim.Character.Romanceable;
 import java.util.List;
 
 import makosear.datingsim.Character.Character;
+import makosear.datingsim.Scene.*;
 
 /**
  
@@ -13,17 +14,22 @@ import makosear.datingsim.Character.Character;
  */
 public class Romanceable extends Character{ 
 
+
+    public int nivelDeAfeicao;
     private String falasManha[];
     private String falasTarde[];
     private String falasNoite[];
     private String spriteFilePath;
+    private List<Scene> scenes;
 
-    public Romanceable(String nome, List<String> presentesAma, List<String> presentesOdeia, List<String> lugaresEncontro, String spriteFilePath, String[] falasManha, String[] falasTarde, String[] falasNoite) {
+    public Romanceable(String nome, List<String> presentesAma, List<String> presentesOdeia, List<String> lugaresEncontro, String spriteFilePath, String[] falasManha, String[] falasTarde, String[] falasNoite, List<Scene> scenes) {
         super(nome, presentesAma, presentesOdeia, lugaresEncontro);
         this.spriteFilePath = spriteFilePath;
         this.falasManha = falasManha;
         this.falasTarde = falasTarde;
         this.falasNoite = falasNoite;
+        this.scenes = scenes;
+        nivelDeAfeicao = 0;
     }
 
     public String getSpriteFilePath() {
@@ -36,7 +42,17 @@ public class Romanceable extends Character{
         else if(periodoAtual == "Tarde") return falasTarde[(int)(Math.random() * falasTarde.length)];
         else if (periodoAtual == "Noite") return falasNoite[(int)(Math.random() * falasNoite.length)];
 
-        return "Hii";
+        return "Hi.";
+    }
+
+    public Scene getCena() {
+        if (scenes.size() == 0) return null;
+        if (nivelDeAfeicao >= scenes.size()) return new Scene(interact("Manha"),"", new String[] {""}); 
+        return scenes.get(nivelDeAfeicao);
+    }
+
+    public void shiftAffection(int amount) {
+        nivelDeAfeicao += amount;
     }
     
 }

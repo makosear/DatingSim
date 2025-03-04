@@ -16,7 +16,9 @@ public class ActionHandler implements ActionListener {
     }
 
     private List<String> currentDialogue = new ArrayList<>();
+    private String currentCharacter;
     private int dialogueBoxCounter = 0;
+    private boolean isWaitingOption = false;
 
     public boolean isNoOneTalking() {
         return currentDialogue.isEmpty();
@@ -34,22 +36,72 @@ public class ActionHandler implements ActionListener {
 
     }
 
-    public void passDialogue() {
-
-        if (isNoOneTalking()) { //send error 
-            dialogueBoxCounter = 0;
-        }
-
-        else if (dialogueBoxCounter != 0 && dialogueBoxCounter == currentDialogue.size()) { // acabou o dialogo
-            currentDialogue.clear();
-            dialogueBoxCounter = 0;
-            gm.passaPeriodo();
-        }
-
-        else {  
-            gm.ui.messageText.setText(currentDialogue.get(dialogueBoxCounter));
+    public void chooseOption(int option) {
+        if (isWaitingOption) {
+            
+            String optionText = DatingSim.romanceableCharacters.get(currentCharacter).getCena().getResults(option);
+            String[] splitDialogue = optionText.split("\n");
+            for (String line : splitDialogue) {
+                currentDialogue.add(line);
+            }
             dialogueBoxCounter++;
+            isWaitingOption = false;
+            gm.ui.unpopulateOptions();
+            passDialogue();
         }
+    }
+
+    public void passDialogue() {
+        if (!isWaitingOption) {
+            if (isNoOneTalking()) { //send error 
+                dialogueBoxCounter = 0;
+            }
+
+            else if (dialogueBoxCounter != 0 && dialogueBoxCounter == currentDialogue.size()) { // acabou o dialogo
+                currentDialogue.clear();
+                dialogueBoxCounter = 0;
+                currentCharacter = "";
+                gm.passaPeriodo();
+            }
+
+            else {
+                String text = currentDialogue.get(dialogueBoxCounter); 
+                //System.out.println(text);
+                if (!text.startsWith("$o")) { // not an option menu text
+                    if (text.startsWith("$g")) //increase points and remove the tag
+                        {
+                            text = text.replaceFirst("\\$g", "");
+                            DatingSim.romanceableCharacters.get(currentCharacter).shiftAffection(+1);
+                        }
+                    if (text.startsWith("$b")) {
+                        text = text.replaceFirst("\\$b", "");
+                        DatingSim.romanceableCharacters.get(currentCharacter).shiftAffection(-1);
+                    }
+                    gm.ui.messageText.setText(text);
+                    dialogueBoxCounter++;
+                }
+
+                else {
+                    String[] options = text.split("\\|");
+
+                    //System.out.println(options[0]);
+
+                    options[0] = options[0].replaceFirst("\\$o", "");
+                    gm.ui.messageText.setText(options[0]);
+
+                    gm.ui.populateOptions(options);
+
+                    isWaitingOption = true;
+                }
+            }
+        }
+    }
+
+    public void checkCharacter(String character) 
+    {
+        currentCharacter = character;
+        gm.ui.bringCharacterScreen(character);
+        startDialogue(DatingSim.romanceableCharacters.get(character).getCena().getDialogue   () + DatingSim.romanceableCharacters.get(character).getCena().getOptions());
     }
 
     
@@ -63,17 +115,18 @@ public class ActionHandler implements ActionListener {
             case "talkCh2":  gm.ui.messageText.setText("Gaku: Hi! How are you doing?"); break;
             case "talkCh3":  gm.ui.messageText.setText("Shu: Hi! How are you doing?"); break;
             case "talkCh4":  gm.ui.messageText.setText("Yato: Hi! How are you doing?"); break;
-            case "talkCh5":     if (isNoOneTalking()) 
-                                    startDialogue(gm.romanceableCharacters.get("Itsuki").interact(gm.periodoAtual));
+            case "talkCh5":     currentCharacter = "Itsuki";
+                                if (isNoOneTalking()) 
+                                    startDialogue(DatingSim.romanceableCharacters.get(currentCharacter).interact(gm.periodoAtual));
                                 else passDialogue(); break;
             case "talkCh6":  gm.ui.messageText.setText("Tsumugi: Hi! How are you doing?"); break;
 
-            case "checkCh1":  gm.ui.messageText.setText("Chiaki is just standing there. You should talk to him."); break;
-            case "checkCh2":  gm.ui.messageText.setText("Gaku is just standing there. You should talk to him."); break;
-            case "checkCh3":  gm.ui.messageText.setText("Shu is just standing there. You should talk to him."); break;
-            case "checkCh4":  gm.ui.messageText.setText("Yato is just standing there. You should talk to her."); break;
-            case "checkCh5":  gm.ui.messageText.setText("Itsuki is just standing there. You should talk to him."); break;
-            case "checkCh6":  gm.ui.messageText.setText("Tsumugi is just standing there. You should talk to him."); break;
+            case "checkCh1":  checkCharacter("Chiaki");             break;
+            case "checkCh2":  checkCharacter("Gaku");               break;
+            case "checkCh3":  checkCharacter("Shu");                break;
+            case "checkCh4":  checkCharacter("Yato");               break;
+            case "checkCh5":  checkCharacter("Itsuki");             break;
+            case "checkCh6":  checkCharacter("Tsumugi");            break;
             
             case "giftCh1": gm.ui.messageText.setText("Chiaki: Aw, that's so nice of you! Appreciate it."); break;
             case "giftCh2": gm.ui.messageText.setText("Gaku: Cool, man! Are you trying to get points with me?"); break;

@@ -18,7 +18,7 @@ public class BGMHandler {
                 clip.start();
                 
             } else {
-                System.out.println("Can't find file");
+                //System.out.println("Can't find file");
             }
         } catch (Exception e) {
             e.printStackTrace();

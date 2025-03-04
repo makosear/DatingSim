@@ -19,6 +19,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import makosear.datingsim.DatingSim;
 
@@ -27,12 +29,15 @@ import makosear.datingsim.DatingSim;
  * @author ice
  */
 public class ui {
+    final int TRYING_STUFF = 425;
+    final int MSGBOX_Y = 410;
     JFrame window;
 
     DatingSim gm;
 
     public JTextArea messageText;
     public JTextArea dayAndPeriodCounter;
+    private List<JTextArea> optionTextAreas = new ArrayList<>();
     public JPanel bgPanel[] = new JPanel[10];
     public JLabel bgLabel[] = new JLabel[10];
     
@@ -59,7 +64,7 @@ public class ui {
 
         messageText = new JTextArea("Sample text");
 
-        messageText.setBounds(50,410,700,150);
+        messageText.setBounds(50, MSGBOX_Y,700,150);
 
         messageText.setBackground(Color.black);
 
@@ -107,6 +112,64 @@ public class ui {
         window.add(dayAndPeriodCounter);
     }
 
+    public void unpopulateOptions() {
+        for (JTextArea optionText : optionTextAreas) {
+            window.remove(optionText);
+        }
+        optionTextAreas.clear();
+        messageText.setVisible(true);
+    }
+
+    public void populateOptions(String[] options) {
+        messageText.setVisible(false);
+        final int ONE_LINE_HEIGHT = 30;
+
+        for (int i = 0; i < options.length; i++) {
+            final int optionIndex = i - 1;
+            String option = options[i];
+            JTextArea optionText = new JTextArea(option);
+            optionTextAreas.add(optionText);
+            optionText.setBounds(50, 410 + i*ONE_LINE_HEIGHT, 700, ONE_LINE_HEIGHT);
+            optionText.setBackground(Color.black);
+            optionText.setForeground(Color.white);
+            optionText.setEditable(false);
+            optionText.setLineWrap(true);
+            optionText.setWrapStyleWord(true);
+            
+            //optionText.setFocusable(true);
+            optionText.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+            if (i != 0){
+                optionText.setEnabled(true);
+                optionText.addMouseListener(new MouseListener() {
+                    public void mouseClicked(MouseEvent e) {}   
+                
+                    public void mousePressed(MouseEvent e) {
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            gm.aHandler.chooseOption(optionIndex);
+                        }
+                    }
+                
+                    public void mouseReleased(MouseEvent e) {
+
+                    }
+                
+                    public void mouseEntered(MouseEvent e) {
+                        optionText.setForeground(Color.blue);
+
+                    }
+                
+                    public void mouseExited(MouseEvent e) {
+                        optionText.setForeground(Color.white );
+                    }
+                    
+                });
+            }
+            window.add(optionText);
+        }
+
+
+    }
+
     public void createBackground(int bgNum, String bgFileName) {
         bgPanel[bgNum] = new JPanel();
         bgPanel[bgNum].setBounds(50,50,700,350);
@@ -130,12 +193,21 @@ public class ui {
         
     }
 
-    Image scaleifCharacter(ImageIcon objectIcon) {
-        double x = 200 / (double) objectIcon.getIconHeight();
+    Image scaleifCharacter(ImageIcon objectIcon, int newHeight) {
+        double newWidth = newHeight / (double) objectIcon.getIconHeight();
 
-        Image scaledImage = objectIcon.getImage().getScaledInstance((int) (objectIcon.getIconWidth() * x), 200, java.awt.Image.SCALE_SMOOTH);
+        Image scaledImage = objectIcon.getImage().getScaledInstance((int) (objectIcon.getIconWidth() * newWidth), newHeight, java.awt.Image.SCALE_SMOOTH);
         
         return scaledImage;
+    }
+
+    public void createCharacterScreenObject(int bgNum, int objx, int objy, int objw, int objh, String objFileName) {
+        JLabel objectLabel = new JLabel();
+        objectLabel.setBounds(objx, objy, objw, objh);
+        ImageIcon objectIcon = new ImageIcon(getClass().getClassLoader().getResource(objFileName));
+        objectIcon = new ImageIcon(scaleifCharacter(objectIcon, TRYING_STUFF));
+        objectLabel.setIcon(objectIcon);
+        bgPanel[bgNum].add(objectLabel);
     }
 
     public void createObject(int bgNum, int objx, int objy, int objw, int objh, String objFileName, String[] optionNames, String[] optionCommands) {
@@ -160,7 +232,7 @@ public class ui {
 
         //check if objFileName starts with "characters/" to determine if it's a character or not
 
-        if (objFileName.startsWith("characters/")) objectIcon = new ImageIcon(scaleifCharacter(objectIcon));
+        if (objFileName.startsWith("characters/")) objectIcon = new ImageIcon(scaleifCharacter(objectIcon, 200));
         
         objectLabel.setIcon(objectIcon);
         objectLabel.addMouseListener(new MouseListener() {
@@ -211,22 +283,45 @@ public class ui {
     }
 
     public void bringCharacterScreen(String character) {
-        createBackground(9, null);
-        createObject(9, 400,150,800,800,"characters/ch_1.png", new String[]{"", "", ""}, new String[]{"", "", ""});
+        createBackground(9, gm.mudaLugar.bgToFilePath.get(gm.mudaLugar.currentLocation));
 
+        createCharacterScreenObject(9, 250, 80, TRYING_STUFF, TRYING_STUFF, DatingSim.romanceableCharacters.get(character).getSpriteFilePath());
+
+        //300, 150, 200, 200
+
+        bgPanel[9].add(bgLabel[9]);
+
+        gm.mudaLugar.addNewLocation("characterScreen", 9, gm.mudaLugar.bgToFilePath.get(gm.mudaLugar.currentLocation));
+
+        gm.mudaLugar.changeLocation("characterScreen", "");
+
+    }
+
+    public void deleteCharacterScreen() {
+        gm.mudaLugar.removeLocation("characterScreen");
+        
+        bgPanel[9].setVisible(false);
+        bgPanel[9].removeAll();
+        bgPanel[9].repaint();
+        bgPanel[9] = null;
+        bgLabel[9] = null;
+
+        window.remove(bgPanel[9]);
     }
 
     public void generateScreen() {
 
         //SCREEN 0 - TOWN MAP
-        createBackground(0, "");
+        createBackground(gm.mudaLugar.bgToLocations.get("Map"), gm.mudaLugar.bgToFilePath.get("Map"));
+
         createLocationButton(0, 100, 75, 64, 64, "icons/iconCoffeeShop.png", "goCafe1");
         createLocationButton(0, 300, 75, 64, 64, "icons/iconLibrary.png", "goCafe2");
         bgPanel[0].add(bgLabel[0]);
 
 
         //SCREEN 1 - CAFE 1
-        createBackground(1, "backgrounds/Cafe_Interior_750x300.jpg");
+
+        createBackground(gm.mudaLugar.bgToLocations.get("Cafe1"), gm.mudaLugar.bgToFilePath.get("Cafe1"));
         createObject(1, 400,150,200,200,"characters/ch_1.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh1", "checkCh1", "giftCh1"});
         createObject(1, 300, 150, 200, 200, "characters/ch_2.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh2", "checkCh2", "giftCh2"});
         createObject(1, 200, 150, 200, 200, "characters/ch_3.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh3", "checkCh3", "giftCh3"});
@@ -235,9 +330,9 @@ public class ui {
 
         //SCREEN 2 - CAFE 2 
 
-        createBackground(2, "backgrounds/Cafe_Interior_Evening_750x300.jpg");
+        createBackground(gm.mudaLugar.bgToLocations.get("Cafe2"), gm.mudaLugar.bgToFilePath.get("Cafe2"));
         createObject(2, 400,150,200,200,"characters/ch_4.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh4", "checkCh4", "giftCh4"});
-        createObject(2, 300, 150, 200, 200, "characters/ch_5.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh5", "checkCh5", "giftCh5"});
+        createObject(2, 300, 150, 200, 200, DatingSim.romanceableCharacters.get("Itsuki").getSpriteFilePath(), new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh5", "checkCh5", "giftCh5"});
         createObject(2, 200, 150, 200, 200, "characters/ch_6.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh6", "checkCh6", "giftCh6"});
 
         createObject(2, 600, 20, 64, 64, "", new String[]{"Check"}, new String[]{"checkLocal"});
