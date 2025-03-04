@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 
 import makosear.datingsim.DatingSim;
 
+import java.util.*;
+
 public class ActionHandler implements ActionListener {
 
     DatingSim gm;
@@ -13,16 +15,57 @@ public class ActionHandler implements ActionListener {
         this.gm = gm;
     }
 
+    private List<String> currentDialogue = new ArrayList<>();
+    private int dialogueBoxCounter = 0;
+
+    public boolean isNoOneTalking() {
+        return currentDialogue.isEmpty();
+    }
+
+    public void startDialogue(String dialogue) {
+
+        String[] splitDialogue = dialogue.split("\n");
+
+        for (String line : splitDialogue) {
+                currentDialogue.add(line);
+        }
+
+        passDialogue();
+
+    }
+
+    public void passDialogue() {
+
+        if (isNoOneTalking()) { //send error 
+            dialogueBoxCounter = 0;
+        }
+
+        else if (dialogueBoxCounter != 0 && dialogueBoxCounter == currentDialogue.size()) { // acabou o dialogo
+            currentDialogue.clear();
+            dialogueBoxCounter = 0;
+            gm.passaPeriodo();
+        }
+
+        else {  
+            gm.ui.messageText.setText(currentDialogue.get(dialogueBoxCounter));
+            dialogueBoxCounter++;
+        }
+    }
+
     
     @Override
     public void actionPerformed(ActionEvent e) {
         String yourChoice = e.getActionCommand();
         switch(yourChoice) {
-            case "talkCh1":  gm.ui.messageText.setText("Chiaki: Hi! How are you doing?"); break;
+            case "talkCh1":     if (isNoOneTalking()) 
+                                    startDialogue("Chiaki: Hi! How are you doing?\nTest");
+                                else passDialogue(); break;
             case "talkCh2":  gm.ui.messageText.setText("Gaku: Hi! How are you doing?"); break;
             case "talkCh3":  gm.ui.messageText.setText("Shu: Hi! How are you doing?"); break;
             case "talkCh4":  gm.ui.messageText.setText("Yato: Hi! How are you doing?"); break;
-            case "talkCh5":  gm.ui.messageText.setText("Itsuki: Hi! How are you doing?"); break;
+            case "talkCh5":     if (isNoOneTalking()) 
+                                    startDialogue(gm.romanceableCharacters.get("Itsuki").interact(gm.periodoAtual));
+                                else passDialogue(); break;
             case "talkCh6":  gm.ui.messageText.setText("Tsumugi: Hi! How are you doing?"); break;
 
             case "checkCh1":  gm.ui.messageText.setText("Chiaki is just standing there. You should talk to him."); break;
@@ -47,9 +90,9 @@ public class ActionHandler implements ActionListener {
 
             case "goCafe1": gm.mudaLugar.setCafe1(); break;
             case "goCafe2": gm.mudaLugar.setCafe2(); break;
-
-            
         }
+
+        //wait for click on screen, until it does then run the following
     }
     
 }

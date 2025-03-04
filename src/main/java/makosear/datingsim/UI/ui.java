@@ -32,6 +32,7 @@ public class ui {
     DatingSim gm;
 
     public JTextArea messageText;
+    public JTextArea dayAndPeriodCounter;
     public JPanel bgPanel[] = new JPanel[10];
     public JLabel bgLabel[] = new JLabel[10];
     
@@ -44,6 +45,10 @@ public class ui {
         window.setVisible(true);
     }
 
+    public void updateDayAndPeriodCounter() {
+        dayAndPeriodCounter.setText("Day " + gm.diaAtual + ", " + gm.periodoAtual);
+    }
+
     public void createMainField() {
         window = new JFrame();
         window.setSize(800, 600);
@@ -54,7 +59,7 @@ public class ui {
 
         messageText = new JTextArea("Sample text");
 
-        messageText.setBounds(50,400,700,150);
+        messageText.setBounds(50,410,700,150);
 
         messageText.setBackground(Color.black);
 
@@ -64,8 +69,42 @@ public class ui {
         messageText.setWrapStyleWord(true);
         messageText.setEnabled(false);
         messageText.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+
+        dayAndPeriodCounter = new JTextArea("Day " + gm.diaAtual + ", " + (String) gm.periodoAtual);
+        dayAndPeriodCounter.setBounds(50, 25, 700, 50);
+        dayAndPeriodCounter.setBackground(Color.black);
+        dayAndPeriodCounter.setForeground(Color.white);
+        dayAndPeriodCounter.setEditable(false);
+        dayAndPeriodCounter.setLineWrap(true);
+        dayAndPeriodCounter.setWrapStyleWord(true);
+        dayAndPeriodCounter.setEnabled(false);
+        dayAndPeriodCounter.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+
+        messageText.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {}   
+
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    gm.aHandler.passDialogue();
+                }
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                
+            }
+
+            public void mouseEntered(MouseEvent e) {
+
+                    //objectLabel.setVisible(false);
+
+            }
+
+            public void mouseExited(MouseEvent e) {}
+
+        });
  
         window.add(messageText);
+        window.add(dayAndPeriodCounter);
     }
 
     public void createBackground(int bgNum, String bgFileName) {
@@ -168,6 +207,12 @@ public class ui {
 
         bgPanel[bgNum].add(locationButton);
 
+
+    }
+
+    public void bringCharacterScreen(String character) {
+        createBackground(9, null);
+        createObject(9, 400,150,800,800,"characters/ch_1.png", new String[]{"", "", ""}, new String[]{"", "", ""});
 
     }
 

@@ -2,33 +2,54 @@ package makosear.datingsim.UI;
 
 import makosear.datingsim.DatingSim;
 
+import java.util.*;
+
+
 public class MudaLugar {
     DatingSim gm;
 
+    Map<String, Integer> bgToLocations = new HashMap<>();
+    String currentLocation = "Map";
+
+
     public MudaLugar(DatingSim gm) {
         this.gm = gm;
+        bgToLocations.put("Map", 0);
+        bgToLocations.put("Cafe1", 1);
+        bgToLocations.put("Cafe2", 2);
     }
+
+    public void addNewLocation (String location, int bgNum) {
+        bgToLocations.put(location, bgNum);
+    }
+
+    public void changeLocation(String location, String message) {
+
+        for (Map.Entry<String, Integer> entry : bgToLocations.entrySet()) {
+            if (entry.getKey().equals(location)) {
+                gm.ui.bgPanel[entry.getValue()].setVisible(true);
+            } else {
+                gm.ui.bgPanel[entry.getValue()].setVisible(false);
+            }
+        }
+
+        currentLocation = location;
+        gm.ui.messageText.setText(message);
+
+    }
+
 
 
     public void setMap(){
-        gm.ui.bgPanel[0].setVisible(true);
-        gm.ui.bgPanel[1].setVisible(false);
-        gm.ui.bgPanel[2].setVisible(false);
-        gm.ui.messageText.setText("Choose a place to go to.");
+        changeLocation("Map", "Choose a place to go to.");
     }
 
     public void setCafe1() {
-        gm.ui.bgPanel[0].setVisible(false);
-        gm.ui.bgPanel[1].setVisible(true);
-        gm.ui.bgPanel[2].setVisible(false);
-        gm.ui.messageText.setText("You walk into the Cafe. Shu, Gaku, and Chiaki are present.");
+        changeLocation("Cafe1", "You walk into the Cafe. Shu, Gaku, and Chiaki are present.");
     }
 
     public void setCafe2() {
-        gm.ui.bgPanel[0].setVisible(false);
-        gm.ui.bgPanel[1].setVisible(false);
-        gm.ui.bgPanel[2].setVisible(true);
-        gm.ui.messageText.setText("You walk into the Cafe. Tsumugi, Itsuki, and Yato are present.");
+        changeLocation("Cafe2", "You walk into the Cafe. Tsumugi, Itsuki, and Yato are present.");
     }
     
 }
