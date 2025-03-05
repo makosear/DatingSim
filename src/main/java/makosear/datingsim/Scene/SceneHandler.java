@@ -1,10 +1,8 @@
-package makosear.datingsim.UI;
+package makosear.datingsim.Scene;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-
-import makosear.datingsim.Scene.*;
 
 public class SceneHandler {
     // \n new line

@@ -9,5 +9,11 @@ package makosear.datingsim.Gift;
  * @author ice
  */
 public class Gift {
-    
+    public String name;
+    public String description;
+
+    public Gift(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

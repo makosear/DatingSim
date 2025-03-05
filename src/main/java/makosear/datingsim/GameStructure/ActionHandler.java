@@ -1,4 +1,4 @@
-package makosear.datingsim.UI;
+package makosear.datingsim.GameStructure;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,14 +68,19 @@ public class ActionHandler implements ActionListener {
                 String text = currentDialogue.get(dialogueBoxCounter); 
                 //System.out.println(text);
                 if (!text.startsWith("$o")) { // not an option menu text
-                    if (text.startsWith("$g")) //increase points and remove the tag
-                        {
+                    if (text.startsWith("$g")) {
                             text = text.replaceFirst("\\$g", "");
                             DatingSim.romanceableCharacters.get(currentCharacter).shiftAffection(+1);
+                            DatingSim.romanceableCharacters.get(currentCharacter).cenasVistas++;
                         }
                     if (text.startsWith("$b")) {
                         text = text.replaceFirst("\\$b", "");
                         DatingSim.romanceableCharacters.get(currentCharacter).shiftAffection(-1);
+                        DatingSim.romanceableCharacters.get(currentCharacter).cenasVistas++;
+                    }
+                    if (text.startsWith("$n")) {
+                        text = text.replaceFirst("\\$n", "");
+                        DatingSim.romanceableCharacters.get(currentCharacter).cenasVistas++;
                     }
                     gm.ui.messageText.setText(text);
                     dialogueBoxCounter++;

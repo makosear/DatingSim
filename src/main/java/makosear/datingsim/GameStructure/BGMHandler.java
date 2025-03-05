@@ -1,4 +1,4 @@
-package makosear.datingsim.UI;
+package makosear.datingsim.GameStructure;
 
 import java.io.*;
 import javax.sound.sampled.*;
