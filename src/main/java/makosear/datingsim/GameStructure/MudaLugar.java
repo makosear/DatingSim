@@ -22,8 +22,20 @@ public class MudaLugar {
         bgToLocations.put("Cafe1", 1);
         bgToFilePath.put("Cafe1", "backgrounds/Cafe_Interior_750x300.jpg");
 
-        bgToLocations.put("Cafe2", 2);
-        bgToFilePath.put("Cafe2", "backgrounds/Cafe_Interior_750x300.jpg");
+        bgToLocations.put("Library", 2);
+        bgToFilePath.put("Library", "backgrounds/Library.png");
+
+        bgToLocations.put("Gym", 3);
+        bgToFilePath.put("Gym", "backgrounds/Gym.png");
+
+        bgToLocations.put("Mall", 4);
+        bgToFilePath.put("Mall", "backgrounds/Mall.png");
+
+        bgToLocations.put("Office", 5);
+        bgToFilePath.put("Office", "backgrounds/Office.png");
+
+        bgToLocations.put("Park", 6);
+        bgToFilePath.put("Park", "backgrounds/Park.png");
     }
 
     public void addNewLocation (String location, int bgNum, String bgFilePath) {

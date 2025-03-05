@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
@@ -48,6 +49,10 @@ public class ui {
         createMainField();
         generateScreen();
         window.setVisible(true);
+    }
+
+    public void closeWindow(){
+        window.dispose();
     }
 
     public void updateDayAndPeriodCounter() {
@@ -110,6 +115,14 @@ public class ui {
  
         window.add(messageText);
         window.add(dayAndPeriodCounter);
+    }
+
+    public void displayLoseScreen() {
+        gm.aHandler.loseScene();
+    }
+
+    public void displayWinScreen(String winner) {
+        gm.aHandler.winScene(winner);
     }
 
     public void unpopulateOptions() {
@@ -311,12 +324,22 @@ public class ui {
 
     public void generateScreen() {
 
+        final int ICON_FIRST_COLUMN = 100;
+        final int ICON_SECOND_COLUMN = ICON_FIRST_COLUMN + 200;
+        final int ICON_THIRD_COLUMN = ICON_SECOND_COLUMN + 200;
+        final int ICON_FIRST_ROW = 75; 
+        final int ICON_SECOND_ROW = ICON_FIRST_ROW * 3;
+
         //SCREEN 0 - TOWN MAP
         createBackground(gm.mudaLugar.bgToLocations.get("Map"), gm.mudaLugar.bgToFilePath.get("Map"));
 
-        createLocationButton(0, 100, 75, 64, 64, "icons/iconCoffeeShop.png", "goCafe1");
-        createLocationButton(0, 300, 75, 64, 64, "icons/iconLibrary.png", "goCafe2");
-        bgPanel[0].add(bgLabel[0]);
+        createLocationButton(0, ICON_FIRST_COLUMN, ICON_FIRST_ROW, 64, 64, "icons/iconCoffeeShop.png", "goCafe");
+        createLocationButton(0, ICON_SECOND_COLUMN, ICON_FIRST_ROW, 64, 64, "icons/iconLibrary.png", "goLibrary");
+        createLocationButton(0, ICON_THIRD_COLUMN, ICON_FIRST_ROW, 64, 64, "icons/iconGym.png", "goGym");
+        createLocationButton(0, ICON_FIRST_COLUMN, ICON_SECOND_ROW, 64, 64, "icons/iconMall.png", "goMall");
+        createLocationButton(0, ICON_SECOND_COLUMN, ICON_SECOND_ROW, 64, 64, "icons/iconOffice.png", "goOffice");
+        createLocationButton(0, ICON_THIRD_COLUMN, ICON_SECOND_ROW, 64, 64, "icons/iconPark.png", "goPark");
+        //bgPanel[0].add(bgLabel[0]);
 
 
         //SCREEN 1 - CAFE 1
@@ -339,5 +362,10 @@ public class ui {
 
         bgPanel[2].add(bgLabel[2]);
 
+    }
+
+    public Component getPanel() {
+        // TODO Auto-generated method stub
+        return window;
     }
 }
