@@ -12,16 +12,19 @@ public class SceneHandler {
     // $b -1 affection points
 
     private Map<String, List<Scene>> characterToScenes = new HashMap<>();
+    private Map<String, List<Scene>> characterToEndings = new HashMap<>();
 
     //Itsuki scenes
 
-    Scene itsukiOneHeart = new Scene("Itsuki: Hello.\n" + //
+    private Scene loseScene = new Scene("Itsuki: You lost.", "", null);
+
+    private Scene itsukiOneHeart = new Scene("Itsuki: Hello.\n" + //
                                     "Itsuki: Isn't it a nice day?\n" + //
                                     "$oWhat do you think?", 
                                     "|Nice|Bad", 
                                     new String[]{"$gItsuki: Right?", "$bItsuki: I see."});
 
-    Scene itsukiTwoHeart = new Scene ("Itsuki: this is the second scene test \n" + //
+    private Scene itsukiTwoHeart = new Scene ("Itsuki: this is the second scene test \n" + //
                                     "$oWhat do you think?",
                                     "|Sure|Lol",
                                     new String[]{"$gItsuki: Right?", "$bItsuki: I see."});
@@ -29,97 +32,116 @@ public class SceneHandler {
                                     Scene itsukiThreeHeart = new Scene("Itsuki: Third conversation placeholder\n$oYour thoughts?",
                                     "|Interesting|Boring",
                                     new String[]{"$gItsuki: Glad you agree", "$bItsuki: That's harsh"});
-    Scene itsukiFourHeart = new Scene("Itsuki: Fourth interaction\n$oChoose response?",
+    private Scene itsukiFourHeart = new Scene("Itsuki: Fourth interaction\n$oChoose response?",
                                     "|Agree|Disagree",
                                     new String[]{"$gItsuki: Wonderful", "$bItsuki: Disappointing"});
-    Scene itsukiFiveHeart = new Scene("Itsuki: Final test scene\n$oYour answer?",
+    private Scene itsukiFiveHeart = new Scene("Itsuki: Final test scene\n$oYour answer?",
                                     "|Accept|Reject",
                                     new String[]{"$gItsuki: Thank you", "$bItsuki: Maybe next time"});
+    private Scene itsukiEnding = new Scene("Itsuki: Final conversation\n" + //
+                                    "Itsuki: It was nice talking to you.\n" + //
+                                    "Itsuki: See you around!", "", new String[]{""});
 
     // Chiaki Scenes
-    Scene chiakiOneHeart = new Scene("Chiaki: First meeting\n$oHow respond?",
+    private Scene chiakiOneHeart = new Scene("Chiaki: First meeting\n$oHow respond?",
                                     "|Friendly|Shy",
                                     new String[]{"$gChiaki: You're nice", "$bChiaki: Don't be scared"});
-    Scene chiakiTwoHeart = new Scene("Chiaki: Coffee shop encounter\n$oOrder what?",
+    private Scene chiakiTwoHeart = new Scene("Chiaki: Coffee shop encounter\n$oOrder what?",
                                     "|Latte|Espresso",
                                     new String[]{"$gChiaki: Good choice!", "$bChiaki: Too strong?"});
-    Scene chiakiThreeHeart = new Scene("Chiaki: Library chat\n$oPick topic?",
+    private Scene chiakiThreeHeart = new Scene("Chiaki: Library chat\n$oPick topic?",
                                     "|Books|Weather",
                                     new String[]{"$gChiaki: I love reading", "$bChiaki: It's sunny"});
-    Scene chiakiFourHeart = new Scene("Chiaki: Park walk\n$oComment on flowers?",
+    private Scene chiakiFourHeart = new Scene("Chiaki: Park walk\n$oComment on flowers?",
                                     "|Beautiful|Ordinary",
                                     new String[]{"$gChiaki: They're lovely", "$bChiaki: Not your style?"});
-    Scene chiakiFiveHeart = new Scene("Chiaki: Final encounter\n$oSay goodbye?",
+    private Scene chiakiFiveHeart = new Scene("Chiaki: Final encounter\n$oSay goodbye?",
                                     "|Warm|Casual",
                                     new String[]{"$gChiaki: Until next time", "$bChiaki: Bye then"});
+    private Scene chiakiEnding = new Scene("Chiaki: Final conversation\n" + //
+                                    "Chiaki: It was nice talking to you.\n" + //
+                                    "Chiaki: See you around!", "", new String[]{""});
 
     // Shu Scenes
-    Scene shuOneHeart = new Scene("Shu: Initial meeting\n$oGreeting?",
+    private Scene shuOneHeart = new Scene("Shu: Initial meeting\n$oGreeting?",
                                 "|Formal|Casual",
                                 new String[]{"$gShu: Respectful", "$bShu: Too familiar"});
-    Scene shuTwoHeart = new Scene("Shu: Training session\n$oFeedback?",
+    private Scene shuTwoHeart = new Scene("Shu: Training session\n$oFeedback?",
                                 "|Praise|Critique",
                                 new String[]{"$gShu: Thanks", "$bShu: Noted"});
-    Scene shuThreeHeart = new Scene("Shu: Night patrol\n$oJoin him?",
+    private Scene shuThreeHeart = new Scene("Shu: Night patrol\n$oJoin him?",
                                 "|Yes|No",
                                 new String[]{"$gShu: Keep up", "$bShu: Your loss"});
-    Scene shuFourHeart = new Scene("Shu: Weapon maintenance\n$oComment?",
+    private Scene shuFourHeart = new Scene("Shu: Weapon maintenance\n$oComment?",
                                 "|Skilled|Routine",
                                 new String[]{"$gShu: Years of practice", "$bShu: Necessary work"});
-    Scene shuFiveHeart = new Scene("Shu: Final test\n$oReady?",
+    private Scene shuFiveHeart = new Scene("Shu: Final test\n$oReady?",
                                 "|Always|Never",
                                 new String[]{"$gShu: Good", "$bShu: Weak"});
+    private Scene shuEnding = new Scene("Shu: Final conversation\n" + //
+                                    "Shu: It was nice talking to you.\n" + //
+                                    "Shu: See you around!", "", new String[]{""});
 
     // Gaku Scenes
-    Scene gakuOneHeart = new Scene("Gaku: First encounter\n$oReact to smile?",
+    private Scene gakuOneHeart = new Scene("Gaku: First encounter\n$oReact to smile?",
                                 "|Return smile|Look away",
                                 new String[]{"$gGaku: Friendly", "$bGaku: Shy?"});
-    Scene gakuTwoHeart = new Scene("Gaku: Music store meet\n$oGenre choice?",
+    private Scene gakuTwoHeart = new Scene("Gaku: Music store meet\n$oGenre choice?",
                                 "|Rock|Jazz",
                                 new String[]{"$gGaku: Great taste", "$bGaku: Not my style"});
-    Scene gakuThreeHeart = new Scene("Gaku: Concert invite\n$oResponse?",
+    private Scene gakuThreeHeart = new Scene("Gaku: Concert invite\n$oResponse?",
                                 "|Excited|Hesitant",
                                 new String[]{"$gGaku: Let's go", "$bGaku: Not sure?"});
-    Scene gakuFourHeart = new Scene("Gaku: Songwriting help\n$oContribute?",
+    private Scene gakuFourHeart = new Scene("Gaku: Songwriting help\n$oContribute?",
                                 "|Lyrics|Melody",
                                 new String[]{"$gGaku: Perfect", "$bGaku: Try harder"});
-    Scene gakuFiveHeart = new Scene("Gaku: Final performance\n$oCheer?",
+    private Scene gakuFiveHeart = new Scene("Gaku: Final performance\n$oCheer?",
                                 "|Loud|Subtle",
                                 new String[]{"$gGaku: Energy!", "$bGaku: Reserved"});
+    private Scene gakuEnding = new Scene("Gaku: Final conversation\n" + //
+                                    "Gaku: It was nice talking to you.\n" + //
+                                    "Gaku: See you around!", "", new String[]{""});
 
     // Yato Scenes
-    Scene yatoOneHeart = new Scene("Yato: Mysterious meeting\n$oApproach?",
+    private Scene yatoOneHeart = new Scene("Yato: Mysterious meeting\n$oApproach?",
                                 "|Direct|Cautious",
                                 new String[]{"$gYato: Bold", "$bYato: Wise"});
-    Scene yatoTwoHeart = new Scene("Yato: Night encounter\n$oFollow?",
+    private Scene yatoTwoHeart = new Scene("Yato: Night encounter\n$oFollow?",
                                 "|Trust|Doubt",
                                 new String[]{"$gYato: Good", "$bYato: Smart"});
-    Scene yatoThreeHeart = new Scene("Yato: Secret reveal\n$oReact?",
+    private Scene yatoThreeHeart = new Scene("Yato: Secret reveal\n$oReact?",
                                 "|Accept|Question",
                                 new String[]{"$gYato: Thanks", "$bYato: Suspicious"});
-    Scene yatoFourHeart = new Scene("Yato: Dangerous choice\n$oJoin?",
+    private Scene yatoFourHeart = new Scene("Yato: Dangerous choice\n$oJoin?",
                                 "|Brave|Hesitant",
                                 new String[]{"$gYato: Courageous", "$bYato: Careful"});
-    Scene yatoFiveHeart = new Scene("Yato: Final truth\n$oBelieve?",
+    private Scene yatoFiveHeart = new Scene("Yato: Final truth\n$oBelieve?",
                                 "|Yes|No",
                                 new String[]{"$gYato: Correct", "$bYato: Wrong"});
+    private Scene yatoEnding = new Scene("Yato: Final conversation\n" + //
+                                    "Yato: It was nice talking to you.\n" + //
+                                    "Yato: See you around!", "", new String[]{""});
 
     // Tsumugi Scenes
-    Scene tsumugiOneHeart = new Scene("Tsumugi: Cafe meeting\n$oOrder?",
+    private Scene tsumugiOneHeart = new Scene("Tsumugi: Cafe meeting\n$oOrder?",
                                     "|Cake|Tea",
                                     new String[]{"$gTsumugi: Sweet!", "$bTsumugi: Simple"});
-    Scene tsumugiTwoHeart = new Scene("Tsumugi: Art talk\n$oOpinion?",
+    private Scene tsumugiTwoHeart = new Scene("Tsumugi: Art talk\n$oOpinion?",
                                     "|Love|Confused",
                                     new String[]{"$gTsumugi: Me too", "$bTsumugi: Hmm"});
-    Scene tsumugiThreeHeart = new Scene("Tsumugi: Museum visit\n$oFavorite era?",
+    private Scene tsumugiThreeHeart = new Scene("Tsumugi: Museum visit\n$oFavorite era?",
                                     "|Renaissance|Modern",
                                     new String[]{"$gTsumugi: Classic", "$bTsumugi: Bold"});
-    Scene tsumugiFourHeart = new Scene("Tsumugi: Cooking demo\n$oTaste?",
+    private Scene tsumugiFourHeart = new Scene("Tsumugi: Cooking demo\n$oTaste?",
                                     "|Delicious|Needs salt",
                                     new String[]{"$gTsumugi: Thanks!", "$bTsumugi: Really?"});
-    Scene tsumugiFiveHeart = new Scene("Tsumugi: Final request\n$oHelp?",
+    private Scene tsumugiFiveHeart = new Scene("Tsumugi: Final request\n$oHelp?",
                                     "|Gladly|Busy",
                                     new String[]{"$gTsumugi: Kind", "$bTsumugi: Okay"});
+    private Scene tsumugiEnding = new Scene("Tsumugi: Final conversation\n" + //
+                                    "Tsumugi: It was nice talking to you.\n" + //
+                                    "Tsumugi: See you around!", "", new String[]{""});
+
 
     public SceneHandler() {
         characterToScenes.put("Itsuki", List.of(itsukiOneHeart, itsukiTwoHeart, itsukiThreeHeart, itsukiFourHeart, itsukiFiveHeart));
@@ -128,10 +150,25 @@ public class SceneHandler {
         characterToScenes.put("Gaku", List.of(gakuOneHeart, gakuTwoHeart, gakuThreeHeart, gakuFourHeart, gakuFiveHeart));
         characterToScenes.put("Yato", List.of(yatoOneHeart, yatoTwoHeart, yatoThreeHeart, yatoFourHeart, yatoFiveHeart));
         characterToScenes.put("Tsumugi", List.of(tsumugiOneHeart, tsumugiTwoHeart, tsumugiThreeHeart, tsumugiFourHeart, tsumugiFiveHeart));
+
+        characterToEndings.put("Itsuki", List.of(itsukiEnding));
+        characterToEndings.put("Chiaki", List.of(chiakiEnding));
+        characterToEndings.put("Shu", List.of(shuEnding));
+        characterToEndings.put("Gaku", List.of(gakuEnding));
+        characterToEndings.put("Yato", List.of(yatoEnding));
+        characterToEndings.put("Tsumugi", List.of(tsumugiEnding));
     }
 
     public List<Scene> getCenas(String character) {
         return characterToScenes.get(character);
+    }
+
+    public Scene getWinScene(String character) {
+        return characterToEndings.get(character).get(0);
+    }
+
+    public Scene getLoseScene() {
+        return loseScene;
     }
 
 }

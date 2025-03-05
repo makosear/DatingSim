@@ -15,7 +15,13 @@ import makosear.datingsim.Personagem.Romanceable.*;
 import makosear.datingsim.Scene.SceneHandler;
 
 import java.util.Map;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,8 +30,10 @@ import java.util.List;
  * @author ice
  */
 public class DatingSim {
-    public int diaAtual = 1;
-    public String periodoAtual = "Manha";
+    final private int DIA_INICIAL = 1;
+    final private String PERIODO_INICIAL = "Manha";
+    public int diaAtual = DIA_INICIAL;
+    public String periodoAtual = PERIODO_INICIAL;
 
     public void comecaJogo() {
 
@@ -60,8 +68,8 @@ public class DatingSim {
     }
 
     public DatingSim() {
-        diaAtual = 1;
-        periodoAtual = "Manha";
+        diaAtual = DIA_INICIAL;
+        periodoAtual = PERIODO_INICIAL;
         mudaLugar.setMap();
         bgmHandler.playMusic("src/main/resources/audio/MusMus-BGM-154.wav");
         
@@ -187,39 +195,26 @@ public class DatingSim {
     }
 
     public String tieBreaker(List<String> winnerList) {
-        String winner = "";
-        // tiebreakers:
-        // higher affection level
-        // higher number of gifts given
-        // higher amount of scenes viewed
-        // random
-
-        if (winnerList.size() == 1) return winnerList.get(0);
-
-        if (winnerList.size() == 2) {
-            if (romanceableCharacters.get(winnerList.get(0)).nivelDeAfeicao == romanceableCharacters.get(winnerList.get(1)).nivelDeAfeicao) {
-                if (romanceableCharacters.get(winnerList.get(0)).giftsReceived.size() == romanceableCharacters.get(winnerList.get(1)).giftsReceived.size()) {
-                    if (romanceableCharacters.get(winnerList.get(0)).cenasVistas == romanceableCharacters.get(winnerList.get(1)).cenasVistas) {
-                        winner = romanceableCharacters.get(winnerList.get(0)).getNome();
-                    } else if (romanceableCharacters.get(winnerList.get(0)).cenasVistas > romanceableCharacters.get(winnerList.get(1)).cenasVistas) {
-                        winner = winnerList.get(0);
-                    } else {
-                        winner = winnerList.get(1);
-                    }
-                } else if (romanceableCharacters.get(winnerList.get(0)).giftsReceived.size() > romanceableCharacters.get(winnerList.get(1)).giftsReceived.size()) {
-                    winner = winnerList.get(0);
-                } else {
-                    winner = winnerList.get(1);
-                }
-            }
-
-            if (romanceableCharacters.get(winnerList.get(0)).nivelDeAfeicao > romanceableCharacters.get(winnerList.get(1)).nivelDeAfeicao) return winnerList.get(0);
-            else return winnerList.get(1);
+        if (winnerList.size() == 1) {
+            return winnerList.get(0);
         }
-        return winner;
+
+        return winnerList.stream()
+        .max(Comparator
+            .comparing((String characterName) -> 
+                romanceableCharacters.get(characterName).nivelDeAfeicao)
+            .thenComparing(characterName -> 
+                romanceableCharacters.get(characterName).giftsReceived.size())
+            .thenComparing(characterName -> 
+                romanceableCharacters.get(characterName).cenasVistas)
+            .thenComparing(characterName -> 
+                Math.random()) // random tiebreaker
+        )
+        .orElseThrow(() -> new IllegalStateException("Winner list is empty"));
     }
 
     public void endGame() {
+        System.out.println("Game Over!");
         List<String> winConditionsMet = new ArrayList<>();
         String winner = "";
 
@@ -227,14 +222,22 @@ public class DatingSim {
             if (p.isWinConditionsMet(this.player)) winConditionsMet.add(p.getNome());
         }
 
-        if (winConditionsMet.size() == 0) ui.displayLoseScreen();
-        else if (winConditionsMet.size() > 1) {
-            winner = tieBreaker(winConditionsMet);
-        }
-        
-        if (winner.isEmpty()) winner = winConditionsMet.get(0);
+        //DEBUG
+        winConditionsMet.add("Chiaki");
+        //TODO REMOVE
 
-        ui.displayWinScreen(winner);
+
+        if (winConditionsMet.size() == 0) ui.displayLoseScreen();
+        else {
+            if (winConditionsMet.size() == 1) winner = winConditionsMet.get(0);
+            else winner = tieBreaker(winConditionsMet);
+
+            ui.displayWinScreen(winner);
+
+            //how to end close the window
+            
+            //ui.closeWindow();
+        }
     }
 
     public void passaPeriodo(){

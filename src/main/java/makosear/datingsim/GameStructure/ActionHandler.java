@@ -67,6 +67,7 @@ public class ActionHandler implements ActionListener {
             else {
                 String text = currentDialogue.get(dialogueBoxCounter); 
                 //System.out.println(text);
+                if (text.startsWith("$e")) gm.ui.closeWindow();
                 if (!text.startsWith("$o")) { // not an option menu text
                     if (text.startsWith("$g")) {
                             text = text.replaceFirst("\\$g", "");
@@ -109,6 +110,16 @@ public class ActionHandler implements ActionListener {
         startDialogue(DatingSim.romanceableCharacters.get(character).getCena().getDialogue   () + DatingSim.romanceableCharacters.get(character).getCena().getOptions());
     }
 
+    public void winScene(String character) {
+        currentCharacter = character;
+        gm.ui.bringCharacterScreen(character);
+        startDialogue(DatingSim.sceneHandler.getWinScene(character).getDialogue());
+    }
+
+    public void loseScene() {
+        startDialogue(DatingSim.sceneHandler.getLoseScene().getDialogue());
+    }
+
     
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -146,8 +157,16 @@ public class ActionHandler implements ActionListener {
 
                 //muda lugar
 
-            case "goCafe1": gm.mudaLugar.setCafe1(); break;
-            case "goCafe2": gm.mudaLugar.setCafe2(); break;
+            case "goCafe": 
+                gm.mudaLugar.setCafe1(); 
+                break;
+            case "goLibrary": 
+                gm.mudaLugar.changeLocation("Library");
+                break;
+            case "goGym": gm.mudaLugar.changeLocation("Gym"); break;
+            case "goMall": gm.mudaLugar.changeLocation("Mall"); break;
+            case "goOffice": gm.mudaLugar.changeLocation("Office"); break;
+            case "goPark": gm.mudaLugar.changeLocation("Park"); break;
         }
 
         //wait for click on screen, until it does then run the following
