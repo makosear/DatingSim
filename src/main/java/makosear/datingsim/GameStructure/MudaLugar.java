@@ -1,6 +1,7 @@
 package makosear.datingsim.GameStructure;
 
 import makosear.datingsim.DatingSim;
+import makosear.datingsim.LocationToCharacters;
 
 import java.util.*;
 
@@ -58,6 +59,11 @@ public class MudaLugar {
     }
 
     public void changeLocation(String location, String message) {
+        boolean notFound = true;
+        List<CharacterPosition> characterPositions = new ArrayList<>();
+        characterPositions.add(CharacterPosition.CENTER);
+        characterPositions.add(CharacterPosition.RIGHT);
+        characterPositions.add(CharacterPosition.LEFT);
 
         for (Map.Entry<String, Integer> entry : bgToLocations.entrySet()) {
             if (entry.getKey().equals(location)) {
@@ -66,18 +72,41 @@ public class MudaLugar {
                 gm.ui.bgPanel[entry.getValue()].setVisible(false);
             }
         }
-        if (!location.equals("Map")) {
-            for (LocationCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
+        if (!location.equals ("Map")) {
+            for (LocationToCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
             {
                 if (locationCharacters.location.equals(location))
                 {
-                    for (String character : locationCharacters.characters)
-                    {
-                        gm.ui.addCharacterToLocation(location, character, CharacterPosition.CENTER);
-                    }
+                    notFound = false;
+                    message += " ";
+                        for (String character : locationCharacters.characters)
+                        {
+                            CharacterPosition position = characterPositions.get(new Random().nextInt    (characterPositions.size()));
+
+                            if (!characterPositions.isEmpty()) {
+                                characterPositions.remove(position);
+                            }
+
+                            message += character + ", ";
+
+                            gm.ui.addCharacterToLocation(location, character, position);
+                        }
                 }
             }
 
+            if (notFound) {
+                System.out.println("Location not found");
+                message += " Doggo, ";
+                gm.ui.addCharacterToLocation(location, "Doggo", CharacterPosition.CENTER);
+            }
+
+        }
+        
+        String toReplace = ", ";
+        String replacement = " is/are here.";
+        int index = message.indexOf(toReplace);
+        if (index != -1) {
+            message = message.substring(0, index) + replacement;
         }
 
         currentLocation = location;
@@ -92,11 +121,11 @@ public class MudaLugar {
     }
 
     public void setCafe1() {
-        changeLocation("Cafe1", "You walk into the Cafe. Shu, Gaku, and Chiaki are present.");
+        changeLocation("Cafe1", "You walk into the Cafe.");
     }
 
     public void setCafe2() {
-        changeLocation("Cafe2", "You walk into the Cafe. Tsumugi, Itsuki, and Yato are present.");
+        changeLocation("Cafe2", "You walk into the Cafe.");
     }
     
 }

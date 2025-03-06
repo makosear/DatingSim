@@ -304,12 +304,23 @@ public class ui {
         if (bgPanel[locationId] == null) {
             createBackground(locationId, gm.mudaLugar.bgToFilePath.get(location));
         }
+
+        //check if 
+        if (characterName == "Doggo") {
+            System.out.println("Doggo added");
+            createObject(locationId, characterPosition.getX(), characterPosition.getY(), characterPosition.getWidth(), characterPosition.getHeight(), 
+            "Dog.png", 
+            new String[]{"Talk", "Check", "Give gift"}, 
+            new String[]{"talkCh5", "checkCh5", "giftCh5"});
+        }
         
         // Create the object on top of the existing background
-        createObject(locationId, characterPosition.getX(), characterPosition.getY(), characterPosition.getWidth(), characterPosition.getHeight(), 
+        else {
+            createObject(locationId, characterPosition.getX(), characterPosition.getY(), characterPosition.getWidth(), characterPosition.getHeight(), 
             DatingSim.romanceableCharacters.get(characterName).getSpriteFilePath(), 
             new String[]{"Talk", "Check", "Give gift"}, 
             new String[]{"talkCh5", "checkCh5", "giftCh5"});
+        }
         
         // Ensure the background label is on top of the background panel
         bgPanel[locationId].add(bgLabel[locationId]);

@@ -6,14 +6,14 @@ package makosear.datingsim;
 
 import makosear.datingsim.GameStructure.ActionHandler;
 import makosear.datingsim.GameStructure.BGMHandler;
-import makosear.datingsim.GameStructure.LocationCharacters;
 import makosear.datingsim.GameStructure.MudaLugar;
 import makosear.datingsim.GameStructure.WinConditions;
 import makosear.datingsim.GameStructure.ui;
 import makosear.datingsim.Gift.Gift;
-import makosear.datingsim.Personagem.NonRomanceable.Player;
+import makosear.datingsim.Personagem.NonRomanceable.*;
 import makosear.datingsim.Personagem.Romanceable.*;
 import makosear.datingsim.Scene.SceneHandler;
+import makosear.datingsim.LocationToCharacters;
 
 import java.util.Map;
 import java.util.Random;
@@ -50,11 +50,13 @@ public class DatingSim {
 
     public Player player = new Player("Player", new ArrayList<>(), new ArrayList<>(), new HashMap<>());
 
-    public Map<Integer, List<LocationCharacters>> dayToLocationCharacters  = new HashMap<>();
+    public Map<Integer, List<LocationToCharacters>> dayToLocationCharacters  = new HashMap<>();
 
     public static SceneHandler sceneHandler = new SceneHandler();
 
     public static Map<String,Romanceable> romanceableCharacters = new HashMap<>();
+
+    public static Map<String, NonRomanceable> nonRomanceableCharacters = new HashMap<>();
 
     public ActionHandler aHandler = new ActionHandler(this);
 
@@ -75,6 +77,7 @@ public class DatingSim {
     }
 
     public DatingSim() {
+        calculateLocationsPerDay();
         diaAtual = DIA_INICIAL;
         periodoAtual = PERIODO_INICIAL;
         mudaLugar.setMap();
@@ -117,7 +120,7 @@ public class DatingSim {
             "Chiaki", 
             null, 
             null, 
-            null,
+            Map.of("Cafe", 0.5, "Gym", 0.05, "Library", 0.1, "Mall", 0.15, "Office", 0.1, "Park", 0.2),
             "characters/ch_1.png",
             new String[]{"good morning", "lol its mornin,", "chiaki de gozamaisu"},
             new String[]{"good afternoon", "lol its nonn", "chiaki da"},
@@ -130,7 +133,7 @@ public class DatingSim {
             "Gaku",
             null,
             null,
-            null,
+            Map.of("Cafe", 0.15, "Gym", 0.15, "Library", 0.25, "Mall", 0.4, "Office", 0.10, "Park", 0.05),
             "characters/ch_2.png",
             new String[]{"good morning", "lol its mornin,", "gaku de gozamaisu"},
             new String[]{"good afternoon", "lol its nonn", "gaku da"},
@@ -145,7 +148,7 @@ public class DatingSim {
             "Shu",
             null,
             null,
-            null,
+            Map.of("Cafe", 0.15, "Gym", 0.15, "Library", 0.10, "Mall", 0.05, "Office", 0.25, "Park", 0.4),
             "characters/ch_3.png",
             new String[]{"good morning", "lol its mornin,", "shu de gozamaisu"},
             new String[]{"good afternoon", "lol its nonn", "shu da"},
@@ -158,8 +161,7 @@ public class DatingSim {
             "Yato",
             null,
             null,
-            null,
-            "characters/ch_4.png",
+            Map.of("Cafe", 0.075, "Gym", 0.4, "Library", 0.05, "Mall", 0.1, "Office", 0.075, "Park", 0.3),            "characters/ch_4.png",
             new String[]{"good morning", "lol its mornin,", "yato de gozamaisu"},
             new String[]{"good afternoon", "lol its nonn", "yato da"},
             new String[]{"good evening", "lol its night", "yato desu"},
@@ -171,8 +173,7 @@ public class DatingSim {
             "Itsuki", 
             null, 
             null, 
-            null,
-            "characters/ch_5.png",
+            Map.of("Cafe", 0.15, "Gym", 0.25, "Library", 0.15, "Mall", 0.10, "Office", 0.4, "Park", 0.05),            "characters/ch_5.png",
             new String[]{"good morning", "lol its mornin,", "itsuki de gozamaisu"},
             new String[]{"good afternoon", "lol its nonn", "itsuki da"},
             new String[]{"good evening", "lol its night", "itsuki desu"},
@@ -184,8 +185,7 @@ public class DatingSim {
             "Tsumugi", 
             null, 
             null, 
-            null,
-            "characters/ch_6.png",
+            Map.of("Cafe", 0.2, "Gym", 0.0, "Library", 0.5, "Mall", 0.05, "Office", 0.2, "Park", 0.05),            "characters/ch_6.png",
             new String[]{"good morning", "lol its mornin,", "tsumugi de gozamaisu"},
             new String[]{"good afternoon", "lol its nonn", "tsumugi da"},
             new String[]{"good evening", "lol its night", "tsumugi desu"},
@@ -193,8 +193,16 @@ public class DatingSim {
             new WinConditions(4, 5, null, Map.of("Library", 2), 0)
         ));
 
-        
-        
+        nonRomanceableCharacters.put("Doggo", new NonRomanceable(
+            "Doggo",
+            null,
+            null,
+            "characters/Dog.png",
+            new String[]{"Woof woof", "Woof woof", "doggo de gozamaisu"},
+            new String[]{"Woof woof", "Woof woof", "doggo da"},
+            new String[]{"Woof woof", "Woof woof", "doggo desu"},
+            sceneHandler.getCenas("Doggo")
+        ));
     }
 
     public void calculateLocationsPerDay() {
@@ -218,7 +226,7 @@ public class DatingSim {
                 boolean assigned = false;
 
                 // Try to assign to existing locations first if under capacity
-                for (LocationCharacters locChar : dayToLocationCharacters.get(day)) {
+                for (LocationToCharacters locChar : dayToLocationCharacters.get(day)) {
                     if (locChar.characters.size() < 3 && availableLocations.containsKey(locChar.location)) {
                         // Higher chance to join existing location with higher percentage
                         double locationPref = availableLocations.get(locChar.location);
@@ -236,7 +244,7 @@ public class DatingSim {
                 if (!assigned) {
                     // Remove locations that already have this character's friends
                     Set<String> occupiedLocations = new HashSet<>();
-                    for (LocationCharacters locChar : dayToLocationCharacters.get(day)) {
+                    for (LocationToCharacters locChar : dayToLocationCharacters.get(day)) {
                         occupiedLocations.add(locChar.location);
                     }
 
@@ -245,7 +253,7 @@ public class DatingSim {
 
                     // Check if this location already exists but was full
                     boolean locationExists = false;
-                    for (LocationCharacters locChar : dayToLocationCharacters.get(day)) {
+                    for (LocationToCharacters locChar : dayToLocationCharacters.get(day)) {
                         if (locChar.location.equals(chosenLocation)) {
                             locationExists = true;
                             // If unexpectedly not full, add the character
@@ -260,7 +268,7 @@ public class DatingSim {
                     if (!locationExists) {
                         List<String> characters = new ArrayList<>();
                         characters.add(characterName);
-                        LocationCharacters newLocChar = new LocationCharacters(chosenLocation, characters);
+                        LocationToCharacters newLocChar = new LocationToCharacters(chosenLocation, characters);
                         dayToLocationCharacters.get(day).add(newLocChar);
                     }
                 }
@@ -268,23 +276,28 @@ public class DatingSim {
         }
 
         // Fix any duplicate locations (merge them)
+        // Second pass - ensure all characters are assigned to a location
         for (int day = 1; day <= 7; day++) {
-            List<LocationCharacters> locationsForDay = dayToLocationCharacters.get(day);
-            Map<String, LocationCharacters> locationMap = new HashMap<>();
-
-            // Identify duplicates
-            for (LocationCharacters locChar : new ArrayList<>(locationsForDay)) {
-                if (locationMap.containsKey(locChar.location)) {
-                    // Merge characters from duplicate into existing (up to 3 max)
-                    LocationCharacters existing = locationMap.get(locChar.location);
-                    for (String character : locChar.characters) {
-                        if (existing.characters.size() < 3 && !existing.characters.contains(character)) {
-                            existing.characters.add(character);
-                        }
+            List<LocationToCharacters> locationsForDay = dayToLocationCharacters.get(day);
+            for (String characterName : characterNames) {
+                boolean isAssigned = false;
+                for (LocationToCharacters locChar : locationsForDay) {
+                    if (locChar.characters.contains(characterName)) {
+                        isAssigned = true;
+                        break;
                     }
-                    locationsForDay.remove(locChar);
-                } else {
-                    locationMap.put(locChar.location, locChar);
+                }
+                if (!isAssigned) {
+                    // Forcibly assign the character to the first available location
+                    if (!locationsForDay.isEmpty()) {
+                        locationsForDay.get(0).characters.add(characterName);
+                    } else {
+                        // If no locations exist, create a default location
+                        List<String> characters = new ArrayList<>();
+                        characters.add(characterName);
+                        LocationToCharacters newLocChar = new LocationToCharacters("Gym", characters);
+                        locationsForDay.add(newLocChar);
+                    }
                 }
             }
         }
@@ -292,7 +305,7 @@ public class DatingSim {
         // Print results for verification
         for (int day = 1; day <= 7; day++) {
             System.out.println("=== Day " + day + " ===");
-            for (LocationCharacters locChar : dayToLocationCharacters.get(day)) {
+            for (LocationToCharacters locChar : dayToLocationCharacters.get(day)) {
                 System.out.println(locChar.location + ": " + locChar.characters);
             }
         }
