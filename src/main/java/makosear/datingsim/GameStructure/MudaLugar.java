@@ -128,6 +128,16 @@ public class MudaLugar {
         currentLocation = location;
         gm.ui.messageText.setText(message);
 
+        if (location.equals("MainMenu")) {
+            gm.ui.dayAndPeriodCounter.setVisible(false);
+            gm.ui.messageText.setVisible(false);
+        }
+
+        else if (location.equals("Map")) {
+            gm.ui.dayAndPeriodCounter.setVisible(true);
+            gm.ui.messageText.setVisible(true);
+        }
+
     }
 
 

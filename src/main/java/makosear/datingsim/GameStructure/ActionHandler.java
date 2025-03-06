@@ -2,6 +2,7 @@ package makosear.datingsim.GameStructure;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import makosear.datingsim.DatingSim;
 
@@ -175,5 +176,11 @@ public class ActionHandler implements ActionListener {
 
         //wait for click on screen, until it does then run the following
     }
+
+	public void keyTyped(KeyEvent ke) {
+		System.out.println("Key typed: " + ke.getKeyChar());
+
+
+	}
     
 }

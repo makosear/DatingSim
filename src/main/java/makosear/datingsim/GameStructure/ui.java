@@ -20,8 +20,12 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
 
 import makosear.datingsim.DatingSim;
 
@@ -68,7 +72,12 @@ public class ui {
         window.getContentPane().setBackground(Color.black);
         window.setLayout(null);
         window.setResizable(false);
-
+        window.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                gm.aHandler.keyTyped(e);
+            }
+        });
         messageText = new JTextArea("Sample text");
 
         messageText.setBounds(50, MSGBOX_Y,700,150);
@@ -208,39 +217,62 @@ public class ui {
         
     }
 
-    public void createMainMenu(){
-
+    public void createMainMenu() {
         System.out.println("Creating main menu");
         final int START_MENU_BGNUM = 7;
-
+    
         bgPanel[START_MENU_BGNUM] = new JPanel();
-        bgPanel[START_MENU_BGNUM].setBounds(50,50,700,350);
-        
-
-        bgPanel[START_MENU_BGNUM].setBackground(Color.WHITE);
-        bgPanel[START_MENU_BGNUM].setLayout(null);
+        bgPanel[START_MENU_BGNUM].setBounds(50, 100, 800, 600);
+        bgPanel[START_MENU_BGNUM].setBackground(Color.black);
+        bgPanel[START_MENU_BGNUM].setLayout(null); // Null layout
         window.add(bgPanel[START_MENU_BGNUM]);
 
-        bgLabel[START_MENU_BGNUM] = new JLabel();
-        bgLabel[START_MENU_BGNUM].setBounds(0,0,700,350);
+        JLabel gameTitle = new JLabel("Dating Sim");
+        gameTitle.setBounds(220, 20, 300, 100);
+        gameTitle.setFont(new Font("Book Antiqua", Font.PLAIN, 50));
+        gameTitle.setForeground(Color.white);
+        bgPanel[START_MENU_BGNUM].add(gameTitle);
+    
+        
+        JButton btnStart = new JButton("New Game");
+        JButton btnLoad = new JButton("Load Game");
+        JButton btnExit = new JButton("Exit");
 
-        // I want three labels, two of them will be buttons, one starts the game, the other loads a save
-
-        JLabel startButton = new JLabel();
-        startButton.setBounds(0,0,700,350);
-        startButton.addMouseListener(new MouseListener() {
-            public void mouseClicked(MouseEvent e) {}
-            public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    gm.mudaLugar.changeLocation("Map");
-                }
+        final int BUTTON_X = 250;
+        final int BUTTON_Y = 180;
+        final int BUTTON_WIDTH = 200;
+        final int BUTTON_HEIGHT = 50;
+        final int BUTTON_SPACING_VERTICAL = 75;
+    
+        
+        btnStart.setBounds(BUTTON_X, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
+        btnLoad.setBounds(BUTTON_X, BUTTON_Y + BUTTON_SPACING_VERTICAL, BUTTON_WIDTH, BUTTON_HEIGHT);
+        btnExit.setBounds(BUTTON_X, BUTTON_Y + BUTTON_SPACING_VERTICAL * 2, BUTTON_WIDTH, BUTTON_HEIGHT);
+    
+        
+        btnStart.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+        btnLoad.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+        btnExit.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+    
+        btnStart.setFocusable(false);
+        btnLoad.setFocusable(false);
+        btnExit.setFocusable(false);
+    
+        
+        btnStart.addActionListener(e -> gm.mudaLugar.changeLocation("Map", "You start a new game."));
+        btnLoad.addActionListener(e -> {
+            try {
+                SaveHandler.carregarJogo(gm.SAVE_PATH);
+            } catch (IOException | ClassNotFoundException ex) {
+                ex.printStackTrace();
             }
-            public void mouseReleased(MouseEvent e) {}
-            public void mouseEntered(MouseEvent e) {}
-            public void mouseExited(MouseEvent e) {}
         });
-        bgPanel[START_MENU_BGNUM].add(startButton);
-
+        btnExit.addActionListener(e -> closeWindow());
+    
+        
+        bgPanel[START_MENU_BGNUM].add(btnStart);
+        bgPanel[START_MENU_BGNUM].add(btnLoad);
+        bgPanel[START_MENU_BGNUM].add(btnExit);
     }
 
     Image scaleifCharacter(ImageIcon objectIcon, int newHeight) {

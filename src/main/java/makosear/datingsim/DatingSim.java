@@ -7,6 +7,7 @@ package makosear.datingsim;
 import makosear.datingsim.GameStructure.ActionHandler;
 import makosear.datingsim.GameStructure.BGMHandler;
 import makosear.datingsim.GameStructure.MudaLugar;
+import makosear.datingsim.GameStructure.SaveHandler;
 import makosear.datingsim.GameStructure.WinConditions;
 import makosear.datingsim.GameStructure.ui;
 import makosear.datingsim.Gift.Gift;
@@ -35,6 +36,7 @@ import java.util.List;
  * @author ice
  */
 public class DatingSim {
+    public final String SAVE_PATH = "save.json";
     final private int DIA_INICIAL = 1;
     final private String PERIODO_INICIAL = "Manha";
     public int diaAtual = DIA_INICIAL;
@@ -53,6 +55,8 @@ public class DatingSim {
     public Map<Integer, List<LocationToCharacters>> dayToLocationCharacters  = new HashMap<>();
 
     public static SceneHandler sceneHandler = new SceneHandler();
+
+    public SaveHandler saveHandler = new SaveHandler();
 
     public static Map<String,Romanceable> romanceableCharacters = new HashMap<>();
 
