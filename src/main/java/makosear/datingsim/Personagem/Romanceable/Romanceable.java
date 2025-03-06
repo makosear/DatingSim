@@ -4,6 +4,7 @@
  */
 package makosear.datingsim.Personagem.Romanceable;
 import java.util.List;
+import java.util.Map;
 
 import makosear.datingsim.GameStructure.WinConditions;
 import makosear.datingsim.Gift.Gift;
@@ -36,7 +37,7 @@ correct answers counter */
 
 
 
-    public Romanceable(String nome, List<String> presentesAma, List<String> presentesOdeia, List<String> lugaresEncontro, String spriteFilePath, String[] falasManha, String[] falasTarde, String[] falasNoite, List<Scene> scenes, WinConditions winConditions) {
+    public Romanceable(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro, String spriteFilePath, String[] falasManha, String[] falasTarde, String[] falasNoite, List<Scene> scenes, WinConditions winConditions) {
         super(nome, presentesAma, presentesOdeia, lugaresEncontro);
         this.spriteFilePath = spriteFilePath;
         this.falasManha = falasManha;

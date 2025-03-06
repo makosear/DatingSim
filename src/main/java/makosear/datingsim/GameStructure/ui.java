@@ -32,6 +32,8 @@ import makosear.datingsim.DatingSim;
 public class ui {
     final int TRYING_STUFF = 425;
     final int MSGBOX_Y = 410;
+    
+
     JFrame window;
 
     DatingSim gm;
@@ -295,6 +297,37 @@ public class ui {
 
     }
 
+    public void addCharacterToLocation(String location, String characterName, CharacterPosition characterPosition) {
+        int locationId = gm.mudaLugar.bgToLocations.get(location);
+        
+        // First, ensure the background is set up
+        if (bgPanel[locationId] == null) {
+            createBackground(locationId, gm.mudaLugar.bgToFilePath.get(location));
+        }
+        
+        // Create the object on top of the existing background
+        createObject(locationId, characterPosition.getX(), characterPosition.getY(), characterPosition.getWidth(), characterPosition.getHeight(), 
+            DatingSim.romanceableCharacters.get(characterName).getSpriteFilePath(), 
+            new String[]{"Talk", "Check", "Give gift"}, 
+            new String[]{"talkCh5", "checkCh5", "giftCh5"});
+        
+        // Ensure the background label is on top of the background panel
+        bgPanel[locationId].add(bgLabel[locationId]);
+        
+        // Repaint to ensure the new object is visible
+        bgPanel[locationId].revalidate();
+        bgPanel[locationId].repaint();
+    }
+    /*
+    public void generateLugar(String location)
+    {
+        bgPanel[gm.mudaLugar.bgToLocations.get(location)].removeAll();
+        createBackground(gm.mudaLugar.bgToLocations.get(location), gm.mudaLugar.bgToFilePath.get(location));
+        addRandomCharactersToLugarScreen(location);
+        bgPanel[gm.mudaLugar.bgToLocations.get(location)].add(bgLabel[gm.mudaLugar.bgToLocations.get(location)]);
+
+    } */
+
     public void bringCharacterScreen(String character) {
         createBackground(9, gm.mudaLugar.bgToFilePath.get(gm.mudaLugar.currentLocation));
 
@@ -341,26 +374,15 @@ public class ui {
         createLocationButton(0, ICON_THIRD_COLUMN, ICON_SECOND_ROW, 64, 64, "icons/iconPark.png", "goPark");
         //bgPanel[0].add(bgLabel[0]);
 
+        List<String> locations = new ArrayList<>(gm.mudaLugar.bgToLocations.keySet());
 
-        //SCREEN 1 - CAFE 1
-
-        createBackground(gm.mudaLugar.bgToLocations.get("Cafe1"), gm.mudaLugar.bgToFilePath.get("Cafe1"));
-        createObject(1, 400,150,200,200,"characters/ch_1.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh1", "checkCh1", "giftCh1"});
-        createObject(1, 300, 150, 200, 200, "characters/ch_2.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh2", "checkCh2", "giftCh2"});
-        createObject(1, 200, 150, 200, 200, "characters/ch_3.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh3", "checkCh3", "giftCh3"});
-
-        bgPanel[1].add(bgLabel[1]);
-
-        //SCREEN 2 - CAFE 2 
-
-        createBackground(gm.mudaLugar.bgToLocations.get("Cafe2"), gm.mudaLugar.bgToFilePath.get("Cafe2"));
-        createObject(2, 400,150,200,200,"characters/ch_4.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh4", "checkCh4", "giftCh4"});
-        createObject(2, 300, 150, 200, 200, DatingSim.romanceableCharacters.get("Itsuki").getSpriteFilePath(), new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh5", "checkCh5", "giftCh5"});
-        createObject(2, 200, 150, 200, 200, "characters/ch_6.png", new String[]{"Talk", "Check", "Give gift"}, new String[]{"talkCh6", "checkCh6", "giftCh6"});
-
-        createObject(2, 600, 20, 64, 64, "", new String[]{"Check"}, new String[]{"checkLocal"});
-
-        bgPanel[2].add(bgLabel[2]);
+        for (String location : locations) {
+            if (location != "Map") {
+                createBackground(gm.mudaLugar.bgToLocations.get(location), gm.mudaLugar.bgToFilePath.get(location));
+                
+                bgPanel[gm.mudaLugar.bgToLocations.get(location)].add(bgLabel[gm.mudaLugar.bgToLocations.get(location)]);
+            }
+        }
 
     }
 

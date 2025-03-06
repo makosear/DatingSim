@@ -11,12 +11,12 @@ import java.util.*;
  * @author ice
  */
 public class Personagem {
-    String nome;
-    List<String> presentesAma;
-    List<String> presentesOdeia;
-    List<String> lugaresEncontro;
+    private String nome;
+    public List<String> presentesAma;
+    public List<String> presentesOdeia;
+    public Map<String, Double> lugaresEncontro;
     
-    public Personagem(String nome, List<String> presentesAma, List<String> presentesOdeia, List<String> lugaresEncontro){
+    public Personagem(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro){
         this.nome = nome;
         this.presentesAma = presentesAma;
         this.presentesOdeia = presentesOdeia;

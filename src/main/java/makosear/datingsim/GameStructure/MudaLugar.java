@@ -51,6 +51,12 @@ public class MudaLugar {
         bgToFilePath.remove(location);
     }
 
+    public void changeLocation(String location)
+    {
+        String message = "You walk into " + location + ".";
+        changeLocation(location, message);
+    }
+
     public void changeLocation(String location, String message) {
 
         for (Map.Entry<String, Integer> entry : bgToLocations.entrySet()) {
@@ -59,6 +65,19 @@ public class MudaLugar {
             } else {
                 gm.ui.bgPanel[entry.getValue()].setVisible(false);
             }
+        }
+        if (!location.equals("Map")) {
+            for (LocationCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
+            {
+                if (locationCharacters.location.equals(location))
+                {
+                    for (String character : locationCharacters.characters)
+                    {
+                        gm.ui.addCharacterToLocation(location, character, CharacterPosition.CENTER);
+                    }
+                }
+            }
+
         }
 
         currentLocation = location;

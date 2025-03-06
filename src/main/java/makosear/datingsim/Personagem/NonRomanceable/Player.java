@@ -23,7 +23,7 @@ public class Player extends Personagem{
 
     public Map<String, Integer> locationVisitCounter = new HashMap<>();
     
-    public Player(String nome, List<String> presentesAma, List<String> presentesOdeia, List<String> lugaresEncontro) {
+    public Player(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro) {
         super(nome, presentesAma, presentesOdeia, lugaresEncontro);
     }
     
