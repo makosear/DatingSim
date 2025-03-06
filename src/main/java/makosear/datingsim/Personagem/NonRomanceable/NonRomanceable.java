@@ -9,7 +9,7 @@ import java.util.Map;
 import makosear.datingsim.GameStructure.WinConditions;
 import makosear.datingsim.Gift.Gift;
 import makosear.datingsim.Personagem.Personagem;
-import makosear.datingsim.Personagem.NonRomanceable.Player;
+import makosear.datingsim.Personagem.NonRomanceable.*;
 import makosear.datingsim.Scene.*;
 
 /**

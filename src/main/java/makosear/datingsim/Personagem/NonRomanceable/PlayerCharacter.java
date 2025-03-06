@@ -19,11 +19,11 @@ all cutscenes are viewed
 gifted specific item
 visited specific location
 correct answers counter */
-public class Player extends Personagem{
+public class PlayerCharacter extends Personagem{
 
     public Map<String, Integer> locationVisitCounter = new HashMap<>();
     
-    public Player(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro) {
+    public PlayerCharacter(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro) {
         super(nome, presentesAma, presentesOdeia, lugaresEncontro);
     }
 

@@ -9,7 +9,7 @@ import java.util.Map;
 import makosear.datingsim.GameStructure.WinConditions;
 import makosear.datingsim.Gift.Gift;
 import makosear.datingsim.Personagem.Personagem;
-import makosear.datingsim.Personagem.NonRomanceable.Player;
+import makosear.datingsim.Personagem.NonRomanceable.*;
 import makosear.datingsim.Scene.*;
 
 /**
@@ -80,7 +80,7 @@ correct answers counter */
         nivelDeAfeicao += amount;
     }
 
-    public boolean isWinConditionsMet(Player player) {
+    public boolean isWinConditionsMet(PlayerCharacter player) {
         if (winConditions.necessaryAffectionLevel > nivelDeAfeicao) return false;
         if (winConditions.necessaryCutscenes > cenasVistas) return false;
 

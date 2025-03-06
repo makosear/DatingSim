@@ -50,7 +50,7 @@ public class DatingSim {
 
     }
 
-    public Player player = new Player("Player", new ArrayList<>(), new ArrayList<>(), new HashMap<>());
+    public PlayerCharacter player = new PlayerCharacter("Player", new ArrayList<>(), new ArrayList<>(), new HashMap<>());
 
     public Map<Integer, List<LocationToCharacters>> dayToLocationCharacters  = new HashMap<>();
 
