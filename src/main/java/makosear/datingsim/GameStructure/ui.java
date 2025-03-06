@@ -18,6 +18,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -732,16 +734,14 @@ public class ui {
         File saveFile = new File("saves/slot" + slotNumber + ".json");
         if(saveFile.exists()) {
             try {
-                DatingSim saveState = gm.jsonPersistence.loadGameState("saves/slot" + slotNumber + ".json");
+                JsonNode rootNode = gm.jsonPersistence.mapper.readTree(saveFile);
                 String text = "<html>Slot " + slotNumber + "<br>"
-                            + "Date: " + saveState.diaAtual + "<br>"
-                            + "Location: " + saveState.mudaLugar.currentLocation + "</html>";
+                            + "Date: " + rootNode.path("diaAtual").asText() + "<br>"
+                            + "Location: " + rootNode.path("mudaLugar").path("currentLocation") + "</       html>";
                 button.setText(text);
-            } catch (GameLoadException e) {
+            } catch (IOException e) {
                 button.setText("Corrupted Save");
             }
-        } else {
-            button.setText("Empty Slot " + slotNumber);
         }
 
         // Right-click menu
@@ -815,5 +815,12 @@ public class ui {
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+    }
+
+    public void postLoadInit() {
+        createMainField();
+        generateScreen();
+        window.setVisible(true);
+        gm.setLoadingFromSave(false);
     }
 }

@@ -4,9 +4,13 @@
  */
 package makosear.datingsim.Personagem.NonRomanceable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import makosear.datingsim.Personagem.Personagem;
 
@@ -23,8 +27,18 @@ public class PlayerCharacter extends Personagem{
 
     public Map<String, Integer> locationVisitCounter = new HashMap<>();
     
-    public PlayerCharacter(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro) {
+    @JsonCreator
+    public PlayerCharacter(
+        @JsonProperty("nome") String nome,
+        @JsonProperty("presentesAma") List<String> presentesAma,
+        @JsonProperty("presentesOdeia") List<String> presentesOdeia,
+        @JsonProperty("lugaresEncontro") Map<String, Double> lugaresEncontro) {
         super(nome, presentesAma, presentesOdeia, lugaresEncontro);
+    }
+
+    // Add no-arg constructor for Jackson
+    public PlayerCharacter() {
+        super("", new ArrayList<>(), new ArrayList<>(), new HashMap<>());
     }
 
     public void setName(String name) {

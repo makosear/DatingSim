@@ -9,6 +9,11 @@ public class Default extends User {
         super(username, password);
         this.profileType = "DEFAULT";
     }
+
+    public Default() {
+        super("DEFAULT", "");
+        this.profileType = "DEFAULT";
+    }
     
     @Override
     public boolean authenticate(String password) {

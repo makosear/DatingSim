@@ -9,7 +9,7 @@ public abstract class User implements Authenticable {
         this.username = username;
         this.password = password;
     }
-
+    
     public String getUsername() {
         return username;
     }

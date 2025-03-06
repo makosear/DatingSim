@@ -3,6 +3,8 @@ package makosear.datingsim.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import makosear.datingsim.Excecao.GameLoadException;
 import makosear.datingsim.Excecao.GameSaveException;
 import makosear.datingsim.Excecao.InvalidInputException;
@@ -12,11 +14,16 @@ import makosear.datingsim.GameStructure.GamePersistence.GamePersistence;
 public class UserService {
     public User currentUser;
     private List<User> users = new ArrayList<>();
+    @JsonIgnore
     private GamePersistence persistence;
 
     public UserService(GamePersistence persistence) {
         this.persistence = persistence;
         carregarUsuarios();
+    }
+
+    public UserService() {
+        this.persistence = null; // Will be reinitialized post-load
     }
 
     public User authenticateUser(String username, String password) {

@@ -24,6 +24,9 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +40,6 @@ import java.util.List;
  * @author ice
  */
 public class DatingSim {
-    public final String SAVE_PATH = "save.json";
     final private int DIA_INICIAL = 1;
     final private String PERIODO_INICIAL = "Manha";
     public int diaAtual = DIA_INICIAL;
@@ -59,6 +61,7 @@ public class DatingSim {
 
     public static SceneHandler sceneHandler = new SceneHandler();
 
+    @JsonIgnore
     public JSONPersistence jsonPersistence = new JSONPersistence();
 
     public UserService userService = new UserService(jsonPersistence);
@@ -67,12 +70,16 @@ public class DatingSim {
 
     public static Map<String, NonRomanceable> nonRomanceableCharacters = new HashMap<>();
 
+    //@JsonIgnore
     public ActionHandler aHandler = new ActionHandler(this);
 
+    @JsonIgnore
     public BGMHandler bgmHandler = new BGMHandler();
 
+    @JsonIgnore
     public MudaLugar mudaLugar = new MudaLugar(this);
 
+    @JsonIgnore
     public ui ui = new ui(this);
 
    
@@ -92,6 +99,29 @@ public class DatingSim {
         mudaLugar.changeLocation("MainMenu", "");
         bgmHandler.playMusic("src/main/resources/audio/MusMus-BGM-154.wav");
         
+    }
+
+    @JsonSetter
+    public void postLoadInit() {
+        this.userService = new UserService(jsonPersistence);
+        this.aHandler = new ActionHandler(this);
+        this.mudaLugar = new MudaLugar(this);
+        this.ui = new ui(this); // Modified UI initialization
+        this.bgmHandler = new BGMHandler();
+        if(this.userService == null) {
+            this.userService = new UserService(jsonPersistence);
+        }
+
+    }
+
+    private transient boolean isLoadingFromSave = false;
+    
+    public boolean isLoadingFromSave() {
+        return isLoadingFromSave;
+    }
+    
+    public void setLoadingFromSave(boolean loading) {
+        isLoadingFromSave = loading;
     }
 
     public static void inicializaPersonagens() {

@@ -16,6 +16,10 @@ public class ActionHandler implements ActionListener {
         this.gm = gm;
     }
 
+    public ActionHandler() {
+        this.gm = null;
+    }
+
     private List<String> currentDialogue = new ArrayList<>();
     private String currentCharacter;
     private int dialogueBoxCounter = 0;

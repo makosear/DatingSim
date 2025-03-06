@@ -7,6 +7,11 @@ public class Guest extends User {
         this.profileType = "GUEST";
     }
 
+    public Guest() {
+        super("GUEST", "");
+        this.profileType = "GUEST";
+    }
+
     @Override
     public boolean authenticate(String password) {
         return true;

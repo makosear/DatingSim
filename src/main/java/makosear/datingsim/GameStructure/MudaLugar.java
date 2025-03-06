@@ -85,7 +85,12 @@ public class MudaLugar {
             }
         }
             System.out.println("-----------");
-        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu") && !location.equals("PlayerCreationMenu")) {
+        if (!location.equals ("Map") 
+            && !location.equals("characterScreen") 
+            && !location.equals("MainMenu") 
+            && !location.equals("PlayerCreationMenu") 
+            && !location.equals("SaveMenu")) {
+                
             gm.ui.removeCharactersFromLocation(location);
             for (LocationToCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
             {
