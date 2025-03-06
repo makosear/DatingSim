@@ -6,6 +6,7 @@ package makosear.datingsim;
 
 import makosear.datingsim.GameStructure.ActionHandler;
 import makosear.datingsim.GameStructure.BGMHandler;
+import makosear.datingsim.GameStructure.LocationCharacters;
 import makosear.datingsim.GameStructure.MudaLugar;
 import makosear.datingsim.GameStructure.WinConditions;
 import makosear.datingsim.GameStructure.ui;
@@ -15,14 +16,18 @@ import makosear.datingsim.Personagem.Romanceable.*;
 import makosear.datingsim.Scene.SceneHandler;
 
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -43,7 +48,9 @@ public class DatingSim {
 
     }
 
-    public Player player = new Player("Player", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    public Player player = new Player("Player", new ArrayList<>(), new ArrayList<>(), new HashMap<>());
+
+    public Map<Integer, List<LocationCharacters>> dayLocationCharacters  = new HashMap<>();
 
     public static SceneHandler sceneHandler = new SceneHandler();
 
@@ -188,6 +195,132 @@ public class DatingSim {
 
         
         
+    }
+
+    public void calculateLocationsPerDay() {
+        // Initialize the map for each day
+        for (int day = 1; day <= 7; day++) {
+            dayToLocationCharacters.put(day, new ArrayList<>());
+        }
+
+        // Randomize the order of characters to avoid bias in assignment
+        List<String> characterNames = new ArrayList<>(romanceableCharacters.keySet());
+        Collections.shuffle(characterNames);
+
+        // First pass - assign each character to a location based on their preferences
+        for (String characterName : characterNames) {
+            Romanceable character = romanceableCharacters.get(characterName);
+            Map<String, Double> locationPercentages = character.lugaresEncontro;
+
+            for (int day = 1; day <= 7; day++) {
+                // Create a copy of percentages that we can modify
+                Map<String, Double> availableLocations = new HashMap<>(locationPercentages);
+                boolean assigned = false;
+
+                // Try to assign to existing locations first if under capacity
+                for (LocationCharacters locChar : dayToLocationCharacters.get(day)) {
+                    if (locChar.characters.size() < 3 && availableLocations.containsKey(locChar.location)) {
+                        // Higher chance to join existing location with higher percentage
+                        double locationPref = availableLocations.get(locChar.location);
+                        double randomValue = Math.random() * 100;
+
+                        if (randomValue <= locationPref) {
+                            locChar.characters.add(characterName);
+                            assigned = true;
+                            break;
+                        }
+                    }
+                }
+
+                // If not assigned, create a new location
+                if (!assigned) {
+                    // Remove locations that already have this character's friends
+                    Set<String> occupiedLocations = new HashSet<>();
+                    for (LocationCharacters locChar : dayToLocationCharacters.get(day)) {
+                        occupiedLocations.add(locChar.location);
+                    }
+
+                    // Choose from remaining locations based on percentage
+                    String chosenLocation = chooseLocationBasedOnPercentage(availableLocations);
+
+                    // Check if this location already exists but was full
+                    boolean locationExists = false;
+                    for (LocationCharacters locChar : dayToLocationCharacters.get(day)) {
+                        if (locChar.location.equals(chosenLocation)) {
+                            locationExists = true;
+                            // If unexpectedly not full, add the character
+                            if (locChar.characters.size() < 3) {
+                                locChar.characters.add(characterName);
+                            }
+                            break;
+                        }
+                    }
+
+                    // If location doesn't exist yet, create it
+                    if (!locationExists) {
+                        List<String> characters = new ArrayList<>();
+                        characters.add(characterName);
+                        LocationCharacters newLocChar = new LocationCharacters(chosenLocation, characters);
+                        dayToLocationCharacters.get(day).add(newLocChar);
+                    }
+                }
+            }
+        }
+
+        // Fix any duplicate locations (merge them)
+        for (int day = 1; day <= 7; day++) {
+            List<LocationCharacters> locationsForDay = dayToLocationCharacters.get(day);
+            Map<String, LocationCharacters> locationMap = new HashMap<>();
+
+            // Identify duplicates
+            for (LocationCharacters locChar : new ArrayList<>(locationsForDay)) {
+                if (locationMap.containsKey(locChar.location)) {
+                    // Merge characters from duplicate into existing (up to 3 max)
+                    LocationCharacters existing = locationMap.get(locChar.location);
+                    for (String character : locChar.characters) {
+                        if (existing.characters.size() < 3 && !existing.characters.contains(character)) {
+                            existing.characters.add(character);
+                        }
+                    }
+                    locationsForDay.remove(locChar);
+                } else {
+                    locationMap.put(locChar.location, locChar);
+                }
+            }
+        }
+
+        // Print results for verification
+        for (int day = 1; day <= 7; day++) {
+            System.out.println("=== Day " + day + " ===");
+            for (LocationCharacters locChar : dayToLocationCharacters.get(day)) {
+                System.out.println(locChar.location + ": " + locChar.characters);
+            }
+        }
+    }
+
+    private String chooseLocationBasedOnPercentage(Map<String, Double> locationPercentages) {
+        // Handle empty map case
+        if (locationPercentages == null || locationPercentages.isEmpty()) {
+            return "Gym"; // Default location
+        }
+
+        double randomValue = Math.random() * 100;
+        double cumulativeProbability = 0.0;
+
+        // Normalize the percentages in case they don't add up to 100
+        double total = locationPercentages.values().stream().mapToDouble(Double::doubleValue).sum();
+        double normalizationFactor = total > 0 ? 100.0 / total : 1.0;
+
+        for (Map.Entry<String, Double> entry : locationPercentages.entrySet()) {
+            cumulativeProbability += entry.getValue() * normalizationFactor;
+            if (randomValue <= cumulativeProbability) {
+                return entry.getKey();
+            }
+        }
+
+        // Fallback to a random location if calculation failed
+        List<String> locations = new ArrayList<>(locationPercentages.keySet());
+        return locations.get(new Random().nextInt(locations.size()));
     }
 
     public void inicializaPeriodoNovo() {
