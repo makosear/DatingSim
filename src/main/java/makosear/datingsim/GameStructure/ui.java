@@ -29,6 +29,7 @@ import java.util.List;
 import java.io.IOException;
 
 import makosear.datingsim.DatingSim;
+import makosear.datingsim.Excecao.GameLoadException;
 import makosear.datingsim.GameStructure.GamePersistence.*;
 
 /**
@@ -232,8 +233,10 @@ public class ui {
         bgPanel[PLAYER_CREATION_BG_NUM].setBackground(Color.black);
         bgPanel[PLAYER_CREATION_BG_NUM].setLayout(null); // Null layout
         
-        JLabel playerCreationTitle = new JLabel("Create your character");
-        playerCreationTitle.setBounds(250, 50, 300, 100);
+        JLabel playerCreationTitle = new JLabel("Account information");
+        playerCreationTitle.setBounds(0, 50, 800, 100);
+        //set the text to the center
+        playerCreationTitle.setHorizontalAlignment(JLabel.CENTER);
         playerCreationTitle.setFont(new Font("Book Antiqua", Font.PLAIN, 30));
         playerCreationTitle.setForeground(Color.white);
         bgPanel[PLAYER_CREATION_BG_NUM].add(playerCreationTitle);
@@ -309,9 +312,10 @@ public class ui {
         bgPanel[START_MENU_BGNUM].add(gameTitle);
     
         
-        JButton btnStart = new JButton("New Game");
-        JButton btnLoad = new JButton("Load Game");
+        //JButton btnStart = new JButton("New Game");
+        //JButton btnLoad = new JButton("Load Game");
         JButton btnExit = new JButton("Exit");
+        JButton btnLogin = new JButton("Login");
 
         final int BUTTON_X = 250;
         final int BUTTON_Y = 180;
@@ -320,33 +324,38 @@ public class ui {
         final int BUTTON_SPACING_VERTICAL = 75;
     
         
-        btnStart.setBounds(BUTTON_X, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
-        btnLoad.setBounds(BUTTON_X, BUTTON_Y + BUTTON_SPACING_VERTICAL, BUTTON_WIDTH, BUTTON_HEIGHT);
+        //btnStart.setBounds(BUTTON_X, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
+        //btnLoad.setBounds(BUTTON_X, BUTTON_Y + BUTTON_SPACING_VERTICAL, BUTTON_WIDTH, BUTTON_HEIGHT);
+        btnLogin.setBounds(BUTTON_X, BUTTON_Y + BUTTON_SPACING_VERTICAL, BUTTON_WIDTH, BUTTON_HEIGHT);
         btnExit.setBounds(BUTTON_X, BUTTON_Y + BUTTON_SPACING_VERTICAL * 2, BUTTON_WIDTH, BUTTON_HEIGHT);
     
         
-        btnStart.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
-        btnLoad.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+        //btnStart.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+        //btnLoad.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+        btnLogin.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
         btnExit.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
     
-        btnStart.setFocusable(false);
-        btnLoad.setFocusable(false);
+        //btnStart.setFocusable(false);
+        //btnLoad.setFocusable(false);
+        btnLogin.setFocusable(false);
         btnExit.setFocusable(false);
     
         
-        btnStart.addActionListener(e -> gm.mudaLugar.changeLocation("PlayerCreationMenu", ""));
+        /* btnStart.addActionListener(e -> gm.mudaLugar.changeLocation("PlayerCreationMenu", ""));
         btnLoad.addActionListener(e -> {
             try {
-                SaveHandler.carregarJogo(gm.SAVE_PATH);
-            } catch (IOException | ClassNotFoundException ex) {
-                ex.printStackTrace();
+                gm.jsonPersistence.loadGameState();
+            } catch (GameLoadException e1) {
+                e1.printStackTrace();
             }
-        });
+        }); */
+        btnLogin.addActionListener(e -> gm.mudaLugar.changeLocation("PlayerCreationMenu", ""));
         btnExit.addActionListener(e -> closeWindow());
     
         
-        bgPanel[START_MENU_BGNUM].add(btnStart);
-        bgPanel[START_MENU_BGNUM].add(btnLoad);
+        //bgPanel[START_MENU_BGNUM].add(btnStart);
+        //bgPanel[START_MENU_BGNUM].add(btnLoad);
+        bgPanel[START_MENU_BGNUM].add(btnLogin);
         bgPanel[START_MENU_BGNUM].add(btnExit);
 
         bgPanel[START_MENU_BGNUM].setVisible(false);

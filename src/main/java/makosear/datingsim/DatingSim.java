@@ -56,7 +56,7 @@ public class DatingSim {
 
     public static SceneHandler sceneHandler = new SceneHandler();
 
-    public SaveHandler saveHandler = new SaveHandler();
+    public JSONPersistence jsonPersistence = new JSONPersistence();
 
     public static Map<String,Romanceable> romanceableCharacters = new HashMap<>();
 

@@ -40,7 +40,8 @@ public class SceneHandler {
                                     new String[]{"$gItsuki: Thank you", "$bItsuki: Maybe next time"});
     private Scene itsukiEnding = new Scene("Itsuki: Final conversation\n" + //
                                     "Itsuki: It was nice talking to you.\n" + //
-                                    "Itsuki: See you around!", "", new String[]{""});
+                                    "Itsuki: See you around!\n" + //
+                                    "$e", "", new String[]{""});
 
     // Chiaki Scenes
     private Scene chiakiOneHeart = new Scene("Chiaki: First meeting\n$oHow respond?",
@@ -60,7 +61,8 @@ public class SceneHandler {
                                     new String[]{"$gChiaki: Until next time", "$bChiaki: Bye then"});
     private Scene chiakiEnding = new Scene("Chiaki: Final conversation\n" + //
                                     "Chiaki: It was nice talking to you.\n" + //
-                                    "Chiaki: See you around!", "", new String[]{""});
+                                    "Chiaki: See you around!\n" + //
+                                    "$e", "", new String[]{""});
 
     // Shu Scenes
     private Scene shuOneHeart = new Scene("Shu: Initial meeting\n$oGreeting?",
@@ -80,7 +82,8 @@ public class SceneHandler {
                                 new String[]{"$gShu: Good", "$bShu: Weak"});
     private Scene shuEnding = new Scene("Shu: Final conversation\n" + //
                                     "Shu: It was nice talking to you.\n" + //
-                                    "Shu: See you around!", "", new String[]{""});
+                                    "Shu: See you around!\n" + //
+                                    "$e", "", new String[]{""});
 
     // Gaku Scenes
     private Scene gakuOneHeart = new Scene("Gaku: First encounter\n$oReact to smile?",
@@ -100,7 +103,8 @@ public class SceneHandler {
                                 new String[]{"$gGaku: Energy!", "$bGaku: Reserved"});
     private Scene gakuEnding = new Scene("Gaku: Final conversation\n" + //
                                     "Gaku: It was nice talking to you.\n" + //
-                                    "Gaku: See you around!", "", new String[]{""});
+                                    "Gaku: See you around!\n" + //
+                                    "$e", "", new String[]{""});
 
     // Yato Scenes
     private Scene yatoOneHeart = new Scene("Yato: Mysterious meeting\n$oApproach?",
@@ -120,7 +124,8 @@ public class SceneHandler {
                                 new String[]{"$gYato: Correct", "$bYato: Wrong"});
     private Scene yatoEnding = new Scene("Yato: Final conversation\n" + //
                                     "Yato: It was nice talking to you.\n" + //
-                                    "Yato: See you around!", "", new String[]{""});
+                                    "Yato: See you around!\n" + //
+                                    "$e", "", new String[]{""});
 
     // Tsumugi Scenes
     private Scene tsumugiOneHeart = new Scene("Tsumugi: Cafe meeting\n$oOrder?",
@@ -140,7 +145,8 @@ public class SceneHandler {
                                     new String[]{"$gTsumugi: Kind", "$bTsumugi: Okay"});
     private Scene tsumugiEnding = new Scene("Tsumugi: Final conversation\n" + //
                                     "Tsumugi: It was nice talking to you.\n" + //
-                                    "Tsumugi: See you around!", "", new String[]{""});
+                                    "Tsumugi: See you around!\n" + //
+                                    "$e", "", new String[]{""});
 
 
     public SceneHandler() {

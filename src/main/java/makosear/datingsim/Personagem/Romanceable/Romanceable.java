@@ -84,12 +84,14 @@ correct answers counter */
         if (winConditions.necessaryAffectionLevel > nivelDeAfeicao) return false;
         if (winConditions.necessaryCutscenes > cenasVistas) return false;
 
-        for (Gift gift : winConditions.necessaryGifts) {
-            if (!giftsReceived.contains(gift)) return false;
-        }
+        if (winConditions.necessaryGifts != null) {
+            for (Gift gift : winConditions.necessaryGifts) {
+                if (!giftsReceived.contains(gift)) return false;
+            }
+        }   
         
         if (winConditions.necessaryGoodAnswers > numeroRepostasBoas) return false;
-        if (winConditions.necessaryLocationVisits.size() > 0) {
+        if (winConditions.necessaryLocationVisits != null) {
             for (String location : winConditions.necessaryLocationVisits.keySet()) {
                 if (player.locationVisitCounter.get(location) < winConditions.necessaryLocationVisits.get(location)) return false;
             }
