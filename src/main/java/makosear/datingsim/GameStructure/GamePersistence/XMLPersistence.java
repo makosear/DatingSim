@@ -15,8 +15,10 @@ import makosear.datingsim.User.*;
 public class XMLPersistence implements GamePersistence {
     private String XMLfilename;
     private final JAXBContext context;
+    private StuffToSave stuffToSave;
 
-    public XMLPersistence() throws JAXBException {
+    public XMLPersistence(StuffToSave stuffToSave) throws JAXBException {
+        this.stuffToSave = stuffToSave;
         try {
             context = JAXBContext.newInstance(User.class, Admin.class, Default.class, Guest.class);
         } catch (JAXBException e) {
@@ -59,21 +61,42 @@ public class XMLPersistence implements GamePersistence {
     }
 
     @Override
-    public void saveGameState(DatingSim game) throws GameSaveException {
+    public void saveGameState(StuffToSave stuffToSave, String filename) throws GameSaveException {
         try {
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(game, new File("gamestate.xml"));
+            marshaller.marshal(stuffToSave, new File("gamestate.xml"));
         } catch (JAXBException e) {
             throw new GameSaveException("Falha ao salvar estado do jogo em XML", e);
         }
     }
 
     @Override
-    public DatingSim loadGameState() throws GameLoadException {
+    public void loadGameState(String filename) throws GameLoadException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (DatingSim) unmarshaller.unmarshal(new File("gamestate.xml"));
+            StuffToSave loadedState = (StuffToSave) unmarshaller.unmarshal(new File(filename));
+
+            stuffToSave.setDiaAtual(loadedState.getDiaAtual());
+            stuffToSave.setPeriodoAtual(loadedState.getPeriodoAtual());
+            stuffToSave.setPlayer(loadedState.getPlayer());
+            stuffToSave.setDayToLocationCharacters(loadedState.getDayToLocationCharacters());
+            stuffToSave.setCurrentUser(loadedState.getCurrentUser());
+            stuffToSave.setCurrentDialogue(loadedState.getCurrentDialogue());
+            stuffToSave.setCurrentCharacter(loadedState.getCurrentCharacter());
+            stuffToSave.setDialogueBoxCounter(loadedState.getDialogueBoxCounter());
+            stuffToSave.setIsWaitingOption(loadedState.getIsWaitingOption());
+            stuffToSave.setCurrentLocation(loadedState.getCurrentLocation());
+            stuffToSave.setMessageText(loadedState.getMessageText());
+            stuffToSave.setRomanceableCharacters(loadedState.getRomanceableCharacters());
+            stuffToSave.setNonRomanceableCharacters(loadedState.getNonRomanceableCharacters());
+
+
+            stuffToSave.loadInformation();
+
+            
+
+
         } catch (JAXBException e) {
             throw new GameLoadException("Falha ao carregar estado do jogo em XML", e);
         }

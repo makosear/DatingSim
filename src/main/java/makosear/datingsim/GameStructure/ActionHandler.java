@@ -16,10 +16,10 @@ public class ActionHandler implements ActionListener {
         this.gm = gm;
     }
 
-    private List<String> currentDialogue = new ArrayList<>();
-    private String currentCharacter;
-    private int dialogueBoxCounter = 0;
-    private boolean isWaitingOption = false;
+    public List<String> currentDialogue = new ArrayList<>();
+    public String currentCharacter;
+    public int dialogueBoxCounter = 0;
+    public boolean isWaitingOption = false;
 
     public boolean isNoOneTalking() {
         return currentDialogue.isEmpty();
@@ -176,11 +176,5 @@ public class ActionHandler implements ActionListener {
 
         //wait for click on screen, until it does then run the following
     }
-
-	public void keyTyped(KeyEvent ke) {
-		System.out.println("Key typed: " + ke.getKeyChar());
-
-
-	}
     
 }

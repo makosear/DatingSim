@@ -4,16 +4,20 @@
  */
 package makosear.datingsim.GameStructure;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -21,15 +25,20 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
 
 import makosear.datingsim.DatingSim;
 import makosear.datingsim.Excecao.GameLoadException;
+import makosear.datingsim.Excecao.GameSaveException;
 import makosear.datingsim.GameStructure.GamePersistence.*;
 
 /**
@@ -43,7 +52,7 @@ public class ui {
     
 
     JFrame window;
-
+    public JButton btnSave;
     DatingSim gm;
 
     public JTextArea messageText;
@@ -76,12 +85,7 @@ public class ui {
         window.getContentPane().setBackground(Color.black);
         window.setLayout(null);
         window.setResizable(false);
-        window.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                gm.aHandler.keyTyped(e);
-            }
-        });
+        
         messageText = new JTextArea("Sample text");
 
         messageText.setBounds(50, MSGBOX_Y,700,150);
@@ -104,6 +108,12 @@ public class ui {
         dayAndPeriodCounter.setWrapStyleWord(true);
         dayAndPeriodCounter.setEnabled(false);
         dayAndPeriodCounter.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+
+        btnSave = new JButton("Save/Load");
+        btnSave.addActionListener(e -> gm.mudaLugar.changeLocation("SaveMenu"));
+        btnSave.setBounds(600, 25, 100, 50);
+        btnSave.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
+        window.add(btnSave);
 
         messageText.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {}   
@@ -565,13 +575,14 @@ public class ui {
         List<String> locations = new ArrayList<>(gm.mudaLugar.bgToLocations.keySet());
 
         for (String location : locations) {
-            if (location != "Map" && location != "characterScreen" && location != "MainMenu") { 
+            if (location != "Map" && location != "characterScreen" && location != "MainMenu" && location != "SaveMenu") {
                 createBackground(gm.mudaLugar.bgToLocations.get(location), gm.mudaLugar.bgToFilePath.get(location));
                 
                 bgPanel[gm.mudaLugar.bgToLocations.get(location)].add(bgLabel[gm.mudaLugar.bgToLocations.get(location)]);
             }
         }
 
+        createSaveMenu();
         //SCREEN 8 - PLAYER CREATIO
         createPlayerCreationMenu();
 
@@ -581,5 +592,147 @@ public class ui {
     public Component getPanel() {
         // TODO Auto-generated method stub
         return window;
+    }
+
+     public void createSaveMenu() {
+        final int SAVE_MENU_BG_NUM = 10;
+        gm.mudaLugar.addNewLocation("SaveMenu", SAVE_MENU_BG_NUM, "");
+
+        bgPanel[SAVE_MENU_BG_NUM] = new JPanel();
+        bgPanel[SAVE_MENU_BG_NUM].setBounds(0, 0, 800, 600);
+        bgPanel[SAVE_MENU_BG_NUM].setBackground(Color.black);
+        bgPanel[SAVE_MENU_BG_NUM].setLayout(new GridLayout(4, 1));
+        
+        JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(Color.BLACK);
+        JLabel title = new JLabel("Save/Load Game");
+        title.setFont(new Font("Book Antiqua", Font.BOLD, 28));
+        title.setForeground(Color.WHITE);
+        headerPanel.add(title);
+
+        // Save Slots
+        JPanel slotsPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+        slotsPanel.setBackground(Color.BLACK);
+
+        for(int i = 1; i <= 3; i++) {
+            JButton slotButton = createSaveSlotButton(i);
+            slotsPanel.add(slotButton);
+        }
+
+        // Control Buttons
+        JPanel controlPanel = new JPanel(new FlowLayout());
+        controlPanel.setBackground(Color.BLACK);
+
+        JButton btnBack = new JButton("Back");
+        styleButton(btnBack);
+        btnBack.addActionListener(e -> gm.mudaLugar.changeLocation("Map"));
+
+        controlPanel.add(btnBack);
+
+        // Error Message Area
+        JTextArea errorArea = new JTextArea();
+        errorArea.setEditable(false);
+        errorArea.setForeground(Color.RED);
+        errorArea.setBackground(Color.BLACK);
+        errorArea.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
+
+        bgPanel[SAVE_MENU_BG_NUM].add(headerPanel);
+        bgPanel[SAVE_MENU_BG_NUM].add(slotsPanel);
+        bgPanel[SAVE_MENU_BG_NUM].add(controlPanel);
+        bgPanel[SAVE_MENU_BG_NUM].add(errorArea);
+
+        window.add(bgPanel[SAVE_MENU_BG_NUM]);
+    }
+
+    private JButton createSaveSlotButton(int slotNumber) {
+        JButton button = new JButton();
+        button.setFont(new Font("Book Antiqua", Font.PLAIN, 20));
+        button.setBackground(Color.DARK_GRAY);
+        button.setForeground(Color.WHITE);
+        button.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+
+        // Load save metadata if exists
+        File saveFile = new File("saves/slot" + slotNumber + ".json");
+        if (saveFile.exists()) {
+            try {
+                JsonNode rootNode = gm.jsonPersistence.mapper.readTree(saveFile);
+                String diaAtual = rootNode.path("diaAtual").asText();
+                String location = rootNode.path("mudaLugar").path("currentLocation").asText();
+                String text = String.format("<html>Slot %d<br>Day: %s<br>Location: %s</html>", 
+                    slotNumber, diaAtual, location);
+                button.setText(text);
+            } catch (IOException e) {
+                button.setText("Corrupted Save");
+            }
+        } else {
+            button.setText("Empty Slot");
+        }
+        // Right-click menu
+        JPopupMenu contextMenu = new JPopupMenu();
+        JMenuItem saveItem = new JMenuItem("Save");
+        JMenuItem loadItem = new JMenuItem("Load");
+
+        saveItem.addActionListener(e -> handleSave(slotNumber, button));
+        loadItem.addActionListener(e -> handleLoad(slotNumber, button));
+
+        contextMenu.add(saveItem);
+        contextMenu.add(loadItem);
+
+        button.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if(SwingUtilities.isRightMouseButton(e)) {
+                    contextMenu.show(button, e.getX(), e.getY());
+                }
+            }
+        });
+
+        return button;
+    }
+
+    private void handleSave(int slotNumber, JButton button) {
+        try {
+            // Create saves directory if needed
+            new File("saves").mkdirs();
+
+            // Save game state
+            gm.stuffToSave.updateInformation();
+            gm.jsonPersistence.saveGameState(gm.stuffToSave, "saves/slot" + slotNumber + ".json");
+
+            // Update button text
+            String text = "<html>Slot " + slotNumber + "<br>"
+                        + "Date: " + gm.diaAtual + "<br>"
+                        + "Location: " + gm.mudaLugar.currentLocation + "</html>";
+            button.setText(text);
+
+            // Show confirmation
+            JOptionPane.showMessageDialog(window, "Game saved successfully!", 
+                                        "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (GameSaveException e) {
+            JOptionPane.showMessageDialog(window, "Failed to save game: " + e.getMessage(),
+                                        "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void handleLoad(int slotNumber, JButton button) {
+        try {
+            // Load into the existing game instance
+            gm.jsonPersistence.loadGameState("saves/slot" + slotNumber + ".json");
+            
+            // Refresh UI
+            gm.ui.updateDayAndPeriodCounter();
+            gm.mudaLugar.changeLocation(gm.mudaLugar.currentLocation, "Game loaded");
+            
+        } catch (GameLoadException e) {
+            JOptionPane.showMessageDialog(window, "Failed to load game: " + e.getMessage(),
+                                        "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void styleButton(JButton button) {
+        button.setFont(new Font("Book Antiqua", Font.PLAIN, 20));
+        button.setBackground(new Color(30, 30, 30));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
     }
 }

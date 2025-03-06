@@ -51,7 +51,9 @@ public class DatingSim {
 
     }
 
-    
+    public StuffToSave stuffToSave = new StuffToSave(this);
+
+
 
     public PlayerCharacter player = new PlayerCharacter("Player", new ArrayList<>(), new ArrayList<>(), new HashMap<>());
 
@@ -59,7 +61,7 @@ public class DatingSim {
 
     public static SceneHandler sceneHandler = new SceneHandler();
 
-    public JSONPersistence jsonPersistence = new JSONPersistence();
+    public JSONPersistence jsonPersistence = new JSONPersistence(stuffToSave);
 
     public UserService userService = new UserService(jsonPersistence);
 
@@ -403,7 +405,7 @@ public class DatingSim {
             .comparing((String characterName) -> 
                 romanceableCharacters.get(characterName).nivelDeAfeicao)
             .thenComparing(characterName -> 
-                romanceableCharacters.get(characterName).giftsReceived.size())
+                romanceableCharacters.get(characterName).getGiftsReceived().size())
             .thenComparing(characterName -> 
                 romanceableCharacters.get(characterName).cenasVistas)
             .thenComparing(characterName -> 

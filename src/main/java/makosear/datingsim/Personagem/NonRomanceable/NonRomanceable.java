@@ -30,7 +30,8 @@ correct answers counter */
     private String falasNoite[];
     private String spriteFilePath;
     private List<Scene> scenes;
-    public List<Gift> giftsReceived = new java.util.ArrayList<>();
+    //private List<Gift> giftsReceived = new java.util.ArrayList<>();
+    
 
 
     
@@ -48,10 +49,14 @@ correct answers counter */
     public String getSpriteFilePath() {
         return spriteFilePath;
     }
-
+    /* 
     public void receiveGift(Gift gift) {
         giftsReceived.add(gift);
     }
+     
+    public List<Gift> getGiftsReceived() {
+        return giftsReceived;
+    } */
 
 
     public String interact(String periodoAtual){

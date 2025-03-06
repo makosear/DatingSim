@@ -11,7 +11,7 @@ public class MudaLugar {
 
     Map<String, Integer> bgToLocations = new HashMap<>();
     Map<String, String> bgToFilePath = new HashMap<>();
-    String currentLocation = "Map";
+    public String currentLocation = "Map";
 
 
     public MudaLugar(DatingSim gm) {
@@ -80,8 +80,7 @@ public class MudaLugar {
                 gm.ui.bgPanel[entry.getValue()].setVisible(false);
             }
         }
-            System.out.println("-----------");
-        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu") && !location.equals("PlayerCreationMenu")) {
+        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu") && !location.equals("PlayerCreationMenu") && !location.equals("SaveMenu")) {
             gm.ui.removeCharactersFromLocation(location);
             for (LocationToCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
             {
@@ -130,15 +129,19 @@ public class MudaLugar {
 
         currentLocation = location;
         gm.ui.messageText.setText(message);
-
-        if (location.equals("MainMenu") || location.equals("PlayerCreationMenu")) {
+        
+        if (location.equals("MainMenu") || location.equals("PlayerCreationMenu") || location.equals("SaveMenu")) {
+            gm.ui.btnSave.setVisible(false);
             gm.ui.dayAndPeriodCounter.setVisible(false);
             gm.ui.messageText.setVisible(false);
         }
 
-        else if (location.equals("Map")) {
-            gm.ui.dayAndPeriodCounter.setVisible(true);
-            gm.ui.messageText.setVisible(true);
+        else {
+            gm.ui.btnSave.setVisible(true);
+            if (location.equals("Map")) {
+                gm.ui.dayAndPeriodCounter.setVisible(true);
+                gm.ui.messageText.setVisible(true);
+            }
         }
 
     }

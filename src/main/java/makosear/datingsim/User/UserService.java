@@ -12,6 +12,7 @@ import makosear.datingsim.GameStructure.GamePersistence.GamePersistence;
 public class UserService {
     private List<User> users = new ArrayList<>();
     private GamePersistence persistence;
+    public User currentUser;
 
     public UserService(GamePersistence persistence) {
         this.persistence = persistence;

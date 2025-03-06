@@ -11,7 +11,14 @@ import java.io.File;
 import java.io.IOException;
 
 public class JSONPersistence implements GamePersistence {
-    private final ObjectMapper mapper = new ObjectMapper();
+
+    private StuffToSave stuffToSave;
+
+    public JSONPersistence(StuffToSave stuffToSave) {
+        this.stuffToSave = stuffToSave;
+    }
+
+    public final ObjectMapper mapper = new ObjectMapper();
     
     @Override
     public void saveUserData(User user) throws GameSaveException {
@@ -52,18 +59,36 @@ public class JSONPersistence implements GamePersistence {
     }
 
     @Override
-    public void saveGameState(DatingSim game) throws GameSaveException {
+    public void saveGameState(StuffToSave stuffToSave, String filename) throws GameSaveException {
         try {
-            mapper.writeValue(new File("gamestate.json"), game);
+            File file = new File(filename);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(file, stuffToSave);
         } catch (IOException e) {
             throw new GameSaveException("Falha ao salvar estado do jogo", e);
         }
     }
 
     @Override
-    public DatingSim loadGameState() throws GameLoadException {
+    public void loadGameState(String filename) throws GameLoadException {
         try {
-            return mapper.readValue(new File("gamestate.json"), DatingSim.class);
+            StuffToSave loadedState = mapper.readValue(new File(filename), StuffToSave.class);
+
+            stuffToSave.setDiaAtual(loadedState.getDiaAtual());
+            stuffToSave.setPeriodoAtual(loadedState.getPeriodoAtual());
+            stuffToSave.setPlayer(loadedState.getPlayer());
+            stuffToSave.setDayToLocationCharacters(loadedState.getDayToLocationCharacters());
+            stuffToSave.setCurrentUser(loadedState.getCurrentUser());
+            stuffToSave.setCurrentDialogue(loadedState.getCurrentDialogue());
+            stuffToSave.setCurrentCharacter(loadedState.getCurrentCharacter());
+            stuffToSave.setDialogueBoxCounter(loadedState.getDialogueBoxCounter());
+            stuffToSave.setIsWaitingOption(loadedState.getIsWaitingOption());
+            stuffToSave.setCurrentLocation(loadedState.getCurrentLocation());
+            stuffToSave.setMessageText(loadedState.getMessageText());
+            stuffToSave.setRomanceableCharacters(loadedState.getRomanceableCharacters());
+            stuffToSave.setNonRomanceableCharacters(loadedState.getNonRomanceableCharacters());
+
+            stuffToSave.loadInformation(); 
+
         } catch (IOException e) {
             throw new GameLoadException("Falha ao carregar estado do jogo", e);
         }

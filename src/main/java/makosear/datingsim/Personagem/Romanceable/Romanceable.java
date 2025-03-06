@@ -6,6 +6,8 @@ package makosear.datingsim.Personagem.Romanceable;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 import makosear.datingsim.GameStructure.WinConditions;
 import makosear.datingsim.Gift.Gift;
 import makosear.datingsim.Personagem.Personagem;
@@ -32,7 +34,7 @@ correct answers counter */
     private String falasNoite[];
     private String spriteFilePath;
     private List<Scene> scenes;
-    public List<Gift> giftsReceived = new java.util.ArrayList<>();
+    private List<Gift> giftsReceived = new java.util.ArrayList<>();
     private WinConditions winConditions;
     private String description;
 
@@ -57,6 +59,10 @@ correct answers counter */
 
     public void receiveGift(Gift gift) {
         giftsReceived.add(gift);
+    }
+
+    public List<Gift> getGiftsReceived() {
+        return giftsReceived;
     }
 
 
