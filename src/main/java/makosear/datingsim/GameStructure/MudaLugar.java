@@ -9,9 +9,11 @@ import java.util.*;
 public class MudaLugar {
     DatingSim gm;
 
+    public void setGm(DatingSim gm) {this.gm = gm;}
+
     Map<String, Integer> bgToLocations = new HashMap<>();
     Map<String, String> bgToFilePath = new HashMap<>();
-    String currentLocation = "Map";
+    public String currentLocation = "Map";
 
 
     public MudaLugar(DatingSim gm) {
@@ -90,7 +92,7 @@ public class MudaLugar {
             && !location.equals("MainMenu") 
             && !location.equals("PlayerCreationMenu") 
             && !location.equals("SaveMenu")) {
-                
+
             gm.ui.removeCharactersFromLocation(location);
             for (LocationToCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
             {

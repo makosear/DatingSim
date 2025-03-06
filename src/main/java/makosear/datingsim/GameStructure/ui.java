@@ -18,6 +18,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.awt.Color;
@@ -60,9 +61,18 @@ public class ui {
     final int MSGBOX_Y = 410;
     
 
-    JFrame window;
+    public JFrame window;
 
     DatingSim gm;
+    
+    @JsonIgnore
+    public DatingSim getGm() {
+        return gm;
+    }
+    @JsonIgnore
+    public void setGm(DatingSim gm) {
+        this.gm = gm;
+    }
 
     public JTextArea messageText;
     public JButton btnSave;
@@ -732,18 +742,20 @@ public class ui {
 
         // Load save metadata if exists
         File saveFile = new File("saves/slot" + slotNumber + ".json");
-        if(saveFile.exists()) {
+        if (saveFile.exists()) {
             try {
                 JsonNode rootNode = gm.jsonPersistence.mapper.readTree(saveFile);
-                String text = "<html>Slot " + slotNumber + "<br>"
-                            + "Date: " + rootNode.path("diaAtual").asText() + "<br>"
-                            + "Location: " + rootNode.path("mudaLugar").path("currentLocation") + "</       html>";
+                String diaAtual = rootNode.path("diaAtual").asText();
+                String location = rootNode.path("mudaLugar").path("currentLocation").asText();
+                String text = String.format("<html>Slot %d<br>Day: %s<br>Location: %s</html>", 
+                    slotNumber, diaAtual, location);
                 button.setText(text);
             } catch (IOException e) {
                 button.setText("Corrupted Save");
             }
+        } else {
+            button.setText("Empty Slot");
         }
-
         // Right-click menu
         JPopupMenu contextMenu = new JPopupMenu();
         JMenuItem saveItem = new JMenuItem("Save");
@@ -791,18 +803,13 @@ public class ui {
 
     private void handleLoad(int slotNumber, JButton button) {
         try {
-            DatingSim loadedGame = gm.jsonPersistence.loadGameState("saves/slot" + slotNumber + ".json");
-
-            // Update current game state
-            gm.diaAtual = loadedGame.diaAtual;
-            gm.periodoAtual = loadedGame.periodoAtual;
-            gm.mudaLugar = loadedGame.mudaLugar;
-            gm.player = loadedGame.player;
-
+            // Load into the existing game instance
+            gm.jsonPersistence.loadGameState(gm, "saves/slot" + slotNumber + ".json");
+            
             // Refresh UI
             gm.ui.updateDayAndPeriodCounter();
             gm.mudaLugar.changeLocation(gm.mudaLugar.currentLocation, "Game loaded");
-
+            
         } catch (GameLoadException e) {
             JOptionPane.showMessageDialog(window, "Failed to load game: " + e.getMessage(),
                                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -818,9 +825,12 @@ public class ui {
     }
 
     public void postLoadInit() {
+        // Refresh UI components without creating new window
+        window.getContentPane().removeAll();
         createMainField();
         generateScreen();
-        window.setVisible(true);
+        window.revalidate();
+        window.repaint();
         gm.setLoadingFromSave(false);
     }
 }

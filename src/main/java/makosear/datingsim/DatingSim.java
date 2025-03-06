@@ -103,15 +103,21 @@ public class DatingSim {
 
     @JsonSetter
     public void postLoadInit() {
-        this.userService = new UserService(jsonPersistence);
-        this.aHandler = new ActionHandler(this);
-        this.mudaLugar = new MudaLugar(this);
-        this.ui = new ui(this); // Modified UI initialization
-        this.bgmHandler = new BGMHandler();
-        if(this.userService == null) {
+        if (this.userService == null) {
             this.userService = new UserService(jsonPersistence);
         }
-
+        this.aHandler = new ActionHandler(this);
+        if (this.mudaLugar == null) {
+            this.mudaLugar = new MudaLugar(this);
+        } else {
+            this.mudaLugar.setGm(this);
+        }
+        if (this.ui == null) {
+            this.ui = new ui(this);
+        } else {
+            this.ui.postLoadInit(); // Refresh existing UI
+        }
+        this.bgmHandler = new BGMHandler();
     }
 
     private transient boolean isLoadingFromSave = false;

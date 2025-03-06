@@ -10,5 +10,5 @@ public interface GamePersistence {
     User loadUserData(String username) throws GameLoadException;
     User loadUserData(String username, String filename) throws GameLoadException;
     void saveGameState(DatingSim game, String filename) throws GameSaveException;
-    DatingSim loadGameState(String filename) throws GameLoadException;
+    void loadGameState(DatingSim game, String filename) throws GameLoadException;
 }

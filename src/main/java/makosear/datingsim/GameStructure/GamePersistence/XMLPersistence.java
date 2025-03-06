@@ -69,14 +69,36 @@ public class XMLPersistence implements GamePersistence {
         }
     }
 
+    /* json one by reference:
+     * @Override
+    public void loadGameState(DatingSim game, String filename) throws GameLoadException {
+        try {
+            // Update the existing game instance with the saved data
+            mapper.readerForUpdating(game).readValue(new File(filename));
+            game.setLoadingFromSave(true);
+            game.postLoadInit();
+        } catch (IOException e) {
+            throw new GameLoadException("Falha ao carregar estado do jogo: " + e.getMessage(), e);
+        }
+    }
+}
+     */
+
     @Override
-    public DatingSim loadGameState(String filename) throws GameLoadException {
+    public void loadGameState(DatingSim game, String filename) throws GameLoadException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (DatingSim) unmarshaller.unmarshal(new File("gamestate.xml"));
+            DatingSim loadedGame = (DatingSim) unmarshaller.unmarshal(new File(filename));
+            game.diaAtual = loadedGame.diaAtual;
+            game.periodoAtual = loadedGame.periodoAtual;
+            game.player = loadedGame.player;
+            game.mudaLugar.currentLocation = loadedGame.mudaLugar.currentLocation;
+            game.setLoadingFromSave(true);
+            game.postLoadInit();
         } catch (JAXBException e) {
             throw new GameLoadException("Falha ao carregar estado do jogo em XML", e);
         }
+    }
     }
 
     // Implementar outros métodos da interface

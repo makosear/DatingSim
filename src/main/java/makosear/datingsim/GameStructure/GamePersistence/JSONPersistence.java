@@ -1,5 +1,9 @@
 package makosear.datingsim.GameStructure.GamePersistence;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,17 +15,28 @@ import makosear.datingsim.DatingSim;
 import makosear.datingsim.Excecao.GameLoadException;
 import makosear.datingsim.Excecao.GameSaveException;
 import makosear.datingsim.User.User;
+import makosear.datingsim.GameStructure.ui;
 
 import java.io.File;
 import java.io.IOException;
 
 public class JSONPersistence implements GamePersistence {
+    // In JSONPersistence constructor
+@JsonIgnoreType
+    private static abstract class UiMixIn {
+        @JsonIgnore
+        abstract DatingSim getGm();  // Match the getter name from your UI class
+        @JsonIgnore
+        abstract void setGm(DatingSim gm);
+    }
+
     public final ObjectMapper mapper = new ObjectMapper()
         .enable(SerializationFeature.INDENT_OUTPUT)
         .registerModule(new JavaTimeModule())
         .registerModule(new Jdk8Module())
         .registerModule(new ParameterNamesModule())
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .addMixIn(ui.class, UiMixIn.class)  // Now properly resolved
         .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
     
     @Override
@@ -84,13 +99,12 @@ public class JSONPersistence implements GamePersistence {
     }
 
     @Override
-    public DatingSim loadGameState(String filename) throws GameLoadException {
+    public void loadGameState(DatingSim game, String filename) throws GameLoadException {
         try {
-            DatingSim loaded = mapper.readValue(new File(filename), DatingSim.class);
-            loaded.setLoadingFromSave(true);
-            loaded.postLoadInit();
-            loaded.ui.postLoadInit();
-            return loaded;
+            // Update the existing game instance with the saved data
+            mapper.readerForUpdating(game).readValue(new File(filename));
+            game.setLoadingFromSave(true);
+            game.postLoadInit();
         } catch (IOException e) {
             throw new GameLoadException("Falha ao carregar estado do jogo: " + e.getMessage(), e);
         }
