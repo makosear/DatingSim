@@ -8,8 +8,9 @@ import makosear.datingsim.Excecao.GameSaveException;
 import makosear.datingsim.Excecao.InvalidInputException;
 import makosear.datingsim.GameStructure.GamePersistence.GamePersistence;
 
-// UserService.java - Novo serviço para gerenciamento de usuários
+// UserService.java - Novo servico para gerenciamento de usuarios
 public class UserService {
+    public User currentUser;
     private List<User> users = new ArrayList<>();
     private GamePersistence persistence;
 
@@ -18,13 +19,22 @@ public class UserService {
         carregarUsuarios();
     }
 
+    public User authenticateUser(String username, String password) {
+        User user = buscarUsuario(username);
+        if (user != null && user.authenticate(password)) {
+            currentUser = user;
+            return user;
+        }
+        return null;
+    }
+
     public void carregarUsuarios() {
         try {
             users.add((Admin) persistence.loadUserData("admin_users.xml"));
             users.add(persistence.loadUserData("users.json"));
         } catch (GameLoadException e) {
             // Tratar erro
-            System.err.println("Erro ao carregar usuários: " + e.getMessage());
+            System.err.println("Erro ao carregar usuarios: " + e.getMessage());
             e.printStackTrace();
 
         }

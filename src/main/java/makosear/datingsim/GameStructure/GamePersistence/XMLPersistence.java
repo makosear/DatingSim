@@ -31,7 +31,7 @@ public class XMLPersistence implements GamePersistence {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(user, new File(XMLfilename));
         } catch (JAXBException e) {
-            throw new GameSaveException("Falha ao salvar usuário em XML", e);
+            throw new GameSaveException("Falha ao salvar usuario em XML", e);
         }
     }
 
@@ -46,7 +46,7 @@ public class XMLPersistence implements GamePersistence {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             return (User) unmarshaller.unmarshal(new File(XMLfilename));
         } catch (JAXBException e) {
-            throw new GameLoadException("Falha ao carregar usuário em XML", e);
+            throw new GameLoadException("Falha ao carregar usuario em XML", e);
         }
     }
 
@@ -59,7 +59,7 @@ public class XMLPersistence implements GamePersistence {
     }
 
     @Override
-    public void saveGameState(DatingSim game) throws GameSaveException {
+    public void saveGameState(DatingSim game, String filename) throws GameSaveException {
         try {
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -70,7 +70,7 @@ public class XMLPersistence implements GamePersistence {
     }
 
     @Override
-    public DatingSim loadGameState() throws GameLoadException {
+    public DatingSim loadGameState(String filename) throws GameLoadException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             return (DatingSim) unmarshaller.unmarshal(new File("gamestate.xml"));

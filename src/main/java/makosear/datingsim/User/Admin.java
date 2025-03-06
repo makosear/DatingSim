@@ -14,6 +14,6 @@ public class Admin extends User {
     }
     
     public void editCharacter(Romanceable character) {
-        // Lógica de edição
+        // Logica de edicao
     }
 }

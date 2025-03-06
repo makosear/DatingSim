@@ -18,7 +18,7 @@ public class JSONPersistence implements GamePersistence {
         try {
             mapper.writeValue(new File("users/" + user.getUsername() + ".json"), user);
         } catch (IOException e) {
-            throw new GameSaveException("Falha ao salvar usuário", e);
+            throw new GameSaveException("Falha ao salvar usuario", e);
         }
     }
 
@@ -28,16 +28,21 @@ public class JSONPersistence implements GamePersistence {
         try {
             mapper.writeValue(new File(filename), user);
         } catch (IOException e) {
-            throw new GameSaveException("Falha ao salvar usuário", e);
+            throw new GameSaveException("Falha ao salvar usuario", e);
         }
     }
 
     @Override
     public User loadUserData(String username) throws GameLoadException {
+        File userFile = new File("users/" + username + ".json");
+        if (!userFile.exists()) {
+            throw new GameLoadException("Dados do usuario nao encontrados", null);
+        }
+
         try {
             return mapper.readValue(new File("users/" + username + ".json"), User.class);
         } catch (IOException e) {
-            throw new GameLoadException("Falha ao carregar usuário", e);
+            throw new GameLoadException("Falha ao carregar usuario", e);
         }
     }
 
@@ -47,12 +52,12 @@ public class JSONPersistence implements GamePersistence {
         try {
             return mapper.readValue(new File(filename), User.class);
         } catch (IOException e) {
-            throw new GameLoadException("Falha ao carregar usuário", e);
+            throw new GameLoadException("Falha ao carregar usuario", e);
         }
     }
 
     @Override
-    public void saveGameState(DatingSim game) throws GameSaveException {
+    public void saveGameState(DatingSim game, String filename) throws GameSaveException {
         try {
             mapper.writeValue(new File("gamestate.json"), game);
         } catch (IOException e) {
@@ -61,7 +66,7 @@ public class JSONPersistence implements GamePersistence {
     }
 
     @Override
-    public DatingSim loadGameState() throws GameLoadException {
+    public DatingSim loadGameState(String filename) throws GameLoadException {
         try {
             return mapper.readValue(new File("gamestate.json"), DatingSim.class);
         } catch (IOException e) {

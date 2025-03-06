@@ -62,6 +62,10 @@ public class MudaLugar {
     }
 
     public void changeLocation(String location, String message) {
+        if (!bgToLocations.containsKey(location)) {
+            System.err.println("Unknown location: " + location);
+            return;
+        }
         boolean notFound = true;
         List<CharacterPosition> characterPositions = new ArrayList<>();
         characterPositions.add(CharacterPosition.CENTER);
@@ -131,14 +135,18 @@ public class MudaLugar {
         currentLocation = location;
         gm.ui.messageText.setText(message);
 
-        if (location.equals("MainMenu") || location.equals("PlayerCreationMenu")) {
+        if (location.equals("MainMenu") || location.equals("PlayerCreationMenu") || location.equals("SaveMenu")) {
+            gm.ui.btnSave.setVisible(false);
             gm.ui.dayAndPeriodCounter.setVisible(false);
             gm.ui.messageText.setVisible(false);
         }
 
-        else if (location.equals("Map")) {
-            gm.ui.dayAndPeriodCounter.setVisible(true);
-            gm.ui.messageText.setVisible(true);
+        else {
+            gm.ui.btnSave.setVisible(true);
+            if (location.equals("Map")) {
+                gm.ui.dayAndPeriodCounter.setVisible(true);
+                gm.ui.messageText.setVisible(true);
+            }
         }
 
     }

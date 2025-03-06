@@ -180,6 +180,12 @@ public class ActionHandler implements ActionListener {
 	public void keyTyped(KeyEvent ke) {
 		System.out.println("Key typed: " + ke.getKeyChar());
 
+        if(ke.getKeyChar() == 27) { // 27 is the key code for Esc
+            if (gm.mudaLugar.currentLocation == "Cafe" || gm.mudaLugar.currentLocation == "Library" || gm.mudaLugar.currentLocation == "Gym" || gm.mudaLugar.currentLocation == "Mall" || gm.mudaLugar.currentLocation == "Office" || gm.mudaLugar.currentLocation == "Park" || gm.mudaLugar.currentLocation == "characterScreen" || gm.mudaLugar.currentLocation == "Doggo" || gm.mudaLugar.currentLocation == "Map") { 
+                        System.out.println("Tried to go to savemenu");
+                        gm.mudaLugar.changeLocation("SaveMenu");
+            }
+        }
 
 	}
     
