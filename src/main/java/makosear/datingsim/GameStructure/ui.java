@@ -208,6 +208,41 @@ public class ui {
         
     }
 
+    public void createMainMenu(){
+
+        System.out.println("Creating main menu");
+        final int START_MENU_BGNUM = 7;
+
+        bgPanel[START_MENU_BGNUM] = new JPanel();
+        bgPanel[START_MENU_BGNUM].setBounds(50,50,700,350);
+        
+
+        bgPanel[START_MENU_BGNUM].setBackground(Color.WHITE);
+        bgPanel[START_MENU_BGNUM].setLayout(null);
+        window.add(bgPanel[START_MENU_BGNUM]);
+
+        bgLabel[START_MENU_BGNUM] = new JLabel();
+        bgLabel[START_MENU_BGNUM].setBounds(0,0,700,350);
+
+        // I want three labels, two of them will be buttons, one starts the game, the other loads a save
+
+        JLabel startButton = new JLabel();
+        startButton.setBounds(0,0,700,350);
+        startButton.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    gm.mudaLugar.changeLocation("Map");
+                }
+            }
+            public void mouseReleased(MouseEvent e) {}
+            public void mouseEntered(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {}
+        });
+        bgPanel[START_MENU_BGNUM].add(startButton);
+
+    }
+
     Image scaleifCharacter(ImageIcon objectIcon, int newHeight) {
         double newWidth = newHeight / (double) objectIcon.getIconHeight();
 
@@ -312,7 +347,7 @@ public class ui {
 
         //check if 
         if (characterName == "Doggo") {
-            System.out.println("Doggo added");
+            //System.out.println("Doggo added");
             createObject(locationId, characterPosition.getX(), characterPosition.getY(), characterPosition.getWidth(), characterPosition.getHeight(), 
             "characters/Dog.png", 
             new String[]{"Talk", "Check", "Give gift"}, 
@@ -334,21 +369,12 @@ public class ui {
         bgPanel[locationId].revalidate();
         bgPanel[locationId].repaint();
     }
-    /*
-    public void generateLugar(String location)
-    {
-        bgPanel[gm.mudaLugar.bgToLocations.get(location)].removeAll();
-        createBackground(gm.mudaLugar.bgToLocations.get(location), gm.mudaLugar.bgToFilePath.get(location));
-        addRandomCharactersToLugarScreen(location);
-        bgPanel[gm.mudaLugar.bgToLocations.get(location)].add(bgLabel[gm.mudaLugar.bgToLocations.get(location)]);
-
-    } */
 
     public void bringCharacterScreen(String character) {
         createBackground(9, gm.mudaLugar.bgToFilePath.get(gm.mudaLugar.currentLocation));
 
         createCharacterScreenObject(9, 250, 80, TRYING_STUFF, TRYING_STUFF, DatingSim.romanceableCharacters.get(character).getSpriteFilePath());
-        System.out.println(DatingSim.romanceableCharacters.get(character).getSpriteFilePath());
+        //System.out.println(DatingSim.romanceableCharacters.get(character).getSpriteFilePath());
 
         //300, 150, 200, 200
 
@@ -380,6 +406,10 @@ public class ui {
         final int ICON_FIRST_ROW = 75; 
         final int ICON_SECOND_ROW = ICON_FIRST_ROW * 3;
 
+        //SCREEN 7 - START MENU
+
+        createMainMenu();
+
         //SCREEN 0 - TOWN MAP
         createBackground(gm.mudaLugar.bgToLocations.get("Map"), gm.mudaLugar.bgToFilePath.get("Map"));
 
@@ -394,7 +424,7 @@ public class ui {
         List<String> locations = new ArrayList<>(gm.mudaLugar.bgToLocations.keySet());
 
         for (String location : locations) {
-            if (location != "Map") {
+            if (location != "Map" && location != "characterScreen" && location != "MainMenu") { 
                 createBackground(gm.mudaLugar.bgToLocations.get(location), gm.mudaLugar.bgToFilePath.get(location));
                 
                 bgPanel[gm.mudaLugar.bgToLocations.get(location)].add(bgLabel[gm.mudaLugar.bgToLocations.get(location)]);
@@ -402,6 +432,7 @@ public class ui {
         }
 
     }
+
 
     public Component getPanel() {
         // TODO Auto-generated method stub

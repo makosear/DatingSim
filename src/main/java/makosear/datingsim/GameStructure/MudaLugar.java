@@ -37,6 +37,9 @@ public class MudaLugar {
 
         bgToLocations.put("Park", 6);
         bgToFilePath.put("Park", "backgrounds/Park.png");
+
+        bgToLocations.put("MainMenu", 7);
+        bgToFilePath.put("MainMenu", ""); 
     }
 
     public void addNewLocation (String location, int bgNum, String bgFilePath) {
@@ -68,13 +71,14 @@ public class MudaLugar {
         LocationToCharacters exportedLocationCharacters = null;
 
         for (Map.Entry<String, Integer> entry : bgToLocations.entrySet()) {
+            //System.out.println(entry.getKey());
             if (entry.getKey().equals(location)) {
                 gm.ui.bgPanel[entry.getValue()].setVisible(true);
             } else {
                 gm.ui.bgPanel[entry.getValue()].setVisible(false);
             }
         }
-        if (!location.equals ("Map") && !location.equals("characterScreen")) {
+        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu")) {
             gm.ui.removeCharactersFromLocation(location);
             for (LocationToCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
             {
@@ -97,7 +101,7 @@ public class MudaLugar {
             }
 
             if (notFound) {
-                System.out.println("Location not found");
+                //System.out.println("Location not found");
                 message += " No one is here. A little dog walks in!";
                 gm.ui.addCharacterToLocation(location, "Doggo", CharacterPosition.CENTER);
             }

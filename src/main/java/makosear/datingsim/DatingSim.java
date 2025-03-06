@@ -80,7 +80,7 @@ public class DatingSim {
         calculateLocationsPerDay();
         diaAtual = DIA_INICIAL;
         periodoAtual = PERIODO_INICIAL;
-        mudaLugar.setMap();
+        mudaLugar.changeLocation("MainMenu", "");
         bgmHandler.playMusic("src/main/resources/audio/MusMus-BGM-154.wav");
         
     }
