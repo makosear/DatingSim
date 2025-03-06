@@ -12,6 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import java.awt.Color;
@@ -34,6 +35,7 @@ import makosear.datingsim.DatingSim;
  * @author ice
  */
 public class ui {
+    final int PLAYER_CREATION_BG_NUM = 8;
     final int TRYING_STUFF = 425;
     final int MSGBOX_Y = 410;
     
@@ -45,8 +47,8 @@ public class ui {
     public JTextArea messageText;
     public JTextArea dayAndPeriodCounter;
     private List<JTextArea> optionTextAreas = new ArrayList<>();
-    public JPanel bgPanel[] = new JPanel[10];
-    public JLabel bgLabel[] = new JLabel[10];
+    public JPanel bgPanel[] = new JPanel[12];
+    public JLabel bgLabel[] = new JLabel[12];
     
     
 
@@ -217,6 +219,78 @@ public class ui {
         
     }
 
+    public void createPlayerCreationMenu() {
+
+        gm.mudaLugar.addNewLocation("PlayerCreationMenu", 
+        PLAYER_CREATION_BG_NUM, 
+        ""); 
+    
+        System.out.println("Creating player creation menu");
+        bgPanel[PLAYER_CREATION_BG_NUM] = new JPanel();
+        bgPanel[PLAYER_CREATION_BG_NUM].setBounds(0, 0, 800, 600);
+        bgPanel[PLAYER_CREATION_BG_NUM].setBackground(Color.black);
+        bgPanel[PLAYER_CREATION_BG_NUM].setLayout(null); // Null layout
+        
+        JLabel playerCreationTitle = new JLabel("Create your character");
+        playerCreationTitle.setBounds(250, 50, 300, 100);
+        playerCreationTitle.setFont(new Font("Book Antiqua", Font.PLAIN, 30));
+        playerCreationTitle.setForeground(Color.white);
+        bgPanel[PLAYER_CREATION_BG_NUM].add(playerCreationTitle);
+
+        JTextArea playerNameLabel = new JTextArea("Name:");
+        playerNameLabel.setBounds(250, 200, 100, 50);
+        playerNameLabel.setBackground(Color.black);
+        playerNameLabel.setForeground(Color.white);
+        playerNameLabel.setEditable(false);
+        playerNameLabel.setLineWrap(true);
+        playerNameLabel.setWrapStyleWord(true);
+        playerNameLabel.setEnabled(false);
+        playerNameLabel.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+        bgPanel[PLAYER_CREATION_BG_NUM].add(playerNameLabel);
+
+        //box to type the name and save it to gm.Player.setName("name");
+        JTextField playerNameBox = new JTextField();
+        playerNameBox.setBounds(350, 200, 200, 30);
+        playerNameBox.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+        bgPanel[PLAYER_CREATION_BG_NUM].add(playerNameBox);
+
+        JTextArea playerCodeLabel = new JTextArea("Code:");
+        playerCodeLabel.setBounds(250, 275, 100, 50);
+        playerCodeLabel.setBackground(Color.black);
+        playerCodeLabel.setForeground(Color.white);
+        playerCodeLabel.setEditable(false);
+        playerCodeLabel.setLineWrap(true);
+        playerCodeLabel.setWrapStyleWord(true);
+        playerCodeLabel.setEnabled(false);
+        playerCodeLabel.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+        bgPanel[PLAYER_CREATION_BG_NUM].add(playerCodeLabel);
+
+        JTextField playerCodeBox = new JTextField();
+        playerCodeBox.setBounds(350, 275, 200, 30);
+        playerCodeBox.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
+        bgPanel[PLAYER_CREATION_BG_NUM].add(playerCodeBox);
+
+
+        JButton btnSubmit = new JButton("Submit");
+        btnSubmit.setBounds(350, 375, 100, 50);
+        btnSubmit.addActionListener(e -> buttonSubmitPlayerCreation(playerNameBox.getText(), playerCodeBox.getText()));
+        bgPanel[PLAYER_CREATION_BG_NUM].add(btnSubmit);
+
+        bgPanel[PLAYER_CREATION_BG_NUM].revalidate();
+        bgPanel[PLAYER_CREATION_BG_NUM].repaint();
+
+        window.add(bgPanel[PLAYER_CREATION_BG_NUM]);
+
+        
+        
+
+    }
+
+    public void buttonSubmitPlayerCreation(String name, String code) {
+        gm.player.setName(name);
+        gm.mudaLugar.changeLocation("Map", "Click a place to visit.");
+    }
+
     public void createMainMenu() {
         System.out.println("Creating main menu");
         final int START_MENU_BGNUM = 7;
@@ -259,7 +333,7 @@ public class ui {
         btnExit.setFocusable(false);
     
         
-        btnStart.addActionListener(e -> gm.mudaLugar.changeLocation("Map", "You start a new game."));
+        btnStart.addActionListener(e -> gm.mudaLugar.changeLocation("PlayerCreationMenu", ""));
         btnLoad.addActionListener(e -> {
             try {
                 SaveHandler.carregarJogo(gm.SAVE_PATH);
@@ -273,6 +347,8 @@ public class ui {
         bgPanel[START_MENU_BGNUM].add(btnStart);
         bgPanel[START_MENU_BGNUM].add(btnLoad);
         bgPanel[START_MENU_BGNUM].add(btnExit);
+
+        bgPanel[START_MENU_BGNUM].setVisible(false);
     }
 
     Image scaleifCharacter(ImageIcon objectIcon, int newHeight) {
@@ -442,6 +518,8 @@ public class ui {
 
         createMainMenu();
 
+
+
         //SCREEN 0 - TOWN MAP
         createBackground(gm.mudaLugar.bgToLocations.get("Map"), gm.mudaLugar.bgToFilePath.get("Map"));
 
@@ -462,6 +540,9 @@ public class ui {
                 bgPanel[gm.mudaLugar.bgToLocations.get(location)].add(bgLabel[gm.mudaLugar.bgToLocations.get(location)]);
             }
         }
+
+        //SCREEN 8 - PLAYER CREATIO
+        createPlayerCreationMenu();
 
     }
 

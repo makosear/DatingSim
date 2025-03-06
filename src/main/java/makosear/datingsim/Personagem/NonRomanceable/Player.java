@@ -26,5 +26,9 @@ public class Player extends Personagem{
     public Player(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro) {
         super(nome, presentesAma, presentesOdeia, lugaresEncontro);
     }
+
+    public void setName(String name) {
+        this.nome = name;
+    }
     
 }

@@ -11,7 +11,7 @@ import java.util.*;
  * @author ice
  */
 public class Personagem {
-    private String nome;
+    protected String nome;
     public List<String> presentesAma;
     public List<String> presentesOdeia;
     public Map<String, Double> lugaresEncontro;

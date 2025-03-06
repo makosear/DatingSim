@@ -73,12 +73,15 @@ public class MudaLugar {
         for (Map.Entry<String, Integer> entry : bgToLocations.entrySet()) {
             //System.out.println(entry.getKey());
             if (entry.getKey().equals(location)) {
+                //System.out.println("setting " + location);
                 gm.ui.bgPanel[entry.getValue()].setVisible(true);
             } else {
+                //System.out.println("unsetting " + entry.getKey());
                 gm.ui.bgPanel[entry.getValue()].setVisible(false);
             }
         }
-        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu")) {
+            System.out.println("-----------");
+        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu") && !location.equals("PlayerCreationMenu")) {
             gm.ui.removeCharactersFromLocation(location);
             for (LocationToCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
             {
@@ -128,7 +131,7 @@ public class MudaLugar {
         currentLocation = location;
         gm.ui.messageText.setText(message);
 
-        if (location.equals("MainMenu")) {
+        if (location.equals("MainMenu") || location.equals("PlayerCreationMenu")) {
             gm.ui.dayAndPeriodCounter.setVisible(false);
             gm.ui.messageText.setVisible(false);
         }
