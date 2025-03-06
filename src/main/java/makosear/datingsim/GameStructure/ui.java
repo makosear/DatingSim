@@ -297,6 +297,11 @@ public class ui {
 
     }
 
+    public void removeCharactersFromLocation(String location) {
+        int locationId = gm.mudaLugar.bgToLocations.get(location);
+        bgPanel[locationId].removeAll();
+    }
+
     public void addCharacterToLocation(String location, String characterName, CharacterPosition characterPosition) {
         int locationId = gm.mudaLugar.bgToLocations.get(location);
         
@@ -309,9 +314,9 @@ public class ui {
         if (characterName == "Doggo") {
             System.out.println("Doggo added");
             createObject(locationId, characterPosition.getX(), characterPosition.getY(), characterPosition.getWidth(), characterPosition.getHeight(), 
-            "Dog.png", 
+            "characters/Dog.png", 
             new String[]{"Talk", "Check", "Give gift"}, 
-            new String[]{"talkCh5", "checkCh5", "giftCh5"});
+            new String[]{"talkDoggo", "checkDoggo", "giftDoggo"});
         }
         
         // Create the object on top of the existing background
@@ -319,7 +324,7 @@ public class ui {
             createObject(locationId, characterPosition.getX(), characterPosition.getY(), characterPosition.getWidth(), characterPosition.getHeight(), 
             DatingSim.romanceableCharacters.get(characterName).getSpriteFilePath(), 
             new String[]{"Talk", "Check", "Give gift"}, 
-            new String[]{"talkCh5", "checkCh5", "giftCh5"});
+            new String[]{"talkCh_" + characterName, "checkCh_" + characterName, "giftCh_" + characterName});
         }
         
         // Ensure the background label is on top of the background panel
@@ -343,6 +348,7 @@ public class ui {
         createBackground(9, gm.mudaLugar.bgToFilePath.get(gm.mudaLugar.currentLocation));
 
         createCharacterScreenObject(9, 250, 80, TRYING_STUFF, TRYING_STUFF, DatingSim.romanceableCharacters.get(character).getSpriteFilePath());
+        System.out.println(DatingSim.romanceableCharacters.get(character).getSpriteFilePath());
 
         //300, 150, 200, 200
 

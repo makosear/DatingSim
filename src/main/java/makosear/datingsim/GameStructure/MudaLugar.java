@@ -20,8 +20,8 @@ public class MudaLugar {
         bgToLocations.put("Map", 0);
         bgToFilePath.put("Map", "");
 
-        bgToLocations.put("Cafe1", 1);
-        bgToFilePath.put("Cafe1", "backgrounds/Cafe_Interior_750x300.jpg");
+        bgToLocations.put("Cafe", 1);
+        bgToFilePath.put("Cafe", "backgrounds/Cafe_Interior_750x300.jpg");
 
         bgToLocations.put("Library", 2);
         bgToFilePath.put("Library", "backgrounds/Library.png");
@@ -65,6 +65,8 @@ public class MudaLugar {
         characterPositions.add(CharacterPosition.RIGHT);
         characterPositions.add(CharacterPosition.LEFT);
 
+        LocationToCharacters exportedLocationCharacters = null;
+
         for (Map.Entry<String, Integer> entry : bgToLocations.entrySet()) {
             if (entry.getKey().equals(location)) {
                 gm.ui.bgPanel[entry.getValue()].setVisible(true);
@@ -72,11 +74,13 @@ public class MudaLugar {
                 gm.ui.bgPanel[entry.getValue()].setVisible(false);
             }
         }
-        if (!location.equals ("Map")) {
+        if (!location.equals ("Map") && !location.equals("characterScreen")) {
+            gm.ui.removeCharactersFromLocation(location);
             for (LocationToCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
             {
                 if (locationCharacters.location.equals(location))
                 {
+                    exportedLocationCharacters = locationCharacters;
                     notFound = false;
                     message += " ";
                         for (String character : locationCharacters.characters)
@@ -87,8 +91,6 @@ public class MudaLugar {
                                 characterPositions.remove(position);
                             }
 
-                            message += character + ", ";
-
                             gm.ui.addCharacterToLocation(location, character, position);
                         }
                 }
@@ -96,17 +98,27 @@ public class MudaLugar {
 
             if (notFound) {
                 System.out.println("Location not found");
-                message += " Doggo, ";
+                message += " No one is here. A little dog walks in!";
                 gm.ui.addCharacterToLocation(location, "Doggo", CharacterPosition.CENTER);
             }
 
         }
         
-        String toReplace = ", ";
-        String replacement = " is/are here.";
-        int index = message.indexOf(toReplace);
-        if (index != -1) {
-            message = message.substring(0, index) + replacement;
+        if (!notFound) {
+            if (exportedLocationCharacters.characters.size() == 1) message += exportedLocationCharacters.characters.get(0) + " is here.";
+            else {
+                message += "The following people are here: ";
+                for (String character : exportedLocationCharacters.characters) {
+                    message += character;
+                    if (exportedLocationCharacters.characters.indexOf(character) == exportedLocationCharacters.characters.size() - 1) {
+                        message += ".";
+                    } else {
+                        if (exportedLocationCharacters.characters.indexOf(character) == exportedLocationCharacters.characters.size() - 2)
+                            message += " and ";
+                        else message += ", ";
+                    }
+                }
+            }
         }
 
         currentLocation = location;
@@ -120,12 +132,8 @@ public class MudaLugar {
         changeLocation("Map", "Choose a place to go to.");
     }
 
-    public void setCafe1() {
-        changeLocation("Cafe1", "You walk into the Cafe.");
-    }
-
-    public void setCafe2() {
-        changeLocation("Cafe2", "You walk into the Cafe.");
+    public void setCafe() {
+        changeLocation("Cafe", "You walk into the Cafe.");
     }
     
 }

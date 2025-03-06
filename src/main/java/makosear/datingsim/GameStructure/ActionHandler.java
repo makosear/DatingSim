@@ -120,53 +120,57 @@ public class ActionHandler implements ActionListener {
         startDialogue(DatingSim.sceneHandler.getLoseScene().getDialogue());
     }
 
+    public void talkToCharacter(String character) {
+        currentCharacter = character;
+                                if (isNoOneTalking()) 
+                                    startDialogue(DatingSim.romanceableCharacters.get(currentCharacter).interact(gm.periodoAtual));
+                                else passDialogue(); 
+    }
+
     
     @Override
     public void actionPerformed(ActionEvent e) {
         String yourChoice = e.getActionCommand();
         switch(yourChoice) {
-            case "talkCh1":     if (isNoOneTalking()) 
-                                    startDialogue("Chiaki: Hi! How are you doing?\nTest");
-                                else passDialogue(); break;
-            case "talkCh2":  gm.ui.messageText.setText("Gaku: Hi! How are you doing?"); break;
-            case "talkCh3":  gm.ui.messageText.setText("Shu: Hi! How are you doing?"); break;
-            case "talkCh4":  gm.ui.messageText.setText("Yato: Hi! How are you doing?"); break;
-            case "talkCh5":     currentCharacter = "Itsuki";
-                                if (isNoOneTalking()) 
-                                    startDialogue(DatingSim.romanceableCharacters.get(currentCharacter).interact(gm.periodoAtual));
-                                else passDialogue(); break;
-            case "talkCh6":  gm.ui.messageText.setText("Tsumugi: Hi! How are you doing?"); break;
+            case "talkCh_Chiaki": talkToCharacter("Chiaki"); break;
+            case "talkCh_Gaku": talkToCharacter("Gaku"); break;
+            case "talkCh_Shu": talkToCharacter("Shu"); break;
+            case "talkCh_Yato": talkToCharacter("Yato"); break;
+            case "talkCh_Itsuki": talkToCharacter("Itsuki"); break;
+            case "talkCh_Tsumugi": talkToCharacter("Tsumugi"); break;
 
-            case "checkCh1":  checkCharacter("Chiaki");             break;
-            case "checkCh2":  checkCharacter("Gaku");               break;
-            case "checkCh3":  checkCharacter("Shu");                break;
-            case "checkCh4":  checkCharacter("Yato");               break;
-            case "checkCh5":  checkCharacter("Itsuki");             break;
-            case "checkCh6":  checkCharacter("Tsumugi");            break;
+            case "checkCh_Chiaki":  checkCharacter("Chiaki");             break;
+            case "checkCh_Gaku":  checkCharacter("Gaku");               break;
+            case "checkCh_Shu":  checkCharacter("Shu");                break;
+            case "checkCh_Yato":  checkCharacter("Yato");               break;
+            case "checkCh_Itsuki":  checkCharacter("Itsuki");             break;
+            case "checkCh_Tsumugi":  checkCharacter("Tsumugi");            break;
             
-            case "giftCh1": gm.ui.messageText.setText("Chiaki: Aw, that's so nice of you! Appreciate it."); break;
-            case "giftCh2": gm.ui.messageText.setText("Gaku: Cool, man! Are you trying to get points with me?"); break;
-            case "giftCh3": gm.ui.messageText.setText("Shu: How wonderful! I'm grateful for your kindness."); break;
+            case "giftCh_Chiaki": gm.ui.messageText.setText("Chiaki: Aw, that's so nice of you! Appreciate it."); break;
+            case "giftCh_Gaku": gm.ui.messageText.setText("Gaku: Cool, man! Are you trying to get points with me?"); break;
+            case "giftCh_Shu": gm.ui.messageText.setText("Shu: How wonderful! I'm grateful for your kindness."); break;
 
-            case "giftCh4": gm.ui.messageText.setText("Yato: Tch... I don't wanna owe you anything. But if you are just handing it around..."); break;
-            case "giftCh5": gm.ui.messageText.setText("Itsuki: Hm? Is that for me? Ah, thank you. I wasn't expecting a gift today."); break;
-            case "giftCh6": gm.ui.messageText.setText("Tsumugi: Oh, um. Do I really deserve this? Ah... you kinda put me on the spot. I feel awkward."); break;
+            case "giftCh_Yato": gm.ui.messageText.setText("Yato: Tch... I don't wanna owe you anything. But if you are just handing it around..."); break;
+            case "giftCh_Itsuki": gm.ui.messageText.setText("Itsuki: Hm? Is that for me? Ah, thank you. I wasn't expecting a gift today."); break;
+            case "giftCh_Tsumugi": gm.ui.messageText.setText("Tsumugi: Oh, um. Do I really deserve this? Ah... you kinda put me on the spot. I feel awkward."); break;
 
 
             case "checkLocal": gm.ui.messageText.setText("You found an easter egg!"); break;
 
                 //muda lugar
 
-            case "goCafe": 
-                gm.mudaLugar.setCafe1(); 
-                break;
-            case "goLibrary": 
-                gm.mudaLugar.changeLocation("Library");
-                break;
+            case "goCafe": gm.mudaLugar.changeLocation("Cafe"); break;
+            case "goLibrary": gm.mudaLugar.changeLocation("Library"); break;
             case "goGym": gm.mudaLugar.changeLocation("Gym"); break;
             case "goMall": gm.mudaLugar.changeLocation("Mall"); break;
             case "goOffice": gm.mudaLugar.changeLocation("Office"); break;
             case "goPark": gm.mudaLugar.changeLocation("Park"); break;
+
+            // Doggo interactions
+
+            case "talkDoggo": currentCharacter = "Doggo"; startDialogue("Doggo: Woof woof! *It runs away.*"); break;
+            case "checkDoggo": currentCharacter = "Doggo"; startDialogue("Doggo: *wags tail and runs away.*"); break;
+            case "giftDoggo": currentCharacter = "Doggo"; startDialogue("Doggo: *eats food and runs away.*"); break;
         }
 
         //wait for click on screen, until it does then run the following

@@ -210,28 +210,29 @@ public class DatingSim {
         for (int day = 1; day <= 7; day++) {
             dayToLocationCharacters.put(day, new ArrayList<>());
         }
-
+    
         // Randomize the order of characters to avoid bias in assignment
         List<String> characterNames = new ArrayList<>(romanceableCharacters.keySet());
         Collections.shuffle(characterNames);
-
+    
         // First pass - assign each character to a location based on their preferences
         for (String characterName : characterNames) {
+            
             Romanceable character = romanceableCharacters.get(characterName);
             Map<String, Double> locationPercentages = character.lugaresEncontro;
-
+    
             for (int day = 1; day <= 7; day++) {
                 // Create a copy of percentages that we can modify
                 Map<String, Double> availableLocations = new HashMap<>(locationPercentages);
                 boolean assigned = false;
-
+    
                 // Try to assign to existing locations first if under capacity
                 for (LocationToCharacters locChar : dayToLocationCharacters.get(day)) {
                     if (locChar.characters.size() < 3 && availableLocations.containsKey(locChar.location)) {
                         // Higher chance to join existing location with higher percentage
                         double locationPref = availableLocations.get(locChar.location);
                         double randomValue = Math.random() * 100;
-
+    
                         if (randomValue <= locationPref) {
                             locChar.characters.add(characterName);
                             assigned = true;
@@ -239,7 +240,7 @@ public class DatingSim {
                         }
                     }
                 }
-
+    
                 // If not assigned, create a new location
                 if (!assigned) {
                     // Remove locations that already have this character's friends
@@ -247,10 +248,10 @@ public class DatingSim {
                     for (LocationToCharacters locChar : dayToLocationCharacters.get(day)) {
                         occupiedLocations.add(locChar.location);
                     }
-
+    
                     // Choose from remaining locations based on percentage
-                    String chosenLocation = chooseLocationBasedOnPercentage(availableLocations);
-
+                    String chosenLocation = chooseLocationBasedOnPercentage(availableLocations, dayToLocationCharacters.get(day));
+    
                     // Check if this location already exists but was full
                     boolean locationExists = false;
                     for (LocationToCharacters locChar : dayToLocationCharacters.get(day)) {
@@ -263,7 +264,7 @@ public class DatingSim {
                             break;
                         }
                     }
-
+    
                     // If location doesn't exist yet, create it
                     if (!locationExists) {
                         List<String> characters = new ArrayList<>();
@@ -274,8 +275,7 @@ public class DatingSim {
                 }
             }
         }
-
-        // Fix any duplicate locations (merge them)
+    
         // Second pass - ensure all characters are assigned to a location
         for (int day = 1; day <= 7; day++) {
             List<LocationToCharacters> locationsForDay = dayToLocationCharacters.get(day);
@@ -301,7 +301,29 @@ public class DatingSim {
                 }
             }
         }
-
+    
+        // Fix any duplicate locations (merge them)
+        for (int day = 1; day <= 7; day++) {
+            List<LocationToCharacters> locationsForDay = dayToLocationCharacters.get(day);
+            Map<String, LocationToCharacters> locationMap = new HashMap<>();
+    
+            // Identify duplicates
+            for (LocationToCharacters locChar : new ArrayList<>(locationsForDay)) {
+                if (locationMap.containsKey(locChar.location)) {
+                    // Merge characters from duplicate into existing (up to 3 max)
+                    LocationToCharacters existing = locationMap.get(locChar.location);
+                    for (String character : locChar.characters) {
+                        if (existing.characters.size() < 3 && !existing.characters.contains(character)) {
+                            existing.characters.add(character);
+                        }
+                    }
+                    locationsForDay.remove(locChar);
+                } else {
+                    locationMap.put(locChar.location, locChar);
+                }
+            }
+        }
+    
         // Print results for verification
         for (int day = 1; day <= 7; day++) {
             System.out.println("=== Day " + day + " ===");
@@ -310,27 +332,45 @@ public class DatingSim {
             }
         }
     }
-
+    
+    private String chooseLocationBasedOnPercentage(Map<String, Double> locationPercentages, List<LocationToCharacters> existingLocations) {
+        // Filter out locations that are already full
+        Map<String, Double> availableLocations = new HashMap<>(locationPercentages);
+        for (LocationToCharacters locChar : existingLocations) {
+            if (locChar.characters.size() >= 3) {
+                availableLocations.remove(locChar.location);
+            }
+        }
+    
+        // If no available locations, return a default location
+        if (availableLocations.isEmpty()) {
+            return "Gym";
+        }
+    
+        // Use the probabilistic selection logic on the available locations
+        return chooseLocationBasedOnPercentage(availableLocations);
+    }
+    
     private String chooseLocationBasedOnPercentage(Map<String, Double> locationPercentages) {
         // Handle empty map case
         if (locationPercentages == null || locationPercentages.isEmpty()) {
             return "Gym"; // Default location
         }
-
+    
         double randomValue = Math.random() * 100;
         double cumulativeProbability = 0.0;
-
+    
         // Normalize the percentages in case they don't add up to 100
         double total = locationPercentages.values().stream().mapToDouble(Double::doubleValue).sum();
         double normalizationFactor = total > 0 ? 100.0 / total : 1.0;
-
+    
         for (Map.Entry<String, Double> entry : locationPercentages.entrySet()) {
             cumulativeProbability += entry.getValue() * normalizationFactor;
             if (randomValue <= cumulativeProbability) {
                 return entry.getKey();
             }
         }
-
+    
         // Fallback to a random location if calculation failed
         List<String> locations = new ArrayList<>(locationPercentages.keySet());
         return locations.get(new Random().nextInt(locations.size()));
