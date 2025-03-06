@@ -21,6 +21,7 @@ public class ActionHandler implements ActionListener {
     public int dialogueBoxCounter = 0;
     public boolean isWaitingOption = false;
 
+
     public boolean isNoOneTalking() {
         return currentDialogue.isEmpty();
     }
@@ -48,6 +49,7 @@ public class ActionHandler implements ActionListener {
             dialogueBoxCounter++;
             isWaitingOption = false;
             gm.ui.unpopulateOptions();
+            gm.ui.btnSave.setVisible(true);
             passDialogue();
         }
     }
@@ -95,6 +97,7 @@ public class ActionHandler implements ActionListener {
 
                     options[0] = options[0].replaceFirst("\\$o", "");
                     gm.ui.messageText.setText(options[0]);
+                    gm.ui.btnSave.setVisible(false);
 
                     gm.ui.populateOptions(options);
 

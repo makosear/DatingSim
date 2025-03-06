@@ -29,6 +29,8 @@ public class WinConditions {
         this.necessaryLocationVisits = necessaryLocationVisits;
         this.necessaryGoodAnswers = necessaryGoodAnswers;
     }
+
+    public WinConditions() {}
 }
 
 //int int List<Gift> Map<String, Integer> int

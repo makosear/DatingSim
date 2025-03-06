@@ -110,7 +110,7 @@ public class ui {
         dayAndPeriodCounter.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
 
         btnSave = new JButton("Save/Load");
-        btnSave.addActionListener(e -> gm.mudaLugar.changeLocation("SaveMenu"));
+        btnSave.addActionListener(e -> gm.mudaLugar.saveButton());
         btnSave.setBounds(600, 25, 100, 50);
         btnSave.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
         window.add(btnSave);
@@ -625,7 +625,7 @@ public class ui {
 
         JButton btnBack = new JButton("Back");
         styleButton(btnBack);
-        btnBack.addActionListener(e -> gm.mudaLugar.changeLocation("Map"));
+        btnBack.addActionListener(e -> gm.mudaLugar.changeLocation(gm.mudaLugar.previousLocation));
 
         controlPanel.add(btnBack);
 
@@ -658,8 +658,12 @@ public class ui {
                 JsonNode rootNode = gm.jsonPersistence.mapper.readTree(saveFile);
                 String diaAtual = rootNode.path("diaAtual").asText();
                 String location = rootNode.path("mudaLugar").path("currentLocation").asText();
-                String text = String.format("<html>Slot %d<br>Day: %s<br>Location: %s</html>", 
-                    slotNumber, diaAtual, location);
+                String slotLabel = location;
+                if (location.equals("characterScreen")) {
+                    slotLabel = rootNode.path("aHandler").path("currentCharacter").asText();
+                }
+                String text = String.format("<html>Slot %d Day: %s Location: %s</html>", 
+                    slotNumber, diaAtual, slotLabel);
                 button.setText(text);
             } catch (IOException e) {
                 button.setText("Corrupted Save");
@@ -698,10 +702,15 @@ public class ui {
             gm.stuffToSave.updateInformation();
             gm.jsonPersistence.saveGameState(gm.stuffToSave, "saves/slot" + slotNumber + ".json");
 
+            String slotLabel = gm.mudaLugar.previousLocation;
+            if (gm.mudaLugar.previousLocation.equals("characterScreen")) {
+                slotLabel = gm.aHandler.currentCharacter;
+            }
+
             // Update button text
-            String text = "<html>Slot " + slotNumber + "<br>"
-                        + "Date: " + gm.diaAtual + "<br>"
-                        + "Location: " + gm.mudaLugar.currentLocation + "</html>";
+            String text = "<html>Slot " + slotNumber + " "
+                        + "Date: " + gm.diaAtual + " "
+                        + "Location: " + slotLabel + "</html>";
             button.setText(text);
 
             // Show confirmation
@@ -717,10 +726,11 @@ public class ui {
         try {
             // Load into the existing game instance
             gm.jsonPersistence.loadGameState("saves/slot" + slotNumber + ".json");
-            
+            gm.addScenesToCharactersAfterLoad(); //reattach scenes
+
             // Refresh UI
             gm.ui.updateDayAndPeriodCounter();
-            gm.mudaLugar.changeLocation(gm.mudaLugar.currentLocation, "Game loaded");
+            gm.mudaLugar.changeLocation(gm.mudaLugar.currentLocation);
             
         } catch (GameLoadException e) {
             JOptionPane.showMessageDialog(window, "Failed to load game: " + e.getMessage(),

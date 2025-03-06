@@ -62,7 +62,8 @@ public class StuffToSave {
         currentCharacter = gm.aHandler.currentCharacter;
         dialogueBoxCounter = gm.aHandler.dialogueBoxCounter;
         isWaitingOption = gm.aHandler.isWaitingOption;
-        currentLocation = gm.mudaLugar.currentLocation;
+        currentLocation = gm.mudaLugar.previousLocation;
+        System.out.println("Current and previous:" + currentLocation + " " + gm.mudaLugar.currentLocation);
         messageText = gm.ui.messageText.getText();
         romanceableCharacters = DatingSim.romanceableCharacters;
         nonRomanceableCharacters = DatingSim.nonRomanceableCharacters;  

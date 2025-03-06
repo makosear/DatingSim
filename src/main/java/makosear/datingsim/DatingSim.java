@@ -13,6 +13,7 @@ import makosear.datingsim.GameStructure.ui;
 import makosear.datingsim.Gift.Gift;
 import makosear.datingsim.Personagem.NonRomanceable.*;
 import makosear.datingsim.Personagem.Romanceable.*;
+import makosear.datingsim.Scene.Scene;
 import makosear.datingsim.Scene.SceneHandler;
 import makosear.datingsim.User.UserService;
 import makosear.datingsim.LocationToCharacters;
@@ -94,6 +95,16 @@ public class DatingSim {
         mudaLugar.changeLocation("MainMenu", "");
         bgmHandler.playMusic("src/main/resources/audio/MusMus-BGM-154.wav");
         
+    }
+
+    public void addScenesToCharactersAfterLoad() {
+        // Restore scenes for romanceable characters
+        for (Map.Entry<String, Romanceable> entry : romanceableCharacters.entrySet()) {
+            String characterName = entry.getKey();
+            Romanceable character = entry.getValue();
+            List<Scene> characterScenes = sceneHandler.getCenas(characterName);
+            character.setScenes(characterScenes);
+        }
     }
 
     public static void inicializaPersonagens() {
@@ -215,8 +226,8 @@ public class DatingSim {
             "characters/Dog.png",
             new String[]{"Woof woof", "Woof woof", "doggo de gozamaisu"},
             new String[]{"Woof woof", "Woof woof", "doggo da"},
-            new String[]{"Woof woof", "Woof woof", "doggo desu"},
-            sceneHandler.getCenas("Doggo")
+            new String[]{"Woof woof", "Woof woof", "doggo desu"}//,
+            //sceneHandler.getCenas("Doggo")
         ));
     }
 

@@ -90,6 +90,8 @@ public class JSONPersistence implements GamePersistence {
             stuffToSave.loadInformation(); 
 
         } catch (IOException e) {
+            System.err.println("Deserialization error:");
+            e.printStackTrace();
             throw new GameLoadException("Falha ao carregar estado do jogo", e);
         }
     }

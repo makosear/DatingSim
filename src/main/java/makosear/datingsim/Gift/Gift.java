@@ -16,4 +16,9 @@ public class Gift {
         this.name = name;
         this.description = description;
     }
+
+    public Gift() {
+        this.name = "";
+        this.description = "";
+    }
 }

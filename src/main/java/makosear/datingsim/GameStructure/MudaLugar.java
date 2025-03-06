@@ -12,6 +12,7 @@ public class MudaLugar {
     Map<String, Integer> bgToLocations = new HashMap<>();
     Map<String, String> bgToFilePath = new HashMap<>();
     public String currentLocation = "Map";
+    public String previousLocation = "";
 
 
     public MudaLugar(DatingSim gm) {
@@ -56,8 +57,16 @@ public class MudaLugar {
     }
 
     public void changeLocation(String location)
-    {
-        String message = "You walk into " + location + ".";
+    {   
+        String message;
+        String slotLabel = location;
+        if (location.equals("characterScreen")) {
+            slotLabel = gm.aHandler.currentCharacter;
+            message = slotLabel + ": What were we talking about? Oh...";
+        } 
+        else {
+            message = "You walk into " + slotLabel + ".";
+        }
         changeLocation(location, message);
     }
 
@@ -129,7 +138,7 @@ public class MudaLugar {
 
         currentLocation = location;
         gm.ui.messageText.setText(message);
-        
+
         if (location.equals("MainMenu") || location.equals("PlayerCreationMenu") || location.equals("SaveMenu")) {
             gm.ui.btnSave.setVisible(false);
             gm.ui.dayAndPeriodCounter.setVisible(false);
@@ -138,12 +147,17 @@ public class MudaLugar {
 
         else {
             gm.ui.btnSave.setVisible(true);
-            if (location.equals("Map")) {
+            //if (location.equals("Map")) {
                 gm.ui.dayAndPeriodCounter.setVisible(true);
                 gm.ui.messageText.setVisible(true);
-            }
+            //}
         }
 
+    }
+
+    public void saveButton(){
+        previousLocation = currentLocation;
+        gm.mudaLugar.changeLocation("SaveMenu");
     }
 
 

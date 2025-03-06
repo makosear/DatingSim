@@ -27,6 +27,10 @@ public class PlayerCharacter extends Personagem{
         super(nome, presentesAma, presentesOdeia, lugaresEncontro);
     }
 
+    public PlayerCharacter() {
+        super(null, null, null, null);
+    }
+
     public void setName(String name) {
         this.nome = name;
     }

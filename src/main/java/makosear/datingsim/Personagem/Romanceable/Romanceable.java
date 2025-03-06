@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import makosear.datingsim.GameStructure.WinConditions;
 import makosear.datingsim.Gift.Gift;
@@ -53,6 +54,11 @@ correct answers counter */
         this.description = description;
     }
 
+    public Romanceable(){
+        super("", null, null, null);
+        
+    }
+
     public String getSpriteFilePath() {
         return spriteFilePath;
     }
@@ -74,12 +80,14 @@ correct answers counter */
         return "Hi."; 
     }
 
+    @JsonIgnore
     public Scene getCena() {
         if (scenes.size() == 0) return null;
         if (cenasVistas >= scenes.size()) return new Scene(interact("Manha"),"", new String[] {""}); 
         return scenes.get(cenasVistas);
     }
 
+    @JsonIgnore
     public boolean isAllScenesViewed() {
         return cenasVistas >= scenes.size();
     }
@@ -107,5 +115,8 @@ correct answers counter */
         return true;
     }
 
+    public void setScenes(List<Scene> scenes) {
+        this.scenes = scenes;
+    }
     
 }

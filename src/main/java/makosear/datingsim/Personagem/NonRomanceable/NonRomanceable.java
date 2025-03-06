@@ -29,21 +29,26 @@ correct answers counter */
     private String falasTarde[];
     private String falasNoite[];
     private String spriteFilePath;
-    private List<Scene> scenes;
+    //private List<Scene> scenes;
     //private List<Gift> giftsReceived = new java.util.ArrayList<>();
     
 
 
     
-    public NonRomanceable(String nome, List<String> presentesAma, List<String> presentesOdeia, String spriteFilePath, String[] falasManha, String[] falasTarde, String[] falasNoite, List<Scene> scenes) {
+    public NonRomanceable(String nome, List<String> presentesAma, List<String> presentesOdeia, String spriteFilePath, String[] falasManha, String[] falasTarde, String[] falasNoite){ //List<Scene> scenes) {
 
         super(nome, presentesAma, presentesOdeia, null);
         this.spriteFilePath = spriteFilePath;
         this.falasManha = falasManha;
         this.falasTarde = falasTarde;
         this.falasNoite = falasNoite;
-        this.scenes = scenes;
+        //this.scenes = scenes;
         cenasVistas = 0;
+    }
+
+    public NonRomanceable(){
+        super("", null, null, null);
+
     }
 
     public String getSpriteFilePath() {
@@ -67,14 +72,16 @@ correct answers counter */
         return "Hi."; 
     }
 
+
+    /*
     public Scene getCena() {
         if (scenes.size() == 0) return null;
         if (cenasVistas >= scenes.size()) return new Scene(interact("Manha"),"", new String[] {""}); 
         return scenes.get(cenasVistas);
-    }
+    } 
 
     public boolean isAllScenesViewed() {
         return cenasVistas >= scenes.size();
-    }
+    } */
 
 }
