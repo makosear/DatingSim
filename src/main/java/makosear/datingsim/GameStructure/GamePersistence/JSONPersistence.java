@@ -22,10 +22,30 @@ public class JSONPersistence implements GamePersistence {
         }
     }
 
+
+    @Override
+    public void saveUserData(User user, String filename) throws GameSaveException {
+        try {
+            mapper.writeValue(new File(filename), user);
+        } catch (IOException e) {
+            throw new GameSaveException("Falha ao salvar usuário", e);
+        }
+    }
+
     @Override
     public User loadUserData(String username) throws GameLoadException {
         try {
             return mapper.readValue(new File("users/" + username + ".json"), User.class);
+        } catch (IOException e) {
+            throw new GameLoadException("Falha ao carregar usuário", e);
+        }
+    }
+
+    
+    @Override
+    public User loadUserData(String username, String filename) throws GameLoadException {
+        try {
+            return mapper.readValue(new File(filename), User.class);
         } catch (IOException e) {
             throw new GameLoadException("Falha ao carregar usuário", e);
         }

@@ -14,6 +14,7 @@ import makosear.datingsim.Gift.Gift;
 import makosear.datingsim.Personagem.NonRomanceable.*;
 import makosear.datingsim.Personagem.Romanceable.*;
 import makosear.datingsim.Scene.SceneHandler;
+import makosear.datingsim.User.UserService;
 import makosear.datingsim.LocationToCharacters;
 
 import java.util.Map;
@@ -50,6 +51,8 @@ public class DatingSim {
 
     }
 
+    
+
     public PlayerCharacter player = new PlayerCharacter("Player", new ArrayList<>(), new ArrayList<>(), new HashMap<>());
 
     public Map<Integer, List<LocationToCharacters>> dayToLocationCharacters  = new HashMap<>();
@@ -57,6 +60,8 @@ public class DatingSim {
     public static SceneHandler sceneHandler = new SceneHandler();
 
     public JSONPersistence jsonPersistence = new JSONPersistence();
+
+    public UserService userService = new UserService(jsonPersistence);
 
     public static Map<String,Romanceable> romanceableCharacters = new HashMap<>();
 
@@ -130,7 +135,8 @@ public class DatingSim {
             new String[]{"good afternoon", "lol its nonn", "chiaki da"},
             new String[]{"good evening", "lol its night", "chiaki desu"},
             sceneHandler.getCenas("Chiaki"), 
-            new WinConditions(3, 5, null, null, 0)
+            new WinConditions(3, 5, null, null, 0),
+            "Description"
         ));
 
         romanceableCharacters.put("Gaku", new Romanceable(
@@ -143,9 +149,8 @@ public class DatingSim {
             new String[]{"good afternoon", "lol its nonn", "gaku da"},
             new String[]{"good evening", "lol its night", "gaku desu"},
             sceneHandler.getCenas("Gaku"),
-            new WinConditions(6, 5, List.of(new Gift("Notebook", "This is a notebook.")), Map.of("Shopping Center", 5), 0)
-            ///int int List<Gift> Map<String, Integer> int 
-            //new WinConditions(0, 0, null, null, 0)        
+            new WinConditions(6, 5, List.of(new Gift("Notebook", "This is a notebook.")), Map.of("Shopping Center", 5), 0),
+            "Description"   
         ));
 
         romanceableCharacters.put("Shu", new Romanceable(
@@ -158,7 +163,8 @@ public class DatingSim {
             new String[]{"good afternoon", "lol its nonn", "shu da"},
             new String[]{"good evening", "lol its night", "shu desu"},
             sceneHandler.getCenas("Shu"),
-            new WinConditions(6, 5, null, Map.of("Park", 2), 0)
+            new WinConditions(6, 5, null, Map.of("Park", 2), 0),
+            "Description"
         ));
 
         romanceableCharacters.put("Yato", new Romanceable(
@@ -170,7 +176,8 @@ public class DatingSim {
             new String[]{"good afternoon", "lol its nonn", "yato da"},
             new String[]{"good evening", "lol its night", "yato desu"},
             sceneHandler.getCenas("Yato"),
-            new WinConditions(6, 5, null, Map.of("Gym", 2), 0)
+            new WinConditions(6, 5, null, Map.of("Gym", 2), 0),
+            "Description"
         ));
 
         romanceableCharacters.put("Itsuki", new Romanceable(
@@ -182,7 +189,8 @@ public class DatingSim {
             new String[]{"good afternoon", "lol its nonn", "itsuki da"},
             new String[]{"good evening", "lol its night", "itsuki desu"},
             sceneHandler.getCenas("Itsuki"),
-            new WinConditions(6, 5, null, Map.of("Office", 2), 4)
+            new WinConditions(6, 5, null, Map.of("Office", 2), 4),
+            "Description"
         ));
 
         romanceableCharacters.put("Tsumugi", new Romanceable(
@@ -194,7 +202,8 @@ public class DatingSim {
             new String[]{"good afternoon", "lol its nonn", "tsumugi da"},
             new String[]{"good evening", "lol its night", "tsumugi desu"},
             sceneHandler.getCenas("Tsumugi"),
-            new WinConditions(4, 5, null, Map.of("Library", 2), 0)
+            new WinConditions(4, 5, null, Map.of("Library", 2), 0),
+            "Description"
         ));
 
         nonRomanceableCharacters.put("Doggo", new NonRomanceable(

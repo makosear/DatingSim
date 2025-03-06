@@ -34,10 +34,11 @@ correct answers counter */
     private List<Scene> scenes;
     public List<Gift> giftsReceived = new java.util.ArrayList<>();
     private WinConditions winConditions;
+    private String description;
 
 
 
-    public Romanceable(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro, String spriteFilePath, String[] falasManha, String[] falasTarde, String[] falasNoite, List<Scene> scenes, WinConditions winConditions) {
+    public Romanceable(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro, String spriteFilePath, String[] falasManha, String[] falasTarde, String[] falasNoite, List<Scene> scenes, WinConditions winConditions, String description) {
         super(nome, presentesAma, presentesOdeia, lugaresEncontro);
         this.spriteFilePath = spriteFilePath;
         this.falasManha = falasManha;
@@ -47,6 +48,7 @@ correct answers counter */
         nivelDeAfeicao = 0;
         cenasVistas = 0;
         this.winConditions = winConditions;
+        this.description = description;
     }
 
     public String getSpriteFilePath() {

@@ -275,10 +275,21 @@ public class ui {
         bgPanel[PLAYER_CREATION_BG_NUM].add(playerCodeBox);
 
 
-        JButton btnSubmit = new JButton("Submit");
-        btnSubmit.setBounds(350, 375, 100, 50);
-        btnSubmit.addActionListener(e -> buttonSubmitPlayerCreation(playerNameBox.getText(), playerCodeBox.getText()));
-        bgPanel[PLAYER_CREATION_BG_NUM].add(btnSubmit);
+        JButton btnLogin = new JButton("Login");
+        btnLogin.setBounds(350, 375, 100, 50);
+        btnLogin.addActionListener(e -> buttonPlayerCreation(playerNameBox.getText(), playerCodeBox.getText(), "Login"));
+        bgPanel[PLAYER_CREATION_BG_NUM].add(btnLogin);
+
+        JButton btnRegister = new JButton("Register");
+        btnRegister.setBounds(500, 375, 100, 50);
+        btnRegister.addActionListener(e -> buttonPlayerCreation(playerNameBox.getText(), playerCodeBox.getText(), "Register"));
+        bgPanel[PLAYER_CREATION_BG_NUM].add(btnRegister);
+
+        JButton btnGuest = new JButton("Guest");
+        btnGuest.setBounds(350 - (500 - 350), 375, 100, 50);
+        btnGuest.addActionListener(e -> buttonPlayerCreation(playerNameBox.getText(), playerCodeBox.getText(), "Guest"));
+        bgPanel[PLAYER_CREATION_BG_NUM].add(btnGuest);
+
 
         bgPanel[PLAYER_CREATION_BG_NUM].revalidate();
         bgPanel[PLAYER_CREATION_BG_NUM].repaint();
@@ -290,8 +301,18 @@ public class ui {
 
     }
 
-    public void buttonSubmitPlayerCreation(String name, String code) {
-        gm.player.setName(name);
+    public void buttonPlayerCreation(String name, String code, String type) {
+        switch(type) {
+            case "Login":
+                gm.player.setName(name);
+                break;
+            case "Register":
+                gm.player.setName(name);
+                break;
+            case "Guest":
+                gm.player.setName(name);
+                break;
+        }
         gm.mudaLugar.changeLocation("Map", "Click a place to visit.");
     }
 
