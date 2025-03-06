@@ -7,7 +7,7 @@ package makosear.datingsim;
 import makosear.datingsim.GameStructure.ActionHandler;
 import makosear.datingsim.GameStructure.BGMHandler;
 import makosear.datingsim.GameStructure.MudaLugar;
-import makosear.datingsim.GameStructure.SaveHandler;
+import makosear.datingsim.GameStructure.GamePersistence.*;
 import makosear.datingsim.GameStructure.WinConditions;
 import makosear.datingsim.GameStructure.ui;
 import makosear.datingsim.Gift.Gift;
