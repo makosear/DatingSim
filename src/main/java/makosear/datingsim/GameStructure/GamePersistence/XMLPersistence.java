@@ -1,3 +1,5 @@
+//JÚLIO CÉSAR DA SILVA DOS SANTOS - 202135008
+
 package makosear.datingsim.GameStructure.GamePersistence;
 
 import javax.xml.bind.JAXBContext;
@@ -57,7 +59,7 @@ public class XMLPersistence implements GamePersistence {
     @Override
    public User loadUserData(String username, String filename) throws GameLoadException {
         XMLfilename = filename;
-        return loadUserData(username);
+        return loadUserData(username).get(0);
 
     }
 

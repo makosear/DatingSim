@@ -1,3 +1,5 @@
+
+//JÚLIO CÉSAR DA SILVA DOS SANTOS - 202135008
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -973,7 +975,13 @@ public class ui {
             sb.append(character.getNome()).append(":\n")
               .append("Affection: ").append(character.nivelDeAfeicao).append("\n")
               .append("Scenes Viewed: ").append(character.cenasVistas).append("\n")
-              .append("Win Conditions Met: ").append(character.isWinConditionsMet(gm.player)).append("\n\n");
+              .append("Win Conditions Met: ").append(character.isWinConditionsMet(gm.player)).append("\n\n")
+              .append("Current Location: ").append(gm.dayToLocationCharacters.get(gm.diaAtual).stream()
+              .filter(locationToCharacters -> locationToCharacters.characters.contains(character.getNome()))
+              .findFirst()
+              .map(locationToCharacters -> locationToCharacters.location)
+              .orElse("Unknown")).append("\n\n");
+
         }
         return sb.toString();
     }
