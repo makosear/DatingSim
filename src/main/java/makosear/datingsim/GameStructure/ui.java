@@ -217,6 +217,13 @@ public class ui {
                     }
                 
                     public void mouseEntered(MouseEvent e) {
+                        if (gm.userService.currentUser instanceof Admin) {
+                            if(option.startsWith("$g")) {
+                                optionText.setForeground(Color.GREEN);
+                            } else if(option.startsWith("$b")) {
+                                optionText.setForeground(Color.RED);
+                            }
+                        }
                         optionText.setForeground(Color.blue);
 
                     }
@@ -347,6 +354,7 @@ public class ui {
             if(user != null) {
                 gm.userService.currentUser = user;
                 showUserDashboard(user);
+                if (user.getProfileType() == "Admin") gm.mudaLugar.changeLocation("Map", "Admin powers enabled.");
                 if (!user.getUsername().startsWith("Guest_")) gm.mudaLugar.changeLocation("Map", "Welcome " + user.getUsername() + ". Choose a place to visit.");
                 else { gm.mudaLugar.changeLocation("CharacterProfiles"); backButton.setVisible(false); exitButton.setVisible(true);};
 
@@ -648,7 +656,7 @@ public class ui {
             }
         }
         createCharacterProfilesScreen();
-
+        createDebugPanel();
         createSaveMenu();
         //SCREEN 8 - PLAYER CREATIO
         createPlayerCreationMenu();
@@ -923,5 +931,50 @@ public class ui {
                 break;
         }
         
+    }
+
+    private JPanel debugPanel;
+    
+    private void createDebugPanel() {
+        debugPanel = new JPanel();
+        debugPanel.setBounds(50, 100, 700, 400);
+        debugPanel.setBackground(new Color(0,0,0,200));
+        debugPanel.setLayout(new BoxLayout(debugPanel, BoxLayout.Y_AXIS));
+        debugPanel.setVisible(false);
+
+        window.add(debugPanel);
+        window.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE && gm.userService.currentUser instanceof Admin) {
+                    toggleDebugPanel();
+                }
+            }
+        });
+    }
+
+    private void toggleDebugPanel() {
+        debugPanel.setVisible(!debugPanel.isVisible());
+        debugPanel.removeAll();
+        
+        if(debugPanel.isVisible()) {
+            JTextArea debugInfo = new JTextArea();
+            debugInfo.setText(getDebugInfo());
+            debugPanel.add(new JScrollPane(debugInfo));
+        }
+        
+        debugPanel.revalidate();
+    }
+
+    private String getDebugInfo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== Character Status ===\n");
+        for(Romanceable character : DatingSim.romanceableCharacters.values()) {
+            sb.append(character.getNome()).append(":\n")
+              .append("Affection: ").append(character.nivelDeAfeicao).append("\n")
+              .append("Scenes Viewed: ").append(character.cenasVistas).append("\n")
+              .append("Win Conditions Met: ").append(character.isWinConditionsMet(gm.player)).append("\n\n");
+        }
+        return sb.toString();
     }
 }

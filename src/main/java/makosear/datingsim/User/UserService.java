@@ -24,14 +24,21 @@ public class UserService {
         if (user != null && user.getPassword().equals(password)) {
             currentUser = user;
         }
-
-        return user;
+        if (username == "Admin") return (Admin) user;
+        else return user;
     }
 
     public void carregarUsuarios() {
         try {
-            users.add((Admin) persistence.loadUserData("admin_users.xml"));
-            users.add(persistence.loadUserData("users.json"));
+            List<User> loadedAdmins = persistence.loadUserData("admin_users.xml");
+            List<User> loadedUsers = persistence.loadUserData("users/users.json");
+            for (User user : loadedUsers) {
+                users.add(user);
+            }
+
+            for (User user : loadedAdmins) {
+                users.add(user);
+            }
         } catch (GameLoadException e) {
             // Tratar erro
             System.err.println("Erro ao carregar usuários: " + e.getMessage());
@@ -74,7 +81,7 @@ public class UserService {
                 if(u instanceof Admin) {
                     persistence.saveUserData(u, "admin_users.xml");
                 } else {
-                    persistence.saveUserData(u, "users.json");
+                    persistence.saveUserData(u, "users/users.json");
                 }
             } catch (GameSaveException e) {
                 // Tratar erro

@@ -1,5 +1,6 @@
 package makosear.datingsim.GameStructure.GamePersistence;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import makosear.datingsim.DatingSim;
@@ -9,6 +10,9 @@ import makosear.datingsim.User.User;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class JSONPersistence implements GamePersistence {
 
@@ -22,29 +26,45 @@ public class JSONPersistence implements GamePersistence {
     
     @Override
     public void saveUserData(User user) throws GameSaveException {
-        try {
-            mapper.writeValue(new File("users/" + user.getUsername() + ".json"), user);
-        } catch (IOException e) {
-            throw new GameSaveException("Falha ao salvar usuário", e);
-        }
+        saveUserData(user, "users/users.json");
     }
 
 
     @Override
     public void saveUserData(User user, String filename) throws GameSaveException {
         try {
-            mapper.writeValue(new File(filename), user);
+            System.out.println("Saving user data " + user.getUsername() + " to " + filename);
+            List<User> users = new ArrayList<>();
+            File file = new File(filename);
+            System.out.println(file.getAbsolutePath());
+             if(file.exists()) {
+                System.out.println("File exists");
+                users = mapper.readValue(file, new TypeReference<List<User>>(){});
+                if (users == null) List.of(mapper.readValue(file, new TypeReference<User>(){}));
+            }
+            System.out.println ("Users: " + users);
+
+            // Atualiza ou adiciona o usuário
+            users.removeIf(u -> u.getUsername().equals(user.getUsername()));
+            users.add(user);
+
+            System.out.println ("Users: " + users);
+
+            mapper.writeValue(file, users);
         } catch (IOException e) {
             throw new GameSaveException("Falha ao salvar usuário", e);
         }
     }
 
     @Override
-    public User loadUserData(String username) throws GameLoadException {
+    public List<User> loadUserData(String filename) throws GameLoadException {
         try {
-            return mapper.readValue(new File("users/" + username + ".json"), User.class);
+            File file = new File(filename);
+            if(!file.exists()) return new ArrayList<>();
+            
+            return mapper.readValue(file, new TypeReference<List<User>>(){});
         } catch (IOException e) {
-            throw new GameLoadException("Falha ao carregar usuário", e);
+            throw new GameLoadException("Falha ao carregar usuários", e);
         }
     }
 
@@ -52,7 +72,14 @@ public class JSONPersistence implements GamePersistence {
     @Override
     public User loadUserData(String username, String filename) throws GameLoadException {
         try {
-            return mapper.readValue(new File(filename), User.class);
+            File file = new File(filename);
+            if(!file.exists()) return null;
+            
+            List<User> users = mapper.readValue(file, new TypeReference<List<User>>(){});
+            return users.stream()
+                       .filter(u -> u.getUsername().equals(username))
+                       .findFirst()
+                       .orElse(null);
         } catch (IOException e) {
             throw new GameLoadException("Falha ao carregar usuário", e);
         }

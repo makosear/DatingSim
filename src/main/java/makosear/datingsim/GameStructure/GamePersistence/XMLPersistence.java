@@ -6,6 +6,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import java.io.File;
+import java.util.List;
 
 import makosear.datingsim.DatingSim;
 import makosear.datingsim.Excecao.GameLoadException;
@@ -43,10 +44,10 @@ public class XMLPersistence implements GamePersistence {
     }
 
     @Override
-    public User loadUserData(String username) throws GameLoadException {
+    public List<User> loadUserData(String filename) throws GameLoadException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (User) unmarshaller.unmarshal(new File(XMLfilename));
+            return (List<User>) unmarshaller.unmarshal(new File(XMLfilename));
         } catch (JAXBException e) {
             throw new GameLoadException("Falha ao carregar usuário em XML", e);
         }

@@ -349,14 +349,14 @@ public class DatingSim {
                 }
             }
         }
-    
+        /* 
         // Print results for verification
         for (int day = 1; day <= 7; day++) {
             System.out.println("=== Day " + day + " ===");
             for (LocationToCharacters locChar : dayToLocationCharacters.get(day)) {
                 System.out.println(locChar.location + ": " + locChar.characters);
             }
-        }
+        } */
     }
     
     private String chooseLocationBasedOnPercentage(Map<String, Double> locationPercentages, List<LocationToCharacters> existingLocations) {
