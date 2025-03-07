@@ -118,5 +118,9 @@ correct answers counter */
     public void setScenes(List<Scene> scenes) {
         this.scenes = scenes;
     }
+
+    public String getDescription() {
+        return description;
+    }
     
 }

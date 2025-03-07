@@ -19,6 +19,15 @@ public class UserService {
         carregarUsuarios();
     }
 
+    public User authenticateUser(String username, String password) {
+        User user = buscarUsuario(username);
+        if (user != null && user.getPassword().equals(password)) {
+            currentUser = user;
+        }
+
+        return user;
+    }
+
     public void carregarUsuarios() {
         try {
             users.add((Admin) persistence.loadUserData("admin_users.xml"));
@@ -53,6 +62,10 @@ public class UserService {
     public void removerUsuario(String username) {
         users.removeIf(u -> u.getUsername().equals(username));
         salvarUsuarios();
+    }
+
+    public void logoutUsuario() {
+        currentUser = null;
     }
 
     private void salvarUsuarios() {

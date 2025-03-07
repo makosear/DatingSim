@@ -149,7 +149,7 @@ public class DatingSim {
             new String[]{"good evening", "lol its night", "chiaki desu"},
             sceneHandler.getCenas("Chiaki"), 
             new WinConditions(3, 5, null, null, 0),
-            "Description"
+            "An average guy. :)"
         ));
 
         romanceableCharacters.put("Gaku", new Romanceable(
@@ -163,7 +163,7 @@ public class DatingSim {
             new String[]{"good evening", "lol its night", "gaku desu"},
             sceneHandler.getCenas("Gaku"),
             new WinConditions(6, 5, List.of(new Gift("Notebook", "This is a notebook.")), Map.of("Shopping Center", 5), 0),
-            "Description"   
+            "He's hiding secrets from you."   
         ));
 
         romanceableCharacters.put("Shu", new Romanceable(
@@ -177,7 +177,7 @@ public class DatingSim {
             new String[]{"good evening", "lol its night", "shu desu"},
             sceneHandler.getCenas("Shu"),
             new WinConditions(6, 5, null, Map.of("Park", 2), 0),
-            "Description"
+            "How magnificient!"
         ));
 
         romanceableCharacters.put("Yato", new Romanceable(
@@ -190,7 +190,7 @@ public class DatingSim {
             new String[]{"good evening", "lol its night", "yato desu"},
             sceneHandler.getCenas("Yato"),
             new WinConditions(6, 5, null, Map.of("Gym", 2), 0),
-            "Description"
+            "A guy with a low temper."
         ));
 
         romanceableCharacters.put("Itsuki", new Romanceable(
@@ -203,7 +203,7 @@ public class DatingSim {
             new String[]{"good evening", "lol its night", "itsuki desu"},
             sceneHandler.getCenas("Itsuki"),
             new WinConditions(6, 5, null, Map.of("Office", 2), 4),
-            "Description"
+            "The pretty boy."
         ));
 
         romanceableCharacters.put("Tsumugi", new Romanceable(
@@ -216,7 +216,7 @@ public class DatingSim {
             new String[]{"good evening", "lol its night", "tsumugi desu"},
             sceneHandler.getCenas("Tsumugi"),
             new WinConditions(4, 5, null, Map.of("Library", 2), 0),
-            "Description"
+            "He's a nerd."
         ));
 
         nonRomanceableCharacters.put("Doggo", new NonRomanceable(

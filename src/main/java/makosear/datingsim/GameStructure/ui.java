@@ -5,6 +5,8 @@
 package makosear.datingsim.GameStructure;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,7 +14,9 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -21,16 +25,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.io.IOException;
 import java.awt.GridLayout;
@@ -39,7 +46,14 @@ import java.awt.FlowLayout;
 import makosear.datingsim.DatingSim;
 import makosear.datingsim.Excecao.GameLoadException;
 import makosear.datingsim.Excecao.GameSaveException;
+import makosear.datingsim.Excecao.InvalidInputException;
 import makosear.datingsim.GameStructure.GamePersistence.*;
+import makosear.datingsim.Personagem.NonRomanceable.PlayerCharacter;
+import makosear.datingsim.Personagem.Romanceable.Romanceable;
+import makosear.datingsim.User.Admin;
+import makosear.datingsim.User.Default;
+import makosear.datingsim.User.Guest;
+import makosear.datingsim.User.User;
 
 /**
  *
@@ -53,6 +67,9 @@ public class ui {
 
     JFrame window;
     public JButton btnSave;
+    public JButton btnProfiles;
+    public JButton backButton; //characterprofiles screen
+    public JButton exitButton; // characterprofiles guest screen
     DatingSim gm;
 
     public JTextArea messageText;
@@ -110,10 +127,18 @@ public class ui {
         dayAndPeriodCounter.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
 
         btnSave = new JButton("Save/Load");
-        btnSave.addActionListener(e -> gm.mudaLugar.saveButton());
-        btnSave.setBounds(600, 25, 100, 50);
+        btnSave.addActionListener(e -> {System.out.println("lugar antigo eh " + gm.mudaLugar.previousLocation); gm.mudaLugar.menuButton("SaveMenu");});
+        btnSave.setBounds(300, 25, 150, 30);
         btnSave.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
         window.add(btnSave);
+
+        btnProfiles = new JButton("Character Profiles");
+        btnProfiles.addActionListener(e -> 
+                                gm.mudaLugar.menuButton("CharacterProfiles")
+                                );
+        btnProfiles.setBounds(500, 25, 200, 30); 
+        btnProfiles.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
+        window.add(btnProfiles);               
 
         messageText.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {}   
@@ -232,83 +257,124 @@ public class ui {
     }
 
     public void createPlayerCreationMenu() {
-
-        gm.mudaLugar.addNewLocation("PlayerCreationMenu", 
-        PLAYER_CREATION_BG_NUM, 
-        ""); 
-    
-        System.out.println("Creating player creation menu");
+        gm.mudaLugar.addNewLocation("PlayerCreationMenu", PLAYER_CREATION_BG_NUM, ""); 
+        
         bgPanel[PLAYER_CREATION_BG_NUM] = new JPanel();
         bgPanel[PLAYER_CREATION_BG_NUM].setBounds(0, 0, 800, 600);
         bgPanel[PLAYER_CREATION_BG_NUM].setBackground(Color.black);
-        bgPanel[PLAYER_CREATION_BG_NUM].setLayout(null); // Null layout
+        bgPanel[PLAYER_CREATION_BG_NUM].setLayout(null);
+
+        // Title
+        JLabel title = new JLabel("User Management");
+        title.setBounds(0, 50, 800, 100);
+        title.setHorizontalAlignment(JLabel.CENTER);
+        title.setFont(new Font("Book Antiqua", Font.BOLD, 32));
+        title.setForeground(Color.white);
+        bgPanel[PLAYER_CREATION_BG_NUM].add(title);
+
+        // Username
+        JLabel userLabel = new JLabel("Username:");
+        userLabel.setBounds(200, 150, 100, 30);
+        styleLabel(userLabel);
+        bgPanel[PLAYER_CREATION_BG_NUM].add(userLabel);
+
+        JTextField usernameField = new JTextField();
+        usernameField.setBounds(320, 150, 280, 30);
+        bgPanel[PLAYER_CREATION_BG_NUM].add(usernameField);
+
+        // Password
+        JLabel passLabel = new JLabel("Password:");
+        passLabel.setBounds(200, 200, 100, 30);
+        styleLabel(passLabel);
+        bgPanel[PLAYER_CREATION_BG_NUM].add(passLabel);
+
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setBounds(320, 200, 280, 30);
+        bgPanel[PLAYER_CREATION_BG_NUM].add(passwordField);
+
+        // Error Message Area
+        JTextArea errorArea = new JTextArea();
+        errorArea.setBounds(200, 300, 400, 50);
+        errorArea.setForeground(Color.RED);
+        errorArea.setBackground(Color.BLACK);
+        errorArea.setEditable(false);
+        bgPanel[PLAYER_CREATION_BG_NUM].add(errorArea);
+
+        // Buttons
+        JButton btnLogin = createActionButton("Login", 250, 375, e -> 
+            handleAuthAction(usernameField.getText(), 
+                            new String(passwordField.getPassword()), 
+                            "Login", 
+                            errorArea));
         
-        JLabel playerCreationTitle = new JLabel("Account information");
-        playerCreationTitle.setBounds(0, 50, 800, 100);
-        //set the text to the center
-        playerCreationTitle.setHorizontalAlignment(JLabel.CENTER);
-        playerCreationTitle.setFont(new Font("Book Antiqua", Font.PLAIN, 30));
-        playerCreationTitle.setForeground(Color.white);
-        bgPanel[PLAYER_CREATION_BG_NUM].add(playerCreationTitle);
+        JButton btnRegister = createActionButton("Register", 350, 375, e -> {
+            handleAuthAction(usernameField.getText(), 
+                            new String(passwordField.getPassword()), 
+                            "Register", 
+                            errorArea);
+        });
 
-        JTextArea playerNameLabel = new JTextArea("Name:");
-        playerNameLabel.setBounds(250, 200, 100, 50);
-        playerNameLabel.setBackground(Color.black);
-        playerNameLabel.setForeground(Color.white);
-        playerNameLabel.setEditable(false);
-        playerNameLabel.setLineWrap(true);
-        playerNameLabel.setWrapStyleWord(true);
-        playerNameLabel.setEnabled(false);
-        playerNameLabel.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
-        bgPanel[PLAYER_CREATION_BG_NUM].add(playerNameLabel);
+        JButton btnGuest = createActionButton("Guest", 450, 375, e -> 
+            handleAuthAction("Guest", "", "Guest", errorArea));
 
-        //box to type the name and save it to gm.Player.setName("name");
-        JTextField playerNameBox = new JTextField();
-        playerNameBox.setBounds(350, 200, 200, 30);
-        playerNameBox.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
-        bgPanel[PLAYER_CREATION_BG_NUM].add(playerNameBox);
-
-        JTextArea playerCodeLabel = new JTextArea("Code:");
-        playerCodeLabel.setBounds(250, 275, 100, 50);
-        playerCodeLabel.setBackground(Color.black);
-        playerCodeLabel.setForeground(Color.white);
-        playerCodeLabel.setEditable(false);
-        playerCodeLabel.setLineWrap(true);
-        playerCodeLabel.setWrapStyleWord(true);
-        playerCodeLabel.setEnabled(false);
-        playerCodeLabel.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
-        bgPanel[PLAYER_CREATION_BG_NUM].add(playerCodeLabel);
-
-        JTextField playerCodeBox = new JTextField();
-        playerCodeBox.setBounds(350, 275, 200, 30);
-        playerCodeBox.setFont(new Font("Book Antiqua", Font.PLAIN, 26));
-        bgPanel[PLAYER_CREATION_BG_NUM].add(playerCodeBox);
-
-
-        JButton btnLogin = new JButton("Login");
-        btnLogin.setBounds(350, 375, 100, 50);
-        btnLogin.addActionListener(e -> buttonPlayerCreation(playerNameBox.getText(), playerCodeBox.getText(), "Login"));
         bgPanel[PLAYER_CREATION_BG_NUM].add(btnLogin);
-
-        JButton btnRegister = new JButton("Register");
-        btnRegister.setBounds(500, 375, 100, 50);
-        btnRegister.addActionListener(e -> buttonPlayerCreation(playerNameBox.getText(), playerCodeBox.getText(), "Register"));
         bgPanel[PLAYER_CREATION_BG_NUM].add(btnRegister);
-
-        JButton btnGuest = new JButton("Guest");
-        btnGuest.setBounds(350 - (500 - 350), 375, 100, 50);
-        btnGuest.addActionListener(e -> buttonPlayerCreation(playerNameBox.getText(), playerCodeBox.getText(), "Guest"));
         bgPanel[PLAYER_CREATION_BG_NUM].add(btnGuest);
 
-
-        bgPanel[PLAYER_CREATION_BG_NUM].revalidate();
-        bgPanel[PLAYER_CREATION_BG_NUM].repaint();
-
         window.add(bgPanel[PLAYER_CREATION_BG_NUM]);
+    }
 
-        
-        
+    private void handleAuthAction(String username, String password, 
+                                String actionType, JTextArea errorArea) {
+        try {
+            User user = null;
 
+            switch(actionType) {
+                case "Login":
+                    user = gm.userService.authenticateUser(username, password);
+                    break;
+
+                case "Register":
+                    user = new Default(username, password);
+                    gm.userService.criarUsuario(user);
+                    break;
+
+                case "Guest":
+                    user = new Guest("Guest_" + System.currentTimeMillis(), "");
+                    break;
+            }
+
+            if(user != null) {
+                gm.userService.currentUser = user;
+                showUserDashboard(user);
+                if (!user.getUsername().startsWith("Guest_")) gm.mudaLugar.changeLocation("Map", "Welcome " + user.getUsername() + ". Choose a place to visit.");
+                else { gm.mudaLugar.changeLocation("CharacterProfiles"); backButton.setVisible(false); exitButton.setVisible(true);};
+
+            }
+            
+            else {
+                errorArea.setText("Authentication failed.");
+            }
+        } 
+        catch (InvalidInputException e) {
+            errorArea.setText(e.getMessage());
+        }
+        catch (Exception e) {
+            errorArea.setText("Authentication failed: " + e.getMessage());
+        }
+    }
+
+    private JButton createActionButton(String text, int x, int y, ActionListener listener) {
+        JButton button = new JButton(text);
+        button.setBounds(x, y, 100, 30);
+        button.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
+        button.addActionListener(listener);
+        return button;
+    }
+
+    private void styleLabel(JLabel label) {
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font("Book Antiqua", Font.PLAIN, 18));
     }
 
     public void buttonPlayerCreation(String name, String code, String type) {
@@ -575,12 +641,13 @@ public class ui {
         List<String> locations = new ArrayList<>(gm.mudaLugar.bgToLocations.keySet());
 
         for (String location : locations) {
-            if (location != "Map" && location != "characterScreen" && location != "MainMenu" && location != "SaveMenu") {
+            if (location != "Map" && location != "characterScreen" && location != "MainMenu" && location != "SaveMenu" && !location.equals("CharacterProfiles")) {
                 createBackground(gm.mudaLugar.bgToLocations.get(location), gm.mudaLugar.bgToFilePath.get(location));
                 
                 bgPanel[gm.mudaLugar.bgToLocations.get(location)].add(bgLabel[gm.mudaLugar.bgToLocations.get(location)]);
             }
         }
+        createCharacterProfilesScreen();
 
         createSaveMenu();
         //SCREEN 8 - PLAYER CREATIO
@@ -625,7 +692,7 @@ public class ui {
 
         JButton btnBack = new JButton("Back");
         styleButton(btnBack);
-        btnBack.addActionListener(e -> gm.mudaLugar.changeLocation(gm.mudaLugar.previousLocation));
+        btnBack.addActionListener(e -> {System.out.println("lugar antigo eh " + gm.mudaLugar.previousLocation); gm.mudaLugar.changeLocation(gm.mudaLugar.previousLocation);});
 
         controlPanel.add(btnBack);
 
@@ -744,5 +811,117 @@ public class ui {
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+    }
+
+    public void createCharacterProfilesScreen() {
+        final int PROFILES_BG_NUM = 11;
+        gm.mudaLugar.addNewLocation("CharacterProfiles", PROFILES_BG_NUM, "");
+
+        bgPanel[PROFILES_BG_NUM] = new JPanel();
+        bgPanel[PROFILES_BG_NUM].setBounds(50, 50, 700, 450);
+        bgPanel[PROFILES_BG_NUM].setBackground(Color.BLACK);
+        bgPanel[PROFILES_BG_NUM].setLayout(new BoxLayout(bgPanel[PROFILES_BG_NUM], BoxLayout.Y_AXIS));
+
+        // Title
+        JLabel titleLabel = new JLabel("Character Profiles");
+        titleLabel.setFont(new Font("Book Antiqua", Font.BOLD, 28));
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        bgPanel[PROFILES_BG_NUM].add(titleLabel);
+
+        // Scroll pane for profiles
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new GridLayout(0, 1, 10, 10)); // One column for rows
+        contentPanel.setBackground(Color.BLACK);
+
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setPreferredSize(new Dimension(650, 350));
+        scrollPane.getViewport().setBackground(Color.BLACK);
+        scrollPane.setBorder(null);
+
+        // Create profile entries for each romanceable character
+        for (Romanceable character : DatingSim.romanceableCharacters.values()) {
+            JPanel entryPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+            entryPanel.setBackground(Color.DARK_GRAY);
+            entryPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+            // Character Image
+            JLabel imageLabel = new JLabel();
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource(character.getSpriteFilePath  ()));
+            if (icon != null) {
+                Image scaled = icon.getImage().getScaledInstance(-1, 150, Image.SCALE_SMOOTH);
+                imageLabel.setIcon(new ImageIcon(scaled));
+            }
+            imageLabel.setHorizontalAlignment(JLabel.CENTER);
+
+            
+            JTextArea descArea = new JTextArea(character.getDescription());
+            descArea.setWrapStyleWord(true);
+            descArea.setLineWrap(true);
+            descArea.setEditable(false);
+            descArea.setBackground(Color.DARK_GRAY);
+            descArea.setForeground(Color.WHITE);
+            descArea.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
+
+            entryPanel.add(imageLabel);
+            entryPanel.add(descArea);
+            contentPanel.add(entryPanel);
+        }
+
+        // Back button
+        backButton = new JButton("Back");
+        styleButton(backButton);
+        
+        backButton.addActionListener(e -> {System.out.println("lugar antigo eh " + gm.mudaLugar.previousLocation); gm.mudaLugar.changeLocation(gm.mudaLugar.previousLocation);});
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+
+        //EXIT TO LOGIN
+        exitButton = new JButton("Exit to Login");
+        styleButton(exitButton);
+        exitButton.addActionListener(e -> {gm.userService.logoutUsuario(); gm.mudaLugar.changeLocation("PlayerCreationMenu");});
+        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exitButton.setVisible(false);
+        
+
+        bgPanel[PROFILES_BG_NUM].add(scrollPane);
+        bgPanel[PROFILES_BG_NUM].add(Box.createVerticalStrut(10));
+        bgPanel[PROFILES_BG_NUM].add(backButton);
+        bgPanel[PROFILES_BG_NUM].add(exitButton);
+
+        window.add(bgPanel[PROFILES_BG_NUM]);
+    }
+
+    public void showUserDashboard(User user) {
+        if(user instanceof Admin) {
+            // Show admin controls
+            //new AdminPanel(gm.userService).setVisible(true);
+        }
+        else if(user instanceof Default) {
+            // Load player data
+            //gm.player = ((Default) user).getPlayerCharacter();
+        }
+        else {
+            // Guest experience
+
+        }
+
+        updateUIForUserType(user.getProfileType());
+    } 
+
+    private void updateUIForUserType(String profileType) {
+
+        switch (profileType) {
+            case "Admin":
+                //
+                break;
+            case "Default":
+                //
+                break;
+            case "Guest":
+                backButton.setVisible(false);
+                break;
+        }
+        
     }
 }

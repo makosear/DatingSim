@@ -50,6 +50,7 @@ public class ActionHandler implements ActionListener {
             isWaitingOption = false;
             gm.ui.unpopulateOptions();
             gm.ui.btnSave.setVisible(true);
+            gm.ui.btnProfiles.setVisible(true);
             passDialogue();
         }
     }
@@ -98,7 +99,7 @@ public class ActionHandler implements ActionListener {
                     options[0] = options[0].replaceFirst("\\$o", "");
                     gm.ui.messageText.setText(options[0]);
                     gm.ui.btnSave.setVisible(false);
-
+                    gm.ui.btnProfiles.setVisible(false);
                     gm.ui.populateOptions(options);
 
                     isWaitingOption = true;

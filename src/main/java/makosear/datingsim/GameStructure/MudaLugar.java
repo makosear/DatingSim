@@ -89,7 +89,7 @@ public class MudaLugar {
                 gm.ui.bgPanel[entry.getValue()].setVisible(false);
             }
         }
-        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu") && !location.equals("PlayerCreationMenu") && !location.equals("SaveMenu")) {
+        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu") && !location.equals("PlayerCreationMenu") && !location.equals("SaveMenu") && !location.equals("CharacterProfiles")) {
             gm.ui.removeCharactersFromLocation(location);
             for (LocationToCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
             {
@@ -139,14 +139,17 @@ public class MudaLugar {
         currentLocation = location;
         gm.ui.messageText.setText(message);
 
-        if (location.equals("MainMenu") || location.equals("PlayerCreationMenu") || location.equals("SaveMenu")) {
+        if (location.equals("MainMenu") || location.equals("PlayerCreationMenu") || location.equals("SaveMenu") || location.equals("CharacterProfiles")) {
+            gm.ui.exitButton.setVisible(false);
             gm.ui.btnSave.setVisible(false);
+            gm.ui.btnProfiles.setVisible(false);
             gm.ui.dayAndPeriodCounter.setVisible(false);
             gm.ui.messageText.setVisible(false);
         }
 
         else {
             gm.ui.btnSave.setVisible(true);
+            gm.ui.btnProfiles.setVisible(true);
             //if (location.equals("Map")) {
                 gm.ui.dayAndPeriodCounter.setVisible(true);
                 gm.ui.messageText.setVisible(true);
@@ -155,9 +158,9 @@ public class MudaLugar {
 
     }
 
-    public void saveButton(){
+    public void menuButton(String menu){
         previousLocation = currentLocation;
-        gm.mudaLugar.changeLocation("SaveMenu");
+        gm.mudaLugar.changeLocation(menu);
     }
 
 
