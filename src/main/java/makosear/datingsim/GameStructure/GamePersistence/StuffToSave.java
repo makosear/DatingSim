@@ -2,19 +2,14 @@
 
 package makosear.datingsim.GameStructure.GamePersistence;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JTextArea;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import makosear.datingsim.DatingSim;
 import makosear.datingsim.LocationToCharacters;
-import makosear.datingsim.Gift.*;
-import makosear.datingsim.Personagem.*;
 import makosear.datingsim.Personagem.NonRomanceable.NonRomanceable;
 import makosear.datingsim.Personagem.NonRomanceable.PlayerCharacter;
 import makosear.datingsim.Personagem.Romanceable.Romanceable;

@@ -18,16 +18,11 @@ import makosear.datingsim.Personagem.Romanceable.*;
 import makosear.datingsim.Scene.Scene;
 import makosear.datingsim.Scene.SceneHandler;
 import makosear.datingsim.User.UserService;
-import makosear.datingsim.LocationToCharacters;
 
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

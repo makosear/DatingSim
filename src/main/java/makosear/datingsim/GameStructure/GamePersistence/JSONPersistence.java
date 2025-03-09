@@ -5,7 +5,6 @@ package makosear.datingsim.GameStructure.GamePersistence;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import makosear.datingsim.DatingSim;
 import makosear.datingsim.Excecao.GameLoadException;
 import makosear.datingsim.Excecao.GameSaveException;
 import makosear.datingsim.User.User;
@@ -17,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class JSONPersistence implements GamePersistence {
     private final Path userDirectory = Paths.get("users");

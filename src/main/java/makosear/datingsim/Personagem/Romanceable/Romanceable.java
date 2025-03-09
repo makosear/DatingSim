@@ -8,7 +8,6 @@ package makosear.datingsim.Personagem.Romanceable;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import makosear.datingsim.GameStructure.WinConditions;

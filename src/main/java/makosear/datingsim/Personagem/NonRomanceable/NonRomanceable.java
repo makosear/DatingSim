@@ -6,14 +6,8 @@
  */
 package makosear.datingsim.Personagem.NonRomanceable;
 import java.util.List;
-import java.util.Map;
 
-import makosear.datingsim.GameStructure.WinConditions;
-import makosear.datingsim.Gift.Gift;
 import makosear.datingsim.Personagem.Personagem;
-import makosear.datingsim.Personagem.NonRomanceable.*;
-import makosear.datingsim.Scene.*;
-
 /**
  
  * @author ice

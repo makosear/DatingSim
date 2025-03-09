@@ -10,7 +10,6 @@ import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.util.List;
 
-import makosear.datingsim.DatingSim;
 import makosear.datingsim.Excecao.GameLoadException;
 import makosear.datingsim.Excecao.GameSaveException;
 import makosear.datingsim.User.*;
@@ -45,6 +44,7 @@ public class XMLPersistence implements GamePersistence {
         saveUserData(user);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<User> loadUserData(String filename) throws GameLoadException {
         try {

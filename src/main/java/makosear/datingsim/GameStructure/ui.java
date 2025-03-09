@@ -39,9 +39,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.io.IOException;
 import java.awt.GridLayout;
 import java.awt.FlowLayout;
 
@@ -49,8 +47,6 @@ import makosear.datingsim.DatingSim;
 import makosear.datingsim.Excecao.GameLoadException;
 import makosear.datingsim.Excecao.GameSaveException;
 import makosear.datingsim.Excecao.InvalidInputException;
-import makosear.datingsim.GameStructure.GamePersistence.*;
-import makosear.datingsim.Personagem.NonRomanceable.PlayerCharacter;
 import makosear.datingsim.Personagem.Romanceable.Romanceable;
 import makosear.datingsim.User.Admin;
 import makosear.datingsim.User.Default;
