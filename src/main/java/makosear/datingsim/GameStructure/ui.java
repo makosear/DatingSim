@@ -36,8 +36,6 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +57,7 @@ import makosear.datingsim.User.User;
  * @author ice
  */
 public class ui {
+    public boolean tryingSomething;
     final int DEBUG_PANEL_BG_NUM = 12;
     final int PLAYER_CREATION_BG_NUM = 8;
     final int TRYING_STUFF = 425;
@@ -75,6 +74,7 @@ public class ui {
 
     private JTextPane debugInfo;
     public JTextArea messageText;
+    public String previousText;
     public JTextArea dayAndPeriodCounter;
     private List<JTextArea> optionTextAreas = new ArrayList<>();
     public JPanel bgPanel[] = new JPanel[15];
@@ -104,6 +104,9 @@ public class ui {
         window.getContentPane().setBackground(Color.black);
         window.setLayout(null);
         window.setResizable(false);
+        ImageIcon windowIcon = new ImageIcon(getClass().getClassLoader().getResource("icons/iconWindow.png"));
+        window.setIconImage(windowIcon.getImage());
+        window.setTitle("Dating Sim");
         
         messageText = new JTextArea("Sample text");
 
@@ -573,6 +576,27 @@ public class ui {
         locationButton.setActionCommand(objCommand);
         locationButton.setBorderPainted(false);
 
+        locationButton.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {}   
+
+            public void mousePressed(MouseEvent e) {}
+
+            public void mouseReleased(MouseEvent e) {}
+
+            public void mouseEntered(MouseEvent e) {
+                    previousText = messageText.getText();
+                    messageText.setText("Click to go to the" + objFileName.replaceFirst("icons/icon", "").replaceFirst("(?=[A-Z])", " ").replaceFirst(".png", ""));
+                    messageText.append(".");
+                    tryingSomething = true;
+
+            }
+
+            public void mouseExited(MouseEvent e) {
+                if (tryingSomething)messageText.setText(previousText);
+            }
+
+        });
+
         bgPanel[bgNum].add(locationButton);
 
 
@@ -853,14 +877,12 @@ public class ui {
         bgPanel[PROFILES_BG_NUM].setBackground(Color.BLACK);
         bgPanel[PROFILES_BG_NUM].setLayout(new BoxLayout(bgPanel[PROFILES_BG_NUM], BoxLayout.Y_AXIS));
 
-        // Title
         JLabel titleLabel = new JLabel("Character Profiles");
         titleLabel.setFont(new Font("Book Antiqua", Font.BOLD, 28));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         bgPanel[PROFILES_BG_NUM].add(titleLabel);
 
-        // Scroll pane for profiles
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new GridLayout(0, 1, 10, 10)); // One column for rows
         contentPanel.setBackground(Color.BLACK);
@@ -870,13 +892,11 @@ public class ui {
         scrollPane.getViewport().setBackground(Color.BLACK);
         scrollPane.setBorder(null);
 
-        // Create profile entries for each romanceable character
         for (Romanceable character : DatingSim.romanceableCharacters.values()) {
             JPanel entryPanel = new JPanel(new GridLayout(1, 2, 10, 0));
             entryPanel.setBackground(Color.DARK_GRAY);
             entryPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            // Character Image
             JLabel imageLabel = new JLabel();
             ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource(character.getSpriteFilePath  ()));
             if (icon != null) {
@@ -899,7 +919,6 @@ public class ui {
             contentPanel.add(entryPanel);
         }
 
-        // Back button
         backButton = new JButton("Back");
         styleButton(backButton);
         
@@ -907,7 +926,6 @@ public class ui {
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         
 
-        //EXIT TO LOGIN
         exitButton = new JButton("Exit to Login");
         styleButton(exitButton);
         exitButton.addActionListener(e -> {gm.userService.logoutUsuario(); gm.mudaLugar.changeLocation("PlayerCreationMenu");});
@@ -924,19 +942,6 @@ public class ui {
     }
 
     public void showUserDashboard(User user) {
-        if(user instanceof Admin) {
-            // Show admin controls
-            //new AdminPanel(gm.userService).setVisible(true);
-        }
-        else if(user instanceof Default) {
-            // Load player data
-            //gm.player = ((Default) user).getPlayerCharacter();
-        }
-        else {
-            // Guest experience
-
-        }
-
         updateUIForUserType(user.getProfileType());
     } 
 
@@ -944,13 +949,10 @@ public class ui {
 
         switch (profileType) {
             case "Admin":
-                //
-                break;
             case "Default":
-                //
                 break;
             case "Guest":
-                backButton.setVisible(false);
+                backButton.setVisible(false); // basically a sanity check tbh
                 break;
         }
         
@@ -990,33 +992,6 @@ public class ui {
 
         window.add(bgPanel[DEBUG_PANEL_BG_NUM]);
     }
-
-
-    /* 
-    private void createDebugPanel() {
-        debugPanel = new JPanel();
-        debugPanel.setBounds(50, 100, 700, 400);
-        debugPanel.setBackground(new Color(0,0,0,200));
-        debugPanel.setLayout(new BoxLayout(debugPanel, BoxLayout.Y_AXIS));
-        debugPanel.setVisible(false);
-
-        window.add(debugPanel);
-        window.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                    System.out.println("User pressed shift");
-                }
-                if (gm.userService.currentUser instanceof Admin) {
-                    System.out.println("User is admin");
-                }
-                if(e.getKeyCode() == KeyEvent.VK_SHIFT && gm.userService.currentUser instanceof Admin) {
-                    System.out.println("User pressed shift and is admin");
-                    toggleDebugPanel();
-                }
-            }
-        });
-    } */
 
     public void toggleDebugPanel() {
         if(bgPanel[DEBUG_PANEL_BG_NUM].isVisible()) {

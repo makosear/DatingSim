@@ -57,7 +57,17 @@ public class ActionHandler implements ActionListener {
     }
 
     public void passDialogue() {
+        if (dialogueBoxCounter == -1) {
+            System.out.println("Came here");
+            gm.ui.messageText.setText(gm.ui.previousText); 
+            currentDialogue.clear();
+            dialogueBoxCounter = 0;
+            currentCharacter = "";
+            return;
+        }
+
         if (!isWaitingOption) {
+
             if (isNoOneTalking()) { //send error 
                 dialogueBoxCounter = 0;
             }
@@ -129,8 +139,17 @@ public class ActionHandler implements ActionListener {
     public void talkToCharacter(String character) {
         currentCharacter = character;
                                 if (isNoOneTalking()) 
-                                    startDialogue(DatingSim.romanceableCharacters.get(currentCharacter).interact(gm.periodoAtual));
-                                else passDialogue(); 
+                                    giftCharacter(DatingSim.romanceableCharacters.get(currentCharacter).interact(gm.periodoAtual));
+                                else 
+                                    passDialogue(); 
+    }
+
+    private void giftCharacter(String message) {
+        System.out.println("Gifted character: " + currentCharacter);
+        gm.ui.previousText = gm.ui.messageText.getText();
+        gm.ui.messageText.setText(message);
+        dialogueBoxCounter = -1; 
+        //passDialogue();
     }
 
     
@@ -152,13 +171,14 @@ public class ActionHandler implements ActionListener {
             case "checkCh_Itsuki":  checkCharacter("Itsuki");             break;
             case "checkCh_Tsumugi":  checkCharacter("Tsumugi");            break;
             
-            case "giftCh_Chiaki": gm.ui.messageText.setText("Chiaki: Aw, that's so nice of you! Appreciate it."); break;
-            case "giftCh_Gaku": gm.ui.messageText.setText("Gaku: Cool, man! Are you trying to get points with me?"); break;
-            case "giftCh_Shu": gm.ui.messageText.setText("Shu: How wonderful! I'm grateful for your kindness."); break;
 
-            case "giftCh_Yato": gm.ui.messageText.setText("Yato: Tch... I don't wanna owe you anything. But if you are just handing it around..."); break;
-            case "giftCh_Itsuki": gm.ui.messageText.setText("Itsuki: Hm? Is that for me? Ah, thank you. I wasn't expecting a gift today."); break;
-            case "giftCh_Tsumugi": gm.ui.messageText.setText("Tsumugi: Oh, um. Do I really deserve this? Ah... you kinda put me on the spot. I feel awkward."); break;
+            case "giftCh_Chiaki": giftCharacter("Chiaki: Aw, that's so nice of you! Appreciate it."); break;
+            case "giftCh_Gaku": giftCharacter("Gaku: Cool, man! Are you trying to get points with me?"); break;
+            case "giftCh_Shu": giftCharacter("Shu: How wonderful! I'm grateful for your kindness."); break;
+
+            case "giftCh_Yato": giftCharacter("Yato: Tch... I don't wanna owe you anything. But if you are just handing it around..."); break;
+            case "giftCh_Itsuki": giftCharacter("Itsuki: Hm? Is that for me? Ah, thank you. I wasn't expecting a gift today."); break;
+            case "giftCh_Tsumugi": giftCharacter("Tsumugi: Oh, um. Do I really deserve this? Ah... you kinda put me on the spot. I feel awkward."); break;
 
 
             case "checkLocal": gm.ui.messageText.setText("You found an easter egg!"); break;

@@ -68,13 +68,14 @@ public class MudaLugar {
             message = slotLabel + ": What were we talking about? Oh...";
         } 
         else {
-            message = "You walk into " + slotLabel + ".";
+            message = "You walk into the " + slotLabel + ".";
         }
         changeLocation(location, message);
     }
 
     public void changeLocation(String location, String message) {
         boolean notFound = true;
+        gm.ui.tryingSomething = false;
         List<CharacterPosition> characterPositions = new ArrayList<>();
         characterPositions.add(CharacterPosition.CENTER);
         characterPositions.add(CharacterPosition.RIGHT);
