@@ -216,13 +216,16 @@ public class ui {
                 
                     public void mouseEntered(MouseEvent e) {
                         if (gm.userService.currentUser instanceof Admin) {
-                            if(option.startsWith("$g")) {
+                            String optionSelection = DatingSim.romanceableCharacters.get(gm.aHandler.currentCharacter).getCena().getResults(optionIndex);
+                            if(optionSelection.startsWith("$g")) {
                                 optionText.setForeground(Color.GREEN);
-                            } else if(option.startsWith("$b")) {
+                            } else if(optionSelection.startsWith("$b")) {
                                 optionText.setForeground(Color.RED);
                             }
                         }
-                        optionText.setForeground(Color.blue);
+                        else {
+                            optionText.setForeground(Color.blue);
+                        }
 
                     }
                 
