@@ -352,8 +352,8 @@ public class ui {
             if(user != null) {
                 gm.userService.currentUser = user;
                 showUserDashboard(user);
-                if (user.getProfileType() == "Admin") gm.mudaLugar.changeLocation("Map", "Admin powers enabled.");
-                if (!user.getUsername().startsWith("Guest_")) gm.mudaLugar.changeLocation("Map", "Welcome " + user.getUsername() + ". Choose a place to visit.");
+                if (user.getProfileType().equalsIgnoreCase("ADMIN")) gm.mudaLugar.changeLocation("Map", "Admin powers enabled.");
+                else if (!user.getUsername().startsWith("Guest_")) gm.mudaLugar.changeLocation("Map", "Welcome " + user.getUsername() + ". Choose a place to visit.");
                 else { gm.mudaLugar.changeLocation("CharacterProfiles"); backButton.setVisible(false); exitButton.setVisible(true);};
 
             }
@@ -954,7 +954,14 @@ public class ui {
         window.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ESCAPE && gm.userService.currentUser instanceof Admin) {
+                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                    System.out.println("User pressed shift");
+                }
+                if (gm.userService.currentUser instanceof Admin) {
+                    System.out.println("User is admin");
+                }
+                if(e.getKeyCode() == KeyEvent.VK_SHIFT && gm.userService.currentUser instanceof Admin) {
+                    System.out.println("User pressed shift and is admin");
                     toggleDebugPanel();
                 }
             }
