@@ -26,8 +26,7 @@ public class UserService {
         if (user != null && user.getPassword().equals(password)) {
             currentUser = user;
         }
-        if (username == "Admin") return (Admin) user;
-        else return user;
+        return user;
     }
 
     public void carregarUsuarios() {
@@ -42,8 +41,15 @@ public class UserService {
 
     public void criarUsuario(User user) throws InvalidInputException {
         Validator.validarUsuario(user);
-        users.add(user);
-        salvarUsuarios();
+        if (buscarUsuario(user.getUsername()) != null) {
+            throw new InvalidInputException("Usuario", "Usuario ja existe");
+        }
+
+        else { 
+            System.out.println(user.getUsername());
+            users.add(user);
+            salvarUsuarios();
+        }
     }
 
     public void atualizarUsuario(String username, User newData) throws InvalidInputException {
