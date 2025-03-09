@@ -11,7 +11,7 @@ public class Validator {
         validarCampo(user.getPassword(), "Password", 6, 30);
     }
 
-    private static void validarCampo(String valor, String nomeCampo, int min, int max) 
+    public static void validarCampo(String valor, String nomeCampo, int min, int max) 
         throws InvalidInputException {
         if(valor == null || valor.trim().isEmpty()) {
             throw new InvalidInputException(nomeCampo, "Não pode estar vazio");

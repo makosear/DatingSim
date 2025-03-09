@@ -149,7 +149,7 @@ public class ui {
         btnDebug.addActionListener(e -> 
                                     gm.mudaLugar.menuButton("DebugMenu")
             );
-        btnDebug.setBounds(725, 25, 50, 30); 
+        btnDebug.setBounds(725, 25, 25, 30); 
         btnDebug.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
         window.add(btnDebug);
 
@@ -712,7 +712,6 @@ public class ui {
 
 
     public Component getPanel() {
-        // TODO Auto-generated method stub
         return window;
     }
 

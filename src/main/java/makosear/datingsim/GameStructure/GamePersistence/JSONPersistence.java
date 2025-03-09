@@ -19,10 +19,10 @@ import java.util.List;
 
 public class JSONPersistence implements GamePersistence {
     private final Path userDirectory = Paths.get("users");
-    private StuffToSave stuffToSave;
+    private LoadedState stuffToSave;
     public final ObjectMapper mapper = new ObjectMapper();
 
-    public JSONPersistence(StuffToSave stuffToSave) {
+    public JSONPersistence(LoadedState stuffToSave) {
         this.stuffToSave = stuffToSave;
         createUserDirectory();
     }
@@ -33,6 +33,10 @@ public class JSONPersistence implements GamePersistence {
         } catch (IOException e) {
             System.err.println("Couldn't create users directory: " + e.getMessage());
         }
+    }
+
+    public LoadedState getLoadedState() {
+        return this.stuffToSave;
     }
     
     @Override
@@ -85,7 +89,7 @@ public class JSONPersistence implements GamePersistence {
     }
 
     @Override
-    public void saveGameState(StuffToSave stuffToSave, String filename) throws GameSaveException {
+    public void saveGameState(LoadedState stuffToSave, String filename) throws GameSaveException {
         try {
             File file = new File(filename);
             mapper.writerWithDefaultPrettyPrinter().writeValue(file, stuffToSave);
@@ -113,7 +117,7 @@ public class JSONPersistence implements GamePersistence {
             stuffToSave.setRomanceableCharacters(loadedState.getRomanceableCharacters());
             stuffToSave.setNonRomanceableCharacters(loadedState.getNonRomanceableCharacters());
 
-            stuffToSave.loadInformation(); 
+            if (stuffToSave instanceof StuffToSave) ((StuffToSave) stuffToSave).loadInformation(); 
 
         } catch (IOException e) {
             System.err.println("Deserialization error:");

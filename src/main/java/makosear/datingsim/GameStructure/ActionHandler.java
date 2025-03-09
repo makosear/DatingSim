@@ -17,6 +17,8 @@ public class ActionHandler implements ActionListener {
         this.gm = gm;
     }
 
+    final int TALK_OR_GIFT_INTERACTION = -1;
+
     public List<String> currentDialogue = new ArrayList<>();
     public String currentCharacter;
     public int dialogueBoxCounter = 0;
@@ -57,7 +59,7 @@ public class ActionHandler implements ActionListener {
     }
 
     public void passDialogue() {
-        if (dialogueBoxCounter == -1) {
+        if (dialogueBoxCounter == TALK_OR_GIFT_INTERACTION) {
             System.out.println("Came here");
             gm.ui.messageText.setText(gm.ui.previousText); 
             currentDialogue.clear();

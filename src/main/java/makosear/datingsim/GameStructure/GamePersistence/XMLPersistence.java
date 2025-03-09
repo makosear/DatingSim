@@ -1,76 +1,78 @@
-//JÚLIO CÉSAR DA SILVA DOS SANTOS - 202135008
-
 package makosear.datingsim.GameStructure.GamePersistence;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 import java.util.List;
 
+import makosear.datingsim.LocationToCharacters;
 import makosear.datingsim.Excecao.GameLoadException;
 import makosear.datingsim.Excecao.GameSaveException;
 import makosear.datingsim.User.*;
 
 public class XMLPersistence implements GamePersistence {
-    private String XMLfilename;
     private final JAXBContext context;
-    private StuffToSave stuffToSave;
+    private final StuffToSave stuffToSave;
 
     public XMLPersistence(StuffToSave stuffToSave) throws JAXBException {
         this.stuffToSave = stuffToSave;
-        try {
-            context = JAXBContext.newInstance(User.class, Admin.class, Default.class, Guest.class);
-        } catch (JAXBException e) {
-            throw new JAXBException("Erro ao criar JAXBContext", e);
-        }
+        this.context = JAXBContext.newInstance(
+            StuffToSave.class, 
+            User.class, 
+            Admin.class, 
+            Default.class, 
+            Guest.class,
+            LocationToCharacters.class
+        );
     }
 
     @Override
     public void saveUserData(User user) throws GameSaveException {
+        saveUserData(user, "users.xml");
+    }
+
+    @Override
+    public void saveUserData(User user, String filename) throws GameSaveException {
         try {
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(user, new File(XMLfilename));
+            marshaller.marshal(user, new File(filename));
         } catch (JAXBException e) {
-            throw new GameSaveException("Falha ao salvar usuario em XML", e);
+            throw new GameSaveException("Failed to save user data", e);
         }
     }
 
-    public void saveUserData(User user, String filename) throws GameSaveException {
-        XMLfilename = filename;
-        saveUserData(user);
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     public List<User> loadUserData(String filename) throws GameLoadException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (List<User>) unmarshaller.unmarshal(new File(XMLfilename));
+            UserWrapper wrapper = (UserWrapper) unmarshaller.unmarshal(new File(filename));
+            return wrapper.getUsers();
         } catch (JAXBException e) {
-            throw new GameLoadException("Falha ao carregar usuario em XML", e);
+            throw new GameLoadException("Failed to load user data", e);
         }
     }
 
-
     @Override
-   public User loadUserData(String username, String filename) throws GameLoadException {
-        XMLfilename = filename;
-        return loadUserData(username).get(0);
-
+    public User loadUserData(String username, String filename) throws GameLoadException {
+        List<User> users = loadUserData(filename);
+        return users.stream()
+                   .filter(u -> u.getUsername().equals(username))
+                   .findFirst()
+                   .orElse(null);
     }
 
     @Override
-    public void saveGameState(StuffToSave stuffToSave, String filename) throws GameSaveException {
+    public void saveGameState(LoadedState stuffToSave, String filename) throws GameSaveException {
         try {
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(stuffToSave, new File("gamestate.xml"));
+            marshaller.marshal(stuffToSave, new File(filename));
         } catch (JAXBException e) {
-            throw new GameSaveException("Falha ao salvar estado do jogo em XML", e);
+            throw new GameSaveException("Failed to save game state", e);
         }
     }
 
@@ -79,31 +81,29 @@ public class XMLPersistence implements GamePersistence {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             StuffToSave loadedState = (StuffToSave) unmarshaller.unmarshal(new File(filename));
-
-            stuffToSave.setDiaAtual(loadedState.getDiaAtual());
-            stuffToSave.setPeriodoAtual(loadedState.getPeriodoAtual());
-            stuffToSave.setPlayer(loadedState.getPlayer());
-            stuffToSave.setDayToLocationCharacters(loadedState.getDayToLocationCharacters());
-            stuffToSave.setCurrentUser(loadedState.getCurrentUser());
-            stuffToSave.setCurrentDialogue(loadedState.getCurrentDialogue());
-            stuffToSave.setCurrentCharacter(loadedState.getCurrentCharacter());
-            stuffToSave.setDialogueBoxCounter(loadedState.getDialogueBoxCounter());
-            stuffToSave.setIsWaitingOption(loadedState.getIsWaitingOption());
-            stuffToSave.setCurrentLocation(loadedState.getCurrentLocation());
-            stuffToSave.setMessageText(loadedState.getMessageText());
-            stuffToSave.setRomanceableCharacters(loadedState.getRomanceableCharacters());
-            stuffToSave.setNonRomanceableCharacters(loadedState.getNonRomanceableCharacters());
-
-
             stuffToSave.loadInformation();
-
-            
-
-
         } catch (JAXBException e) {
-            throw new GameLoadException("Falha ao carregar estado do jogo em XML", e);
+            throw new GameLoadException("Failed to load game state", e);
         }
     }
 
-    // Implementar outros métodos da interface
+    // Wrapper class for user list
+    @XmlRootElement(name = "users")
+    private static class UserWrapper {
+        private List<User> users;
+
+        public UserWrapper() {}
+
+        public UserWrapper(List<User> users) {
+            this.users = users;
+        }
+
+        public List<User> getUsers() {
+            return users;
+        }
+
+        public void setUsers(List<User> users) {
+            this.users = users;
+        }
+    }
 }

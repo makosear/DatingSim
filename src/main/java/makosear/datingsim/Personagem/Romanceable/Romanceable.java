@@ -42,6 +42,8 @@ correct answers counter */
 
 
 
+
+
     public Romanceable(String nome, List<String> presentesAma, List<String> presentesOdeia, Map<String, Double> lugaresEncontro, String spriteFilePath, String[] falasManha, String[] falasTarde, String[] falasNoite, List<Scene> scenes, WinConditions winConditions, String description) {
         super(nome, presentesAma, presentesOdeia, lugaresEncontro);
         this.spriteFilePath = spriteFilePath;
@@ -72,6 +74,10 @@ correct answers counter */
         return giftsReceived;
     }
 
+    public void setWinConditions(WinConditions winConditions) {
+        this.winConditions = winConditions;
+    }
+
 
     public String interact(String periodoAtual){
         if(periodoAtual == "Manha") return falasManha[(int)(Math.random() * falasManha.length)];
@@ -91,6 +97,17 @@ correct answers counter */
     @JsonIgnore
     public boolean isAllScenesViewed() {
         return cenasVistas >= scenes.size();
+    }
+
+    @JsonIgnore
+    String[] getFalas(String periodo) {
+        if (periodo.equals("Manha")) {
+            return falasManha;
+        } else if (periodo.equals("Tarde")) {
+            return falasTarde;
+        } else {
+            return falasNoite;
+        }
     }
 
     public void shiftAffection(int amount) {

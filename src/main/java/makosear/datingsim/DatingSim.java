@@ -431,10 +431,6 @@ public class DatingSim {
             if (p.isWinConditionsMet(this.player)) winConditionsMet.add(p.getNome());
         }
 
-        //DEBUG
-        winConditionsMet.add("Chiaki");
-        //TODO REMOVE
-
 
         if (winConditionsMet.size() == 0) ui.displayLoseScreen();
         else {

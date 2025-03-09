@@ -10,7 +10,6 @@ import makosear.datingsim.Excecao.GameSaveException;
 import makosear.datingsim.Excecao.InvalidInputException;
 import makosear.datingsim.GameStructure.GamePersistence.GamePersistence;
 
-// UserService.java - Novo serviço para gerenciamento de usuários
 public class UserService {
     private List<User> users = new ArrayList<>();
     private GamePersistence persistence;
