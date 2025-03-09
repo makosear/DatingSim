@@ -539,7 +539,17 @@ public class ui {
     }
 
     public void createLocationButton(int bgNum, int objx, int objy, int objw, int objh, String objFileName, String objCommand) {
-        ImageIcon locationIcon = new ImageIcon(getClass().getClassLoader().getResource(objFileName));
+
+        ImageIcon locationIcon = null;
+
+        java.net.URL imgURL = getClass().getClassLoader().getResource(objFileName);
+        if (imgURL != null) {
+            locationIcon = new ImageIcon(imgURL);
+        } else {
+            System.err.println("Missing icon: " + objFileName);
+            locationIcon = new ImageIcon(getClass().getClassLoader().getResource(""));
+
+        }
 
         JButton locationButton = new JButton();
 

@@ -36,7 +36,7 @@ public class XMLPersistence implements GamePersistence {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(user, new File(XMLfilename));
         } catch (JAXBException e) {
-            throw new GameSaveException("Falha ao salvar usuário em XML", e);
+            throw new GameSaveException("Falha ao salvar usuario em XML", e);
         }
     }
 
@@ -51,7 +51,7 @@ public class XMLPersistence implements GamePersistence {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             return (List<User>) unmarshaller.unmarshal(new File(XMLfilename));
         } catch (JAXBException e) {
-            throw new GameLoadException("Falha ao carregar usuário em XML", e);
+            throw new GameLoadException("Falha ao carregar usuario em XML", e);
         }
     }
 

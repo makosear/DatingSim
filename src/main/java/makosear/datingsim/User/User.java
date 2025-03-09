@@ -2,6 +2,23 @@
 //JÚLIO CÉSAR DA SILVA DOS SANTOS - 202135008
 package makosear.datingsim.User;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "profileType" 
+)
+@JsonSubTypes({
+    @Type(value = Admin.class, name = "ADMIN"),
+    @Type(value = Default.class, name = "DEFAULT"),
+    @Type(value = Guest.class, name = "GUEST")
+})
+
 public abstract class User implements Authenticable {
     protected String username;
     protected String password;

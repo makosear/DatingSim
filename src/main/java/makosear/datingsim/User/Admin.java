@@ -10,6 +10,11 @@ public class Admin extends User {
         this.profileType = "ADMIN";
     }
 
+    public Admin() {
+        super("", "");
+        this.profileType = "ADMIN";
+    }
+
     @Override
     public boolean authenticate(String password) {
         return this.password.equals(password);

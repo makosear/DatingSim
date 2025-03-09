@@ -32,20 +32,11 @@ public class UserService {
 
     public void carregarUsuarios() {
         try {
-            List<User> loadedAdmins = persistence.loadUserData("admin_users.xml");
-            List<User> loadedUsers = persistence.loadUserData("users/users.json");
-            for (User user : loadedUsers) {
-                users.add(user);
-            }
-
-            for (User user : loadedAdmins) {
-                users.add(user);
-            }
+            users = persistence.loadUserData("users.json");
+            System.out.println("Loaded " + users.size() + " users from storage");
         } catch (GameLoadException e) {
-            // Tratar erro
-            System.err.println("Erro ao carregar usuários: " + e.getMessage());
-            e.printStackTrace();
-
+            System.out.println("No existing users found, starting fresh");
+            users = new ArrayList<>();
         }
     }
 
@@ -78,16 +69,14 @@ public class UserService {
     }
 
     private void salvarUsuarios() {
-        users.forEach(u -> {
-            try {
-                if(u instanceof Admin) {
-                    persistence.saveUserData(u, "admin_users.xml");
-                } else {
-                    persistence.saveUserData(u, "users/users.json");
-                }
-            } catch (GameSaveException e) {
-                // Tratar erro
+        try {
+            for (User user : users) {
+                persistence.saveUserData(user, "users.json");
             }
-        });
+        } catch (GameSaveException e) {
+            //print error stack
+            e.printStackTrace();
+            System.err.println("Erro: " + e.getMessage());
+        }
     }
 }

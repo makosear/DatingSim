@@ -12,61 +12,60 @@ import makosear.datingsim.User.User;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class JSONPersistence implements GamePersistence {
-
+    private final Path userDirectory = Paths.get("users");
     private StuffToSave stuffToSave;
+    public final ObjectMapper mapper = new ObjectMapper();
 
     public JSONPersistence(StuffToSave stuffToSave) {
         this.stuffToSave = stuffToSave;
+        createUserDirectory();
     }
 
-    public final ObjectMapper mapper = new ObjectMapper();
+    private void createUserDirectory() {
+        try {
+            Files.createDirectories(userDirectory);
+        } catch (IOException e) {
+            System.err.println("Couldn't create users directory: " + e.getMessage());
+        }
+    }
     
     @Override
     public void saveUserData(User user) throws GameSaveException {
-        saveUserData(user, "users/users.json");
+        saveUserData(user, "users.json");
     }
 
 
     @Override
     public void saveUserData(User user, String filename) throws GameSaveException {
+        Path filePath = userDirectory.resolve(filename);
         try {
-            System.out.println("Saving user data " + user.getUsername() + " to " + filename);
-            List<User> users = new ArrayList<>();
-            File file = new File(filename);
-            System.out.println(file.getAbsolutePath());
-             if(file.exists()) {
-                System.out.println("File exists");
-                users = mapper.readValue(file, new TypeReference<List<User>>(){});
-                if (users == null) List.of(mapper.readValue(file, new TypeReference<User>(){}));
-            }
-            System.out.println ("Users: " + users);
-
-            // Atualiza ou adiciona o usuário
+            List<User> users = Files.exists(filePath) ? 
+                mapper.readValue(filePath.toFile(), new TypeReference<List<User>>(){}) : 
+                new ArrayList<>();
             users.removeIf(u -> u.getUsername().equals(user.getUsername()));
             users.add(user);
-
-            System.out.println ("Users: " + users);
-
-            mapper.writeValue(file, users);
+            mapper.writeValue(filePath.toFile(), users);
         } catch (IOException e) {
-            throw new GameSaveException("Falha ao salvar usuário", e);
+            throw new GameSaveException("Falha ao salvar usuario", e);
         }
     }
 
     @Override
     public List<User> loadUserData(String filename) throws GameLoadException {
+        Path filePath = userDirectory.resolve(filename);
         try {
-            File file = new File(filename);
-            if(!file.exists()) return new ArrayList<>();
-            
-            return mapper.readValue(file, new TypeReference<List<User>>(){});
+            if(Files.notExists(filePath)) return new ArrayList<>();
+            return mapper.readValue(filePath.toFile(), new TypeReference<List<User>>(){});
         } catch (IOException e) {
-            throw new GameLoadException("Falha ao carregar usuários", e);
+            throw new GameLoadException("Falha ao carregar usuarios", e);
         }
     }
 
@@ -83,7 +82,7 @@ public class JSONPersistence implements GamePersistence {
                        .findFirst()
                        .orElse(null);
         } catch (IOException e) {
-            throw new GameLoadException("Falha ao carregar usuário", e);
+            throw new GameLoadException("Falha ao carregar usuario", e);
         }
     }
 
