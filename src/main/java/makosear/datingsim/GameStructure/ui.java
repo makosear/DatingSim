@@ -21,6 +21,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -58,6 +59,7 @@ import makosear.datingsim.User.User;
  * @author ice
  */
 public class ui {
+    final int DEBUG_PANEL_BG_NUM = 12;
     final int PLAYER_CREATION_BG_NUM = 8;
     final int TRYING_STUFF = 425;
     final int MSGBOX_Y = 410;
@@ -68,13 +70,15 @@ public class ui {
     public JButton btnProfiles;
     public JButton backButton; //characterprofiles screen
     public JButton exitButton; // characterprofiles guest screen
+    public JButton btnDebug;
     DatingSim gm;
 
+    private JTextPane debugInfo;
     public JTextArea messageText;
     public JTextArea dayAndPeriodCounter;
     private List<JTextArea> optionTextAreas = new ArrayList<>();
-    public JPanel bgPanel[] = new JPanel[12];
-    public JLabel bgLabel[] = new JLabel[12];
+    public JPanel bgPanel[] = new JPanel[15];
+    public JLabel bgLabel[] = new JLabel[15];
     
     
 
@@ -136,7 +140,15 @@ public class ui {
                                 );
         btnProfiles.setBounds(500, 25, 200, 30); 
         btnProfiles.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
-        window.add(btnProfiles);               
+        window.add(btnProfiles);
+        
+        btnDebug = new JButton("D");
+        btnDebug.addActionListener(e -> 
+                                    gm.mudaLugar.menuButton("DebugMenu")
+            );
+        btnDebug.setBounds(725, 25, 50, 30); 
+        btnDebug.setFont(new Font("Book Antiqua", Font.PLAIN, 16));
+        window.add(btnDebug);
 
         messageText.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {}   
@@ -944,8 +956,43 @@ public class ui {
         
     }
 
-    private JPanel debugPanel;
-    
+    private void createDebugPanel() {
+        
+        gm.mudaLugar.addNewLocation("DebugMenu", DEBUG_PANEL_BG_NUM, "");
+
+        bgPanel[DEBUG_PANEL_BG_NUM] = new JPanel();
+        bgPanel[DEBUG_PANEL_BG_NUM].setBounds(0, 0, 800, 600);
+        bgPanel[DEBUG_PANEL_BG_NUM].setBackground(Color.black);
+        bgPanel[DEBUG_PANEL_BG_NUM].setLayout(new BoxLayout(bgPanel[DEBUG_PANEL_BG_NUM], BoxLayout.Y_AXIS));
+
+        // Control Buttonsw
+        JPanel controlPanel = new JPanel(new FlowLayout());
+        controlPanel.setBackground(Color.BLACK);
+
+        JButton btnBack = new JButton("Back");
+        styleButton(btnBack);
+        btnBack.addActionListener(e -> {
+            System.out.println("lugar antigo eh " + gm.mudaLugar.previousLocation); 
+            gm.mudaLugar.changeLocation(gm.mudaLugar.previousLocation);
+        });
+
+        debugInfo = new JTextPane();
+        debugInfo.setContentType("text/html");
+        debugInfo.setEditable(false);
+
+        controlPanel.add(btnBack);
+
+        bgPanel[DEBUG_PANEL_BG_NUM].add(controlPanel);
+
+        bgPanel[DEBUG_PANEL_BG_NUM].add(new JScrollPane(debugInfo));
+
+        
+
+        window.add(bgPanel[DEBUG_PANEL_BG_NUM]);
+    }
+
+
+    /* 
     private void createDebugPanel() {
         debugPanel = new JPanel();
         debugPanel.setBounds(50, 100, 700, 400);
@@ -969,36 +1016,35 @@ public class ui {
                 }
             }
         });
-    }
+    } */
 
-    private void toggleDebugPanel() {
-        debugPanel.setVisible(!debugPanel.isVisible());
-        debugPanel.removeAll();
-        
-        if(debugPanel.isVisible()) {
-            JTextArea debugInfo = new JTextArea();
+    public void toggleDebugPanel() {
+        if(bgPanel[DEBUG_PANEL_BG_NUM].isVisible()) {
             debugInfo.setText(getDebugInfo());
-            debugPanel.add(new JScrollPane(debugInfo));
         }
         
-        debugPanel.revalidate();
+        bgPanel[DEBUG_PANEL_BG_NUM].revalidate();
     }
 
     private String getDebugInfo() {
         StringBuilder sb = new StringBuilder();
-        sb.append("=== Character Status ===\n");
-        for(Romanceable character : DatingSim.romanceableCharacters.values()) {
-            sb.append(character.getNome()).append(":\n")
-              .append("Affection: ").append(character.nivelDeAfeicao).append("\n")
-              .append("Scenes Viewed: ").append(character.cenasVistas).append("\n")
-              .append("Win Conditions Met: ").append(character.isWinConditionsMet(gm.player)).append("\n\n")
-              .append("Current Location: ").append(gm.dayToLocationCharacters.get(gm.diaAtual).stream()
-              .filter(locationToCharacters -> locationToCharacters.characters.contains(character.getNome()))
-              .findFirst()
-              .map(locationToCharacters -> locationToCharacters.location)
-              .orElse("Unknown")).append("\n\n");
-
+        sb.append("<html>=== Character Status ===<br>");
+        
+        for (Romanceable character : DatingSim.romanceableCharacters.values()) {
+            sb.append("<b>").append(character.getNome()).append("</b>:<br>")
+              .append("<b>Affection: </b>").append(character.nivelDeAfeicao).append("<br>")
+              .append("<b>Scenes Viewed: </b>").append(character.cenasVistas).append("<br>")
+              .append("<b>Win Conditions Met: </b>").append(character.isWinConditionsMet(gm.player)).append("<br><br>")
+              .append("<b>Current Location: </b>").append(
+                  gm.dayToLocationCharacters.get(gm.diaAtual).stream()
+                      .filter(locationToCharacters -> locationToCharacters.characters.contains(character.getNome()))
+                      .findFirst()
+                      .map(locationToCharacters -> locationToCharacters.location)
+                      .orElse("Unknown"))
+              .append("<br><br>");
         }
+        
+        sb.append("</html>");
         return sb.toString();
     }
 }

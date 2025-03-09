@@ -4,6 +4,7 @@ package makosear.datingsim.GameStructure;
 
 import makosear.datingsim.DatingSim;
 import makosear.datingsim.LocationToCharacters;
+import makosear.datingsim.User.Admin;
 
 import java.util.*;
 
@@ -91,7 +92,7 @@ public class MudaLugar {
                 gm.ui.bgPanel[entry.getValue()].setVisible(false);
             }
         }
-        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu") && !location.equals("PlayerCreationMenu") && !location.equals("SaveMenu") && !location.equals("CharacterProfiles")) {
+        if (!location.equals ("Map") && !location.equals("characterScreen") && !location.equals("MainMenu") && !location.equals("PlayerCreationMenu") && !location.equals("SaveMenu") && !location.equals("CharacterProfiles") && !location.equals("DebugMenu")) {
             gm.ui.removeCharactersFromLocation(location);
             for (LocationToCharacters locationCharacters : gm.dayToLocationCharacters.get(gm.diaAtual))
             {
@@ -141,15 +142,18 @@ public class MudaLugar {
         currentLocation = location;
         gm.ui.messageText.setText(message);
 
-        if (location.equals("MainMenu") || location.equals("PlayerCreationMenu") || location.equals("SaveMenu") || location.equals("CharacterProfiles")) {
+        if (location.equals("MainMenu") || location.equals("PlayerCreationMenu") || location.equals("SaveMenu") || location.equals("CharacterProfiles") || location.equals("DebugMenu")) {
             gm.ui.exitButton.setVisible(false);
             gm.ui.btnSave.setVisible(false);
+            gm.ui.btnDebug.setVisible(false);
             gm.ui.btnProfiles.setVisible(false);
             gm.ui.dayAndPeriodCounter.setVisible(false);
             gm.ui.messageText.setVisible(false);
+            gm.ui.toggleDebugPanel();
         }
 
         else {
+            if (gm.userService.currentUser instanceof Admin) gm.ui.btnDebug.setVisible(true);
             gm.ui.btnSave.setVisible(true);
             gm.ui.btnProfiles.setVisible(true);
             //if (location.equals("Map")) {

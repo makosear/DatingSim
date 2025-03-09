@@ -23,10 +23,12 @@ public class UserService {
 
     public User authenticateUser(String username, String password) {
         User user = buscarUsuario(username);
-        if (user != null && user.getPassword().equals(password)) {
-            currentUser = user;
+        if (user != null && user.getPassword().equals(password)) { 
+            this.currentUser = user;
+            System.out.println("Authenticated as: " + user.getClass().getSimpleName());
+            return user;
         }
-        return user;
+        return null;
     }
 
     public void carregarUsuarios() {
