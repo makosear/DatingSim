@@ -11,6 +11,8 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -26,10 +28,14 @@ import javax.swing.SwingUtilities;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -38,7 +44,9 @@ import java.io.IOException;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.awt.GridLayout;
 import java.awt.FlowLayout;
 
@@ -76,7 +84,9 @@ public class ui {
     public JTextArea messageText;
     public String previousText;
     public JTextArea dayAndPeriodCounter;
+    public JPanel characterManager;
     private List<JTextArea> optionTextAreas = new ArrayList<>();
+    Map<String, JTextArea> characterTextMap;
     public JPanel bgPanel[] = new JPanel[15];
     public JLabel bgLabel[] = new JLabel[15];
     
@@ -867,6 +877,12 @@ public class ui {
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
     }
 
+    public void updateDescriptions() {
+        for (Map.Entry<String, JTextArea> entry : characterTextMap.entrySet()) {
+            entry.getValue().setText(DatingSim.romanceableCharacters.get(entry.getKey()).getDescription());
+        }
+    }
+
     public void createCharacterProfilesScreen() {
         final int PROFILES_BG_NUM = 11;
         gm.mudaLugar.addNewLocation("CharacterProfiles", PROFILES_BG_NUM, "");
@@ -890,6 +906,8 @@ public class ui {
         scrollPane.setPreferredSize(new Dimension(650, 350));
         scrollPane.getViewport().setBackground(Color.BLACK);
         scrollPane.setBorder(null);
+
+        characterTextMap = new HashMap<>();
 
         for (Romanceable character : DatingSim.romanceableCharacters.values()) {
             JPanel entryPanel = new JPanel(new GridLayout(1, 2, 10, 0));
@@ -916,7 +934,9 @@ public class ui {
             entryPanel.add(imageLabel);
             entryPanel.add(descArea);
             contentPanel.add(entryPanel);
+            characterTextMap.put(character.getNome(), descArea);    
         }
+        
 
         backButton = new JButton("Back");
         styleButton(backButton);
@@ -958,38 +978,329 @@ public class ui {
     }
 
     private void createDebugPanel() {
-        
         gm.mudaLugar.addNewLocation("DebugMenu", DEBUG_PANEL_BG_NUM, "");
-
+    
         bgPanel[DEBUG_PANEL_BG_NUM] = new JPanel();
         bgPanel[DEBUG_PANEL_BG_NUM].setBounds(0, 0, 800, 600);
         bgPanel[DEBUG_PANEL_BG_NUM].setBackground(Color.black);
-        bgPanel[DEBUG_PANEL_BG_NUM].setLayout(new BoxLayout(bgPanel[DEBUG_PANEL_BG_NUM], BoxLayout.Y_AXIS));
-
-        // Control Buttonsw
+        bgPanel[DEBUG_PANEL_BG_NUM].setLayout(new BorderLayout());
+    
+        // Control Buttons
         JPanel controlPanel = new JPanel(new FlowLayout());
         controlPanel.setBackground(Color.BLACK);
+    
+        // dividir em abas para debuginfo e charactermanager
+        JPanel contentPanel = new JPanel(new CardLayout());
+        contentPanel.setBackground(Color.BLACK);
+        
+        JButton btnDebugInfo = new JButton("Debug Info");
+        styleButton(btnDebugInfo);
+        btnDebugInfo.addActionListener(e -> {
+            CardLayout cl = (CardLayout) contentPanel.getLayout();
+            cl.show(contentPanel, "DEBUG_INFO");
+        });
 
         JButton btnBack = new JButton("Back");
         styleButton(btnBack);
         btnBack.addActionListener(e -> {
-            System.out.println("lugar antigo eh " + gm.mudaLugar.previousLocation); 
             gm.mudaLugar.changeLocation(gm.mudaLugar.previousLocation);
         });
-
+    
+        JButton btnCharacterManager = new JButton("Character Manager");
+        styleButton(btnCharacterManager);
+        btnCharacterManager.addActionListener(e -> {
+            CardLayout cl = (CardLayout) contentPanel.getLayout();
+            cl.show(contentPanel, "CHARACTER_MANAGER");
+        });
+        
+        controlPanel.add(btnDebugInfo);
+        controlPanel.add(btnCharacterManager);
+        controlPanel.add(btnBack);
+        
+        // DebugInfo
         debugInfo = new JTextPane();
         debugInfo.setContentType("text/html");
         debugInfo.setEditable(false);
+        JScrollPane debugScrollPane = new JScrollPane(debugInfo);
+        contentPanel.add(debugScrollPane, "DEBUG_INFO"); 
+    
+        // CharacterManager
+        characterManager = new JPanel();
+        characterManager.setLayout(new BorderLayout());
 
-        controlPanel.add(btnBack);
+        // Left panel of the character manager
+        JPanel spriteComboBox = new JPanel();
+        spriteComboBox.setLayout(new BoxLayout(spriteComboBox, BoxLayout.Y_AXIS));
+        spriteComboBox.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        spriteComboBox.setPreferredSize(new Dimension(250, 500));        
+        JLabel characterSpriteViewer = new JLabel();
+        characterSpriteViewer.setAlignmentX(Component.CENTER_ALIGNMENT);
+        characterSpriteViewer.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        
+        JLabel characterLabel = new JLabel("Select Character:");
+        characterLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        String[] characterNames = new String[DatingSim.romanceableCharacters.size()];
+        String[] characterFilepaths = new String[DatingSim.romanceableCharacters.size()];
+        int i = 0;
+        for (Romanceable character : DatingSim.romanceableCharacters.values()) {
+            characterNames[i] = character.getNome();
+            characterFilepaths[i] = character.getSpriteFilePath();
+            i++;
+        }
 
-        bgPanel[DEBUG_PANEL_BG_NUM].add(controlPanel);
-
-        bgPanel[DEBUG_PANEL_BG_NUM].add(new JScrollPane(debugInfo));
+        
+    
+        JComboBox<String> characterNameComboBox = new JComboBox<>(characterNames);
+        characterNameComboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        characterNameComboBox.setPreferredSize(new Dimension(150, 25));
+        characterNameComboBox.setMaximumSize(new Dimension(200, 25));
 
         
 
+        spriteComboBox.add(characterLabel);
+        spriteComboBox.add(characterNameComboBox);
+        spriteComboBox.add(characterSpriteViewer);
+        
+        // Right panel of the character manager
+        JPanel editableFields = new JPanel();
+        editableFields.setLayout(new BoxLayout(editableFields, BoxLayout.Y_AXIS));
+        editableFields.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    
+        // Create a map to store all text fields for later reference
+        Map<String, JComponent> fieldComponents = new HashMap<>();
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton saveButton = new JButton("Save Character");
+        buttonPanel.add(saveButton);
+        editableFields.add(saveButton);
+    
+        // Name field
+        JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        namePanel.add(new JLabel("Name:"));
+        JTextField nameField = new JTextField(20);
+        namePanel.add(nameField);
+        editableFields.add(namePanel);
+        fieldComponents.put("nome", nameField);
+    
+        // Description field
+        JPanel descPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        descPanel.add(new JLabel("Description:"));
+        JTextArea descField = new JTextArea(5, 20);
+        descField.setLineWrap(true);
+        descField.setWrapStyleWord(true);
+        editableFields.add(descPanel);
+        fieldComponents.put("description", descField);
+    
+        // Sprite filepath
+        JPanel spritePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JComboBox<String> characterFilepathsComboBox = new JComboBox<>(characterFilepaths);
+        characterFilepathsComboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        characterFilepathsComboBox.setPreferredSize(new Dimension(150, 25));
+        characterFilepathsComboBox.setMaximumSize(new Dimension(200, 25));
+        spritePanel.add(new JLabel("Sprite File Path:"));
+        spritePanel.add(characterFilepathsComboBox);
+        editableFields.add(spritePanel);
+        fieldComponents.put("spriteFilePath", characterFilepathsComboBox);
+    
+        // Encounter locations panel
+        JPanel locationsPanel = new JPanel();
+        locationsPanel.setLayout(new BoxLayout(locationsPanel, BoxLayout.Y_AXIS));
+        locationsPanel.setBorder(BorderFactory.createTitledBorder("Encounter Locations (Sum must be 1.0)")); // esse createtitledborder eh mt util bixo eu qria ter usado isso para setar os graficos de personagens custom
+    
+        String[] locations = {"Cafe", "Gym", "Library", "Mall", "Office", "Park"};
+        Map<String, JTextField> locationFields = new HashMap<>();
+    
+        for (String location : locations) {
+            JPanel locationRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            locationRow.add(new JLabel(location + ":"));
+            JTextField valueField = new JTextField("0.0", 5);
+            locationRow.add(valueField);
+            locationsPanel.add(locationRow);
+            locationFields.put(location, valueField);
+        }
+    
+        JPanel totalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        totalPanel.add(new JLabel("Total:"));
+        JLabel totalValueLabel = new JLabel("0.0");
+        totalPanel.add(totalValueLabel);
+    
+        JButton refreshTotalButton = new JButton("Refresh Total");
+        refreshTotalButton.addActionListener(e -> {
+            double total = 0.0;
+            for (JTextField field : locationFields.values()) {
+                try {
+                    total += Double.parseDouble(field.getText());
+                } catch (NumberFormatException ex) {
+                    // hmmmm um custom exception aq seria bom..
+                }
+            }
+            totalValueLabel.setText(String.format("%.1f", total));
+            
+            // highlighta em vermelho se tiver errado
+            if (Math.abs(total - 1.0) > 0.001) {
+                totalValueLabel.setForeground(Color.RED);
+            } else {
+                totalValueLabel.setForeground(Color.BLACK);
+            }
+        });
+        totalPanel.add(refreshTotalButton);
+        locationsPanel.add(totalPanel);
+        editableFields.add(locationsPanel);
+        fieldComponents.put("lugaresEncontro", locationsPanel);
+    
+        JPanel morningPanel = createArrayTextFieldPanel("Morning Dialogs", 3);
+        editableFields.add(morningPanel);
+        fieldComponents.put("falasManha", morningPanel);
+    
+        JPanel afternoonPanel = createArrayTextFieldPanel("Afternoon Dialogs", 3);
+        editableFields.add(afternoonPanel);
+        fieldComponents.put("falasTarde", afternoonPanel);
+    
+        JPanel nightPanel = createArrayTextFieldPanel("Night Dialogs", 3);
+        editableFields.add(nightPanel);
+        fieldComponents.put("falasNoite", nightPanel);
+    
+        JPanel winCondPanel = new JPanel();
+        winCondPanel.setLayout(new BoxLayout(winCondPanel, BoxLayout.Y_AXIS));
+        winCondPanel.setBorder(BorderFactory.createTitledBorder("Win Conditions"));
+
+        JPanel necessaryAffectionLevelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        necessaryAffectionLevelPanel.add(new JLabel("Necessary Affection Level:"));
+        JTextField necessaryAffectionLevelValueField = new JTextField("", 30);
+        necessaryAffectionLevelPanel.add(necessaryAffectionLevelValueField);
+        winCondPanel.add(necessaryAffectionLevelPanel);
+        fieldComponents.put("necessaryAffectionLevel", necessaryAffectionLevelPanel);
+
+        // Panel for Necessary Cutscenes
+        JPanel necessaryCutscenesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        necessaryCutscenesPanel.add(new JLabel("Necessary Cutscenes:"));
+        JTextField necessaryCutscenesValueField = new JTextField("", 30);
+        necessaryCutscenesPanel.add(necessaryCutscenesValueField);
+        winCondPanel.add(necessaryCutscenesPanel);
+        fieldComponents.put("necessaryCutscenes", necessaryCutscenesPanel);
+
+        // Panel for Necessary Gifts
+        JPanel necessaryGiftsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        necessaryGiftsPanel.add(new JLabel("Necessary Gifts:"));
+        JTextField necessaryGiftsValueField = new JTextField("", 30);
+        necessaryGiftsPanel.add(necessaryGiftsValueField);
+        winCondPanel.add(necessaryGiftsPanel);
+        fieldComponents.put("necessaryGifts", necessaryGiftsPanel);
+
+        // Panel for Necessary Location Visits
+        JPanel necessaryLocationVisitsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        necessaryLocationVisitsPanel.add(new JLabel("Necessary Location Visits:"));
+        JTextField necessaryLocationVisitsValueField = new JTextField("", 30);
+        necessaryLocationVisitsPanel.add(necessaryLocationVisitsValueField);
+        winCondPanel.add(necessaryLocationVisitsPanel);
+        fieldComponents.put("necessaryLocationVisits", necessaryLocationVisitsPanel);
+
+        // Panel for Necessary Good Answers
+        JPanel necessaryGoodAnswersPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        necessaryGoodAnswersPanel.add(new JLabel("Necessary Good Answers:"));
+        JTextField necessaryGoodAnswersValueField = new JTextField("", 30);
+        necessaryGoodAnswersPanel.add(necessaryGoodAnswersValueField);
+        winCondPanel.add(necessaryGoodAnswersPanel);
+        fieldComponents.put("necessaryGoodAnswers", necessaryGoodAnswersPanel);
+
+        saveButton.addActionListener(e -> {
+            // Get the selected character
+            String selectedCharacter = (String) characterNameComboBox.getSelectedItem();
+            Romanceable character = DatingSim.romanceableCharacters.get(selectedCharacter);
+            
+            // Update character properties
+            character.setNome(nameField.getText());
+            character.setDescription(descField.getText());
+            character.setSpriteFilePath(characterFilepathsComboBox.getSelectedItem().toString());
+            //update the viewer
+            String newFilepath = character.getSpriteFilePath();
+            ImageIcon objectIcon = new ImageIcon(getClass().getClassLoader().getResource(newFilepath));
+            characterSpriteViewer.setIcon(new ImageIcon(scaleifCharacter(objectIcon, TRYING_STUFF)));
+
+            
+            // Update locations
+            Map<String, Double> newLocations = new HashMap<>();
+            for (String location : locations) {
+                try {
+                    double value = Double.parseDouble(locationFields.get(location).getText());
+                    newLocations.put(location, value);
+                } catch (NumberFormatException ex) {
+                    newLocations.put(location, 0.0);
+                }
+            }
+            character.setLugaresEncontro(newLocations);
+            
+            // Update dialog lines (implementation depends on your data structure)
+            // This is a placeholder - you'll need to implement according to your Romanceable class
+            
+            JOptionPane.showMessageDialog(null, "Character saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        editableFields.add(winCondPanel);
+
+        editableFields.add(Box.createVerticalGlue());
+        editableFields.setMinimumSize(editableFields.getPreferredSize());
+    
+        characterNameComboBox.addActionListener(e -> {
+            String selectedCharacter = characterNameComboBox.getSelectedItem().toString();
+            Romanceable character = DatingSim.romanceableCharacters.get(selectedCharacter);
+        
+            String filepath = character.getSpriteFilePath();
+            ImageIcon objectIcon = new ImageIcon(getClass().getClassLoader().getResource(filepath));
+            characterSpriteViewer.setIcon(new ImageIcon(scaleifCharacter(objectIcon, TRYING_STUFF)));
+            
+
+            nameField.setText(character.getNome());
+            descField.setText(character.getDescription());
+            characterFilepathsComboBox.setSelectedItem(character.getSpriteFilePath());
+            
+            Map<String, Double> characterLocations = character.getLugaresEncontro();
+            for (String location : locationFields.keySet()) {
+                Double value = characterLocations.get(location);
+                locationFields.get(location).setText(value == null ? "0.0" : value.toString());
+            }
+        
+            refreshTotalButton.doClick();
+            
+        });
+        
+        JScrollPane editableFieldsScrollPane = new JScrollPane(editableFields);
+        editableFieldsScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        characterManager.add(spriteComboBox, BorderLayout.WEST);
+        characterManager.add(editableFieldsScrollPane, BorderLayout.CENTER);
+        
+        //JScrollPane characterScrollPane = new JScrollPane(characterManager);
+        //characterScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+        contentPanel.add(characterManager, "CHARACTER_MANAGER"); 
+
+        debugScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+    
+        CardLayout cl = (CardLayout) contentPanel.getLayout();
+        cl.show(contentPanel, "DEBUG_INFO");  // Start with debug info visible
+    
+        bgPanel[DEBUG_PANEL_BG_NUM].add(controlPanel, BorderLayout.NORTH);
+        bgPanel[DEBUG_PANEL_BG_NUM].add(contentPanel, BorderLayout.CENTER);
+    
         window.add(bgPanel[DEBUG_PANEL_BG_NUM]);
+    }
+    
+    // Helper method to create panels for array text fields
+    private JPanel createArrayTextFieldPanel(String title, int numFields) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createTitledBorder(title));
+        
+        for (int i = 0; i < numFields; i++) {
+            JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            row.add(new JLabel("Line " + (i + 1) + ":"));
+            JTextField textField = new JTextField(30);
+            row.add(textField);
+            panel.add(row);
+        }
+        
+        return panel;
     }
 
     public void toggleDebugPanel() {

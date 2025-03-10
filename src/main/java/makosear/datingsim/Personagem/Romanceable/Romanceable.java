@@ -140,5 +140,25 @@ correct answers counter */
     public String getDescription() {
         return description;
     }
+
+    public void setNome(String text) {
+        this.nome = text;
+    }
+
+    public void setDescription(String text) {
+        this.description = text;
+    }
+
+    public void setSpriteFilePath(String text) {
+        this.spriteFilePath = text;
+    }
+
+    public void setLugaresEncontro(Map<String, Double> newLocations) {
+        this.lugaresEncontro = newLocations;
+    }
+
+    public Map<String, Double> getLugaresEncontro() {
+        return lugaresEncontro;
+    }
     
 }

@@ -151,6 +151,7 @@ public class MudaLugar {
             gm.ui.dayAndPeriodCounter.setVisible(false);
             gm.ui.messageText.setVisible(false);
             gm.ui.toggleDebugPanel();
+            gm.ui.updateDescriptions();
         }
 
         else {
